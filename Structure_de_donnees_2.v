@@ -94,3 +94,34 @@ Definition tmap_prop2  (em : edgemap) (tm : trianglemap) :=
       @triangleprop2 (em) (tm.[h2]) (h t h2).
 
 
+Definition edge2point1 (e:E) (em : edgemap) (preuve : e \in em): point :=
+  em.[preuve] (Ordinal(zero<2)).
+
+
+Definition edge2point2 (e:E) (em : edgemap) (preuve : e \in em): point :=
+  em.[preuve] (Ordinal(un<2)).
+
+
+Definition head (e:E) (em : edgemap) (preuve : e \in em) (b:bool) : point :=
+  if b==true then edge2point2 preuve else edge2point1 preuve.
+
+
+Definition tail (e:E) (em : edgemap) (preuve : e \in em) (b:bool) : point :=
+  if b==true then edge2point1 preuve else edge2point2 preuve.
+
+Definition triangle2edges (t1: T) (tm : trianglemap) (preuve : t1 \in tm) : {ffun 'I_3 -> E} :=
+  [ffun Ord : 'I_3 => fst(tm.[preuve] Ord)].
+
+
+
+(* adjE dit si 2 edges sont adjacents *)
+Definition adjE (e1: E) (e2 :E) (em :edgemap) (preuve1 : e1 \in em) (preuve2 : e2 \in em) : bool :=
+  (tail preuve1 true == tail preuve2 true) && (tail preuve1 true == tail preuve2 true)
+         || (tail preuve1 false == tail preuve2 true) && (tail preuve1 false == tail preuve2 true).
+
+
+(*adjT dit si 2 triangles sont adjacents*)
+Definition adjT (t1: T) (t2: T) (tm : trianglemap) (em:edgemap) (preuve1 : t1 \in tm) (preuve2 : t2 \in tm): bool :=
+  exists x : 'I_3, exists y : 'I_3, adjE  (triangleprop1 em tm.[preuve1] x) (triangleprop1 em tm.[preuve2] y) == true.
+
+
