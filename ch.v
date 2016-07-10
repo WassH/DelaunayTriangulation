@@ -128,19 +128,27 @@ Definition edgemapprop2 s (sp : edgemapprop s) :=
   \big[andb/true]_(i : {: domf s}) ((e_hd (s i) == e_tl (s (fnxt s sp i))) &&
      (fnxt s sp (fprv s sp i) == i) && (fprv s sp (fnxt s sp i) == i)).
 
-Lemma fnxtK s sp (sp2 : edgemapprop2 s sp) : cancel (fnxt s sp) (fprv s sp).
+Lemma fprvK s sp (sp2 : edgemapprop2 s sp) : cancel (fnxt s sp) (fprv s sp).
 Proof.
 move => x; apply/eqP; move: sp2.
 rewrite /edgemapprop2 big_andE => /forallP /= sp2.
 by case/andP: (sp2 x) => /andP [].
 Qed.
 
-Lemma fprvK s sp (sp2 : edgemapprop2 s sp) : cancel (fprv s sp) (fnxt s sp).
+Lemma fnxtK s sp (sp2 : edgemapprop2 s sp) : cancel (fprv s sp) (fnxt s sp).
 Proof.
 move => x; apply/eqP; move: sp2.
 rewrite /edgemapprop2 big_andE => /forallP /= sp2.
 by case/andP: (sp2 x) => /andP [].
 Qed.
+
+Definition update_nxt s (sp : edgemapprop s) (x : {: domf s}) (y : E) :=
+  let xvalues := s x in
+  s.[fsval x <- mk_edge (e_hd xvalues) (e_tl xvalues) y (prv xvalues)].
+
+Definition update_prv s (sp : edgemapprop s) (x : {: domf s}) (y : E) :=
+  let xvalues := s x in
+  s.[fsval x <- mk_edge (e_hd xvalues) (e_tl xvalues) (nxt xvalues) y].
 
 Definition initial (p1 p2 : point) : {fmap E -> point ^ 2 * E ^ 2} :=
   nosimpl [fmap].[0 <- mk_edge p1 p2 1 1].[1 <- mk_edge p2 p1 0 0].
@@ -220,7 +228,7 @@ Definition remove_point s
   let ne := fnxt _ sp pointing_edge in
   let old_prv := fprv _ sp pointing_edge in
   let old_prv_values := s old_prv in
-  let old_nxt := fnxt _ sp (fnxt _ sp pointing_edge) in
+  let old_nxt := fnxt _ sp ne in
   let old_nxt_values := s old_nxt in
   let s1 := s.[\ ([fset (val pointing_edge)] `|` [fset (val ne) ])%fset] in
   let k := newname (domf s1) in
@@ -235,25 +243,40 @@ Lemma remove_pointP (s : {fmap E -> point ^ 2 * E ^ 2})
   fprv _ sp pointing_edge != fnxt _ sp pointing_edge ->
   edgemapprop (remove_point s sp sp2 pointing_edge).
 Proof.
-(*
 move => at_least_three; rewrite /remove_point.
-set edge_values := s [` pe ]%fset.
+set edge_values := s pointing_edge.
 set p1 := e_tl edge_values.
 set p2 := e_hd edge_values.
-set ne := nxt edge_values.
-set old_prv := prv edge_values.
-set old_prv_values := s [` prvP _ sp [` pe ]]%fset.
-set old_nxt := nxt (s [` nxtP _ sp [` pe ] ]%fset).
-set old_nxt_values := s [` nxtP _ sp [` nxtP _ sp [` pe ] ] ]%fset.
-set s1 := s.[\ ([fset pointing_edge] `|` [fset ne ])%fset].
+set ne := fnxt _ sp pointing_edge.
+set old_prv := fprv _ sp pointing_edge.
+set old_prv_values := s old_prv.
+set old_nxt := fnxt _ sp ne.
+set old_nxt_values := s old_nxt.
+set s1 := s.[\ ([fset (val pointing_edge)] `|` [fset (val ne) ])%fset].
 set k := newname (domf s1).
 set newmap := _.[_ <- _].
-have old_nxt_new_map : old_nxt \in domf newmap.
-  by rewrite /newmap dom_setf inE in_fsetE eqxx.
 rewrite /edgemapprop.
+have old_nxt_new_map : val old_nxt \in domf newmap.
+  by rewrite /newmap dom_setf inE in_fsetE eqxx.
 rewrite (bigD1 [` old_nxt_new_map ]%fset) //; apply /andP; split.
   apply /andP; split.
-  rewrite /newmap ffunE eqxx nxtK.
+    rewrite /newmap ffunE eqxx nxtK.
+    set u := fnxt _ sp (fnxt _ sp (fnxt _ sp pointing_edge)).
+    rewrite -[nxt old_nxt_values]/(val u).
+    rewrite !mem_setf !inE.
+    have -> : val u \in domf s  by rewrite /u; apply: valP.
+    case unop : (val u == val old_prv); first by rewrite orbT.
+    rewrite andbT.
+    case unpe : (val u == val pointing_edge).
+(* I may have a wrong remove_point function. *)
+fail.
+      have upe : u = pointing_edge by apply: val_inj; apply/eqP.
+      case/negP : at_least_three.
+      rewrite -[X in fprv _ _ X]upe /u fprvK.     
+      have -> : val u = val old_nxt; last by rewrite eqxx.
+        rewrite /u /old_nxt /ne.
+      rewrite /old_prv.
+
   rewrite /newmap ffunE eqxx /nxt ffunE eqxx /old_prv_values /=.
   rewrite /old_nxt_values /=.
 have : s.[prvP s sp [` pe]%fset].2 (@Ordinal 2 0 (erefl true)) = 1.
