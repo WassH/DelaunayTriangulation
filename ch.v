@@ -2,7 +2,7 @@ From mathcomp Require Import ssreflect ssrbool ssrnat eqtype ssrfun seq.
 From mathcomp Require Import choice path finset finfun fintype bigop.
 From mathcomp Require Import ssrnum matrix mxalgebra.
 
-Require Import finmap.
+From mathcomp Require Import finmap.
 
 Section ch.
 
