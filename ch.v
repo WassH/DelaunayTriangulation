@@ -106,7 +106,7 @@ move: sp; rewrite /edgemapprop big_andE; move/forallP => /= sp.
 by move/andP: (sp x) => [].
 Qed.
 
-Definition fnxt s (sp : edgemapprop s) (x : {: domf s}) : {:domf s} :=
+Definition fnxt s (sp : edgemapprop s) (x : domf s) : domf s :=
   nosimpl [` fnxt_aux s sp x ]%fset.
 
 Definition fprv s (sp : edgemapprop s) (x : {: domf s}) : {:domf s} :=
@@ -142,6 +142,7 @@ rewrite /edgemapprop2 big_andE => /forallP /= sp2.
 by case/andP: (sp2 x) => /andP [].
 Qed.
 
+(* utiliser le theoreme can_inj *)
 Lemma fnxt_inj s sp (sp2 : edgemapprop2 s sp) : injective (fnxt _ sp).
 Proof.
 by intros x y fxy; rewrite -(fprvK _ _ sp2 x) -(fprvK _ _ sp2 y) fxy.
@@ -162,11 +163,15 @@ Definition update_prv s (sp : edgemapprop s) (x : {: domf s}) (y : E) :=
 
 Definition initial (p1 p2 : point) : {fmap E -> point ^ 2 * E ^ 2} :=
   nosimpl [fmap].[0 <- mk_edge p1 p2 1 1].[1 <- mk_edge p2 p1 0 0].
+(* TODO : maybe shorter this way. *)
+Definition initial2 (p1 p2 : point) : {fmap E -> point ^ 2 * E ^ 2} :=
+  [fmap x : [fset 0; 1]%fset =>
+     if val x == 0 then mk_edge p1 p2 1 1 else mk_edge p1 p2 0 0].
 
 Lemma initialP (p1 p2 : point) (df : p1 != p2) : edgemapprop (initial p1 p2).
 Proof.
-have m0 : 0 \in initial p1 p2 by rewrite !in_fsetE.
-have m1 : 1 \in initial p1 p2 by rewrite !in_fsetE.
+have m0 : 0 \in initial p1 p2 by rewrite !inE.
+have m1 : 1 \in initial p1 p2 by rewrite !inE.
 (* 
 have m2 : forall k, k.+2 \notin domf (initial p1 p2).
   by move => k; rewrite !in_fsetE.
@@ -187,6 +192,11 @@ rewrite (eq_bigl (fun x => x \in [` m0]%fset :: [` m1 ]%fset :: nil)); last firs
   gives me another, better way to do it. *)
  exact px.
 *)
+
+(* Better way to find all elements : TODO
+rewrite big_andE; apply/forallP => x.
+have:= valP x; rewrite !inE.
+*) 
 rewrite (eq_bigl (fun x => val x \in (1 |` (0 |` fset0))%fset));
   last by move => [ [ | [ | x]] P].
 have m1' : val [` m1 ]%fset \in (1 |` (0 |` fset0))%fset by [].
@@ -198,6 +208,7 @@ rewrite (bigD1 [` m0]%fset  m0') big_pred0 /= ?andbT; last first.
 (* I think the next proof would be easier if I knew how to write a finfun
   in a more systematic way. *)
 set u := initial p1 p2; set v := u.[m0].
+ (* TODO  rewrite !ffunE /= nxtK prvK /u /initial !inE. *)
 apply/andP; split;
   apply/andP;split;
   try solve [rewrite /e_hd /e_tl /nxt /prv !ffunE //=].
@@ -219,6 +230,8 @@ have m0' : (val [` m0 ]%fset \in (1 |` (0 |` fset0))%fset) &&
            ([` m0 ]%fset != [` m1 ]%fset) by rewrite !inE.
 rewrite (bigD1 [` m0]%fset  m0') big_pred0 /= ?andbT; last first.
   by move => [ [ | [ | x]] /= _] ; rewrite ?andbF //= !in_fsetE.
+(* Note : FmapE.fmapE devrait probablement etre remonte au niveau
+  finmap. *)
 apply/andP; split; (apply/andP; split;[apply/andP;split | ]);
  try (by apply/eqP/val_inj; rewrite /fnxt /fprv /initial /= 
        !(FmapE.fmapE, ffunE) /= !(FmapE.fmapE, ffunE, prvK, nxtK)).
@@ -229,6 +242,7 @@ Qed.
 (* both pointing_edge and its successor are removed.  A new edge is created
    to connect the tail of pointing_edge and the head of its successor.
    the map we obtain does not satify the invariants anymore *)
+(* TODO : remove sp2, not needed in the code. *)
 Definition remove_point s
   (sp : edgemapprop s) (sp2 : edgemapprop2 _ sp) 
   (pointing_edge : {: domf s}) : {fmap E -> point ^ 2 * E ^ 2} :=
@@ -282,7 +296,7 @@ have old_nxt_in_s1 : val old_nxt \in s1.
   rewrite -[X in fprv _ _ (fprv _ _ X)]/ne -nepe /old_nxt fprvK // -nepe.
   by rewrite /old_nxt fprvK.
 have old_prv_in_s1 : val old_prv \in s1.
-  rewrite /s1 in_fsetE !inE; apply/andP; split;[exact old_prv_in_s|].
+rewrite /s1 in_fsetE !inE; apply/andP; split;[exact old_prv_in_s|].
   apply/andP;split; [ | exact old_prv_in_s].
   apply/negP => /orP [/eqP abs1 | /eqP abs2]; case/negP: at_least_three.
     have onpe : old_prv = pointing_edge by apply val_inj; rewrite <- abs1.
@@ -339,19 +353,14 @@ case base : (old_nxt == old_prv).
     have vfs : val (fnxt s sp [` xs]%fset) \in domf s  by apply: valP.
     rewrite vfs andTb andbT.
     apply/negP => /orP [ /eqP | /eqP].
-(* Wouah: rewrite can't do it.  Why? *)
-      change ((fun pat : domf s => val (fnxt s sp [` xs ]%fset) =
-               val pat -> False) pointing_edge).
-      rewrite (_ : pointing_edge = fnxt _ sp (fprv _ sp pointing_edge) :>
-                    domf s).
-        move => a1; move : (val_inj _ _ a1) => a1'.
-        move: (fnxt_inj s sp sp2 _ _ a1').
-        rewrite -/old_prv => a1''.
-        case/negP: px; apply/eqP; apply:val_inj.
-        change (val x) with (val [` xs]%fset); rewrite a1''.
-        change (val [` old_nxt_new_map ]%fset) with (val old_nxt).
-        by rewrite (eqP base).
-      by symmetry; apply: fnxtK.
+      rewrite -[X in _ = val X](fnxtK _ _ sp2).
+      move => a1; move : (val_inj _ _ a1) => a1'.
+      move: (fnxt_inj s sp sp2 _ _ a1').
+      rewrite -/old_prv => a1''.
+      case/negP: px; apply/eqP; apply:val_inj.
+      rewrite -[val x]/(val [` xs]%fset); rewrite a1''.
+      rewrite -[val [` old_nxt_new_map ]%fset]/(val old_nxt).
+      by rewrite (eqP base).
     rewrite /ne => a2; move: (val_inj _ _ a2) => a2'.
     move : (fnxt_inj _ _ sp2 _ _ a2') => a2''.
     move: xs1; rewrite /s1 in_fsetE !inE -a2'' eqxx.
@@ -363,25 +372,18 @@ case base : (old_nxt == old_prv).
     have vfs : val (fprv s sp [` xs]%fset) \in domf s  by apply: valP.
     rewrite vfs andTb andbT.
     apply/negP => /orP [ /eqP | /eqP].
-      change ((fun pat : domf s => val (fprv s sp [` xs ]%fset) =
-               val pat -> False) pointing_edge).
-      rewrite (_ : pointing_edge = fprv _ sp (fnxt _ sp pointing_edge) :>
-                    domf s).
+      rewrite -[X in _ = val X](fprvK _ _ sp2).
 (* the two branches are swapped *)
-        move => a1; move: (val_inj _ _ a1) => a1'.
-        move: (fprv_inj _ _ sp2 _ _ a1') => a1''.
-        move: xs1; rewrite /s1 in_fsetE !inE /ne -a1'' eqxx.
-        by rewrite orbT andbF.
-      by symmetry; apply: fprvK.
-      change ((fun pat : domf s => val (fprv s sp [` xs ]%fset) =
-               val pat -> False) ne).
-      rewrite (_ : ne = fprv _ sp (fnxt _ sp ne) :> domf s).
-      move => a2; move : (val_inj _ _ a2) => a2'.
-      move: (fprv_inj s sp sp2 _ _ a2').
-      rewrite -/old_nxt => a2''.
-      case/negP: px; apply/eqP; apply:val_inj.
-      by change (val x) with (val [` xs]%fset); rewrite a2''.
-    by symmetry; apply: fprvK.
+      move => a1; move: (val_inj _ _ a1) => a1'.
+      move: (fprv_inj _ _ sp2 _ _ a1') => a1''.
+      move: xs1; rewrite /s1 in_fsetE !inE /ne -a1'' eqxx.
+      by rewrite orbT andbF.
+    rewrite -[X in _ = val X](fprvK _ _ sp2).
+    move => a2; move : (val_inj _ _ a2) => a2'.
+    move: (fprv_inj s sp sp2 _ _ a2').
+    rewrite -/old_nxt => a2''.
+    case/negP: px; apply/eqP; apply:val_inj.
+    by rewrite -[val x]/(val [` xs]%fset) a2''.
   suff cmp :newmap x = s [` xs ]%fset by
     rewrite cmp -[nxt _]/(val (fnxt _ sp [` xs ]%fset))
       -[prv _]/(val (fprv _ sp [` xs]%fset)) xf xpr.
@@ -507,16 +509,12 @@ have xf : val (fnxt _ sp [` xs]%fset) \in newmap.
   rewrite vfs andTb andbT.
   apply/negP => /orP [ /eqP | /eqP].
 (* Wouah: rewrite can't do it.  Why? *)
-    change ((fun pat : domf s => val (fnxt s sp [` xs ]%fset) =
-               val pat -> False) pointing_edge).
-    rewrite (_ : pointing_edge = fnxt _ sp (fprv _ sp pointing_edge) :>
-                    domf s).
-      move => a1; move : (val_inj _ _ a1) => a1'.
-      move: (fnxt_inj s sp sp2 _ _ a1').
-      rewrite -/old_prv => a1''.
-      case/negP: xprv; apply/eqP; apply:val_inj.
-      by change (val x) with (val [` xs]%fset); rewrite a1''.
-    by symmetry; apply: fnxtK.
+    rewrite -[X in _ = val X](fnxtK _ _ sp2).
+    move => a1; move : (val_inj _ _ a1) => a1'.
+    move: (fnxt_inj s sp sp2 _ _ a1').
+    rewrite -/old_prv => a1''.
+    case/negP: xprv; apply/eqP; apply:val_inj.
+    by rewrite -[val x]/(val [` xs]%fset) a1''.
   rewrite /ne => a2; move: (val_inj _ _ a2) => a2'.
   move : (fnxt_inj _ _ sp2 _ _ a2') => a2''.
   move: xs1; rewrite /s1 in_fsetE !inE -a2'' eqxx.
@@ -529,25 +527,18 @@ have xpr : val (fprv _ sp [` xs]%fset) \in newmap.
   have vfs : val (fprv s sp [` xs]%fset) \in domf s  by apply: valP.
   rewrite vfs andTb andbT.
   apply/negP => /orP [ /eqP | /eqP].
-    change ((fun pat : domf s => val (fprv s sp [` xs ]%fset) =
-               val pat -> False) pointing_edge).
-    rewrite (_ : pointing_edge = fprv _ sp (fnxt _ sp pointing_edge) :>
-                    domf s).
+    rewrite -[X in _ = val X](fprvK _ _ sp2).
 (* the two branches are swapped *)
-      move => a1; move: (val_inj _ _ a1) => a1'.
-      move: (fprv_inj _ _ sp2 _ _ a1') => a1''.
-      move: xs1; rewrite /s1 in_fsetE !inE /ne -a1'' eqxx.
-      by rewrite orbT andbF.
-    by symmetry; apply: fprvK.
-    change ((fun pat : domf s => val (fprv s sp [` xs ]%fset) =
-               val pat -> False) ne).
-    rewrite (_ : ne = fprv _ sp (fnxt _ sp ne) :> domf s).
-    move => a2; move : (val_inj _ _ a2) => a2'.
-    move: (fprv_inj s sp sp2 _ _ a2').
-    rewrite -/old_nxt => a2''.
-    case/negP: xnxt; apply/eqP; apply:val_inj.
-    by change (val x) with (val [` xs]%fset); rewrite a2''.
-  by symmetry; apply: fprvK.
+    move => a1; move: (val_inj _ _ a1) => a1'.
+    move: (fprv_inj _ _ sp2 _ _ a1') => a1''.
+    move: xs1; rewrite /s1 in_fsetE !inE /ne -a1'' eqxx.
+    by rewrite orbT andbF.
+  rewrite -[X in _ = val X](fprvK _ _ sp2).
+  move => a2; move : (val_inj _ _ a2) => a2'.
+  move: (fprv_inj s sp sp2 _ _ a2').
+  rewrite -/old_nxt => a2''.
+  case/negP: xnxt; apply/eqP; apply:val_inj.
+  by rewrite -[val x]/(val [` xs]%fset) a2''.
 suff cmp :newmap x = s [` xs ]%fset by
     rewrite cmp -[nxt _]/(val (fnxt _ sp [` xs ]%fset))
       -[prv _]/(val (fprv _ sp [` xs]%fset)) xf xpr.
