@@ -133,9 +133,8 @@ Definition tmap_prop2  (em : edgemap) (tm : trianglemap) :=
       @triangleprop2 (em) (tm.[h2]) (h t h2).
 
 (* triangleprop3 dit que tout triangle dans edgetmap est dans trianglemap *)
-Definition triangleprop3 (etm : edgetmap) (tm : trianglemap) (e:E) (preuve : e \in finsupp etm)
-                               (t:T) (preuve2 : t \in etm e) :=
-   t \in tm.
+Definition triangleprop3 (etm : edgetmap) (tm : trianglemap) :=
+  forall e (ep : e \in finsupp etm) t (tp : t \in etm e),    t \in tm.
 
 
 Definition edge2point1 (e:E) (em : edgemap) (preuve : e \in em): point :=
@@ -267,6 +266,8 @@ Definition change_ord (T : choiceType)(s : {fset T}) (h : #|{:s}| == 2) (x : 'I_
 rewrite (eqP h); exact x.
 Defined.
 
+
+(*
 Definition findIllegal (em : edgemap) (etm : edgetmap) (tmap : trianglemap) 
                     (preuvetmap : tmap_prop1 em tmap)
             (trp : forall e (ep : e \in finsupp etm) t (tp : t \in etm e),
@@ -307,44 +308,46 @@ have : val t2 \in S'.
 
    exact:valP.
 have : val x \in finsupp etm.
-   
+    *)
 
+Definition toto (etm : edgetmap) (x : {: [fset x | x in finsupp etm & 
+(#|{:etm x}|==2)]%fset }) :
+   val x \in finsupp etm.
+have:= valP x.
+rewrite in_fsetE 2!inE => /andP [it _]; exact: it.
+Defined.
 
-(* triangleprop3 dit que tout triangle dans edgetmap est dans trianglemap *)
-Definition triangleprop3 (etm : edgetmap) (tm : trianglemap) (e:E) (preuve : e \in finsupp etm)
-                               (t:T) (preuve2 : t \in etm e) :=
-   t \in tm.
 
 (* findIllegal fait appel aux fonctions tr2pt et edge2index pour récupérer les 4 points *)
 Definition findIllegal (em : edgemap) (etm : edgetmap) (tmap : trianglemap) 
-                    (preuvetmap : tmap_prop1 em tmap) :=
+                    (preuvetmap : tmap_prop1 em tmap) (preuvetriprop3 : triangleprop3 etm tmap) :=
   let X := [fset x | x in finsupp etm & (#|{:etm x}|==2)]%fset in
-  let f := fun x : {y : X | #|{:etm y}| == 2} =>
+  let f := fun x : {y : X | #|{:etm (val y)}| == 2} =>
     (* S est le fset T contenant les 2 noms de triangles t1 et t2 adjacents en l'edge x *)
-    let S := etm x in
-    let t1 := enum_rank S Ordinal(zero<2) in
-    let t2 := enum_rank S Ordinal(un<2) in
-valP t1 in .
+    let S := etm (val(val x)) in
+    let t1 := @enum_val  [finType of S] xpredT (change_ord (valP x)
+            (Ordinal(zero<2)))in
+    let t2 := @enum_val  [finType of S] xpredT (change_ord (valP x)
+            (Ordinal(un<2)))in
 
-
-    let i1 := @edge2index x t1 em tmap preuvetmap  (triangleprop3 etm tmap x (valP x) t1 "preuve que t1 \in etm x") in
-    let i2 := @edge2index x t2 em tmap preuvetmap  (valP x) in
-    let ptext1 := @tr2pt em tamp preuvetmap t1 (valP x) (addOrd3 i1 (Ordinal un<3)) in
-    let ptext2 := @tr2pt em tamp preuvetmap t2 (valP x) (addOrd3 i2 (Ordinal un<3)) in
-    let ptin1 := @tr2pt em tamp preuvetmap t1 (valP x) i1 in
-    let ptin2 := @tr2pt em tamp preuvetmap t2 (valP x) i2 in 
-      if (@inCircle ptext2 em t1 tmap (valP x) preuvetmap)==true 
-                      then Some (x, ptext1, ptext2, ptin1, ptin2, t1, t2)
+    let i1 := @edge2index (val (val x)) (val t1) em tmap preuvetmap  (preuvetriprop3 (val (val x)) (toto (val x)) (val t1) (valP t1)) in
+    let i2 := @edge2index (val (val x)) (val t2) em tmap preuvetmap  (preuvetriprop3 (val (val x)) (toto (val x)) (val t2) (valP t2))  in
+    let ptext1 := @tr2pt em tmap preuvetmap (val t1) (preuvetriprop3 (val (val x)) (toto (val x)) (val t1) (valP t1)) (addOrd3 i1 (Ordinal un<3)) in
+    let ptext2 := @tr2pt em tmap preuvetmap (val t2) (preuvetriprop3 (val (val x)) (toto (val x)) (val t2) (valP t2)) (addOrd3 i2 (Ordinal un<3)) in
+    let ptin1 := @tr2pt em tmap preuvetmap (val t1) (preuvetriprop3 (val (val x)) (toto (val x)) (val t1) (valP t1)) i1 in
+    let ptin2 := @tr2pt em tmap preuvetmap (val t2) (preuvetriprop3 (val (val x)) (toto (val x)) (val t2) (valP t2)) i2 in 
+      if (@inCircle ptext2 em (val t1) tmap (preuvetriprop3 (val (val x)) (toto (val x)) (val t1) (valP t1)) preuvetmap)==true 
+                      then Some (x, ptext1, ptext2, ptin1, ptin2, t1, t2, 
+                  preuvetriprop3 (val (val x)) (toto (val x)) (val t1) (valP t1),
+                 preuvetriprop3 (val (val x)) (toto (val x)) (val t2) (valP t2))
       else None in true.
 
-
- 
 
 
 Definition flip (em : edgemap) (tm: trianglemap) (eAdj:E) (ptext1 : point) (ptext2 : point) 
                        (t1:T)  (preuve1 : t1 \in tm) (t2 :T) (preuve2: t2 \in tm) 
                                 (preuvetmap : tmap_prop1 em tm):=
-unhookE eAdj em; unhookT t tm1; unhookT t2 tm;  attachE ptext1 ptext2 em; 
+unhookE eAdj em; unhookT t tm1; unhookT t2 tm;  attachE ptext1 ptext2 em;
 let triangle1 := fun x:'I_3 => if x==0 then (fst(tm.[preuve1]%fmap (addOrd3 (@edge2index eAdj t1 em tm preuvetmap preuve1) 1))
                                                     ,snd(tm.[preuve1]%fmap (addOrd3 (@edge2index eAdj t1 em tm preuvetmap preuve1) 1)))  
                                else if x==1 then  (\max_(i : domf em) val i, true)
@@ -354,15 +357,18 @@ in let triangle2 := fun x:'I_3 => if x==0 then (fst(tm.[preuve1]%fmap (addOrd3 (
                                                     ,snd(tm.[preuve1]%fmap (addOrd3 (@edge2index eAdj t1 em tm preuvetmap preuve1) (Ordinal(deux<3)))))  
                                else if x==1 then  (fst(tm.[preuve2]%fmap (addOrd3 (@edge2index eAdj t2 em tm preuvetmap preuve2) (Ordinal(un<3))))
                                                     ,snd(tm.[preuve2]%fmap (addOrd3 (@edge2index eAdj t2 em tm preuvetmap preuve2) (Ordinal(un<3)))))
-                               else (\max_(i : domf em) val i, false)
+                               else (\max_(i : domf em) val i, false) 
 
-in attachT triangle1 triangle2 tm.
+in attachT triangle1 triangle2 tm. 
 
 
 
 (* Dans makeDelaunay faire un test findIllegal et si oui alors faire flip et rappeler 
 makeDelaunay *)
-Fixpoint makeDelaunay (em :edgemap) (tm : trianglemap) :=
-  (* if findIllegal em tm is Some(i) then flip em tm i; makeDelauney em tm *)
+Fixpoint makeDelaunay (em :edgemap) (etm : edgetmap) (tmap : trianglemap) (preuvetmap : tmap_prop1 em tmap) 
+                                  (preuvetriprop3 : triangleprop3 etm tmap) :=
 
-  let X := 
+  if (findIllegal em etm tmap preuvetmap preuvetriprop3) is Some (x, ptext1, ptext2, ptin1, ptin2, t1, t2,preuve1, preuve2) 
+    then  flip (em) (tm) (x) (ptext1) (ptext2) (t1) (preuve1) (t2) (preuve2) (preuvetmap)
+  else ;
+  makeDelaunay em etm tmap preuvetmap.
