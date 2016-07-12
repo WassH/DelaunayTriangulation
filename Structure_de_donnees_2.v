@@ -347,6 +347,13 @@ move => x'; exists x'.
 by case: x' => v /=; rewrite in_fsetE inE; case/andP.
 Defined.
 
+Definition illegaltupleprop (tmap: trianglemap)
+   (p : E * point * point * point * point * T * T) :=
+  let '(x, ptext1, ptext2, ptin1, ptin2, t1, t2 (* ,
+                  preuvetriprop3  (toto (val x)) (valP t1),
+                 preuvetriprop3  (toto (val x)) (valP t2) *)) := p in
+      t1 \in tmap.
+
 Section findIllegal.
 
 Variables  (em : edgemap) (etm : edgetmap) (tmap : trianglemap) 
@@ -372,9 +379,11 @@ Let f (* : X -> option ({y : X | #|{: etm (val y)}| == 2} * point * point *
     let ptin1 := @tr2pt em tmap preuvetmap (val t1) (preuvetriprop3  (toto (val x)) (valP t1)) i1 in
     let ptin2 := @tr2pt em tmap preuvetmap (val t2) (preuvetriprop3  (toto (val x))  (valP t2)) i2 in 
       if (@inCircle ptext2 em (val t1) tmap (preuvetriprop3  (toto (val x)) (valP t1)) preuvetmap)==true 
-                      then Some (x, ptext1, ptext2, ptin1, ptin2, val t1, val t2 (* ,
+      then Some (exist (illegaltupleprop tmap)
+                       (val (val x), ptext1, ptext2, ptin1, ptin2, val t1, val t2 (* ,
                   preuvetriprop3  (toto (val x)) (valP t1),
-                 preuvetriprop3  (toto (val x)) (valP t2) *)) else None.
+                 preuvetriprop3  (toto (val x)) (valP t2) *))
+                  (preuvetriprop3  (toto (val x)) (valP t1)))else None.
 
 Let res := [fset f x | x in {: X} & f x != None]%fset.
 Check match pick (pred_of_simpl (@predT {:res})) with
@@ -385,7 +394,13 @@ Definition findIllegal := match pick (pred_of_simpl (@predT {:res})) with
 
 End findIllegal.
 
+Check findIllegal.
 
+Check (fun (tmap : trianglemap) (x : sig_choiceType (illegaltupleprop tmap)) =>
+         let '(exist (x, ptext1, ptext2, ptin1, ptin2, t1, t2) _) := x in
+         t1).
+
+           
 Definition flip (em : edgemap) (tm: trianglemap) (eAdj:E) (ptext1 : point) (ptext2 : point) 
                        (t1:T)  (preuve1 : t1 \in tm) (t2 :T) (preuve2: t2 \in tm) 
                                 (preuvetmap : tmap_prop1 em tm):=
