@@ -17,7 +17,6 @@ Unset Printing Implicit Defensive.
 
 
 Section gensym.
-
 Open Scope fmap_scope.
 
 Definition E := nat.
@@ -348,11 +347,15 @@ move => x'; exists x'.
 by case: x' => v /=; rewrite in_fsetE inE; case/andP.
 Defined.
 
-(* findIllegal fait appel aux fonctions tr2pt et edge2index pour récupérer les 4 points *)
-Definition findIllegal (em : edgemap) (etm : edgetmap) (tmap : trianglemap) 
-                    (preuvetmap : tmap_prop1 em tmap) (preuvetriprop3 : triangleprop3 etm tmap) :=
-  let X := [fset x | x in finsupp etm & (#|{:etm x}|==2)]%fset in
-  let f := fun x' : {: X } =>
+Section findIllegal.
+
+Variables  (em : edgemap) (etm : edgetmap) (tmap : trianglemap) 
+ (preuvetmap : tmap_prop1 em tmap) (preuvetriprop3 : triangleprop3 etm tmap).
+
+Let  X := [fset x in finsupp etm | (#|{:etm x}|==2)]%fset.
+
+Let f (* : X -> option ({y : X | #|{: etm (val y)}| == 2} * point * point *
+                 point * point * T * T) *) := fun x' : {: X } =>
     let x :=  titi x' : {y : X | #|{:etm (val y)}| == 2} in
     (* S est le fset T contenant les 2 noms de triangles t1 et t2 adjacents en l'edge x *)
     let S := etm (val(val x)) in
@@ -361,21 +364,26 @@ Definition findIllegal (em : edgemap) (etm : edgetmap) (tmap : trianglemap)
     let t2 := @enum_val  [finType of S] xpredT (change_ord (valP x)
             (Ordinal(un<2)))in
 
-    let i1 := @edge2index (val (val x)) (val t1) em tmap preuvetmap  (preuvetriprop3 (val (val x)) (toto (val x)) (val t1) (valP t1)) in
-    let i2 := @edge2index (val (val x)) (val t2) em tmap preuvetmap  (preuvetriprop3 (val (val x)) (toto (val x)) (val t2) (valP t2))  in
-    let ptext1 := @tr2pt em tmap preuvetmap (val t1) (preuvetriprop3 (val (val x)) (toto (val x)) (val t1) (valP t1)) (addOrd3 i1 (Ordinal un<3)) in
-    let ptext2 := @tr2pt em tmap preuvetmap (val t2) (preuvetriprop3 (val (val x)) (toto (val x)) (val t2) (valP t2)) (addOrd3 i2 (Ordinal un<3)) in
-    let ptin1 := @tr2pt em tmap preuvetmap (val t1) (preuvetriprop3 (val (val x)) (toto (val x)) (val t1) (valP t1)) i1 in
-    let ptin2 := @tr2pt em tmap preuvetmap (val t2) (preuvetriprop3 (val (val x)) (toto (val x)) (val t2) (valP t2)) i2 in 
-      if (@inCircle ptext2 em (val t1) tmap (preuvetriprop3 (val (val x)) (toto (val x)) (val t1) (valP t1)) preuvetmap)==true 
-                      then (*Some (x, ptext1, ptext2, ptin1, ptin2, t1, t2 (*, 
-                  preuvetriprop3 (val (val x)) (toto (val x)) (val t1) (valP t1),
-                 preuvetriprop3 (val (val x)) (toto (val x)) (val t2) (valP t2)*))
-*) Some ptext1      else None in (* if pick {: X} is Some x then f x else None *)
-  [fset f x | x in X & f x != None ]%fset.
-  pick Y.
+    let i1 := @edge2index (val (val x)) (val t1) em tmap preuvetmap
+                          (preuvetriprop3 (toto (val x)) (valP t1)) in
+    let i2 := @edge2index (val (val x)) (val t2) em tmap preuvetmap  (preuvetriprop3  (toto (val x)) (valP t2))  in
+    let ptext1 := @tr2pt em tmap preuvetmap (val t1) (preuvetriprop3  (toto (val x)) (valP t1)) (addOrd3 i1 (Ordinal un<3)) in
+    let ptext2 := @tr2pt em tmap preuvetmap (val t2) (preuvetriprop3  (toto (val x)) (valP t2)) (addOrd3 i2 (Ordinal un<3)) in
+    let ptin1 := @tr2pt em tmap preuvetmap (val t1) (preuvetriprop3  (toto (val x)) (valP t1)) i1 in
+    let ptin2 := @tr2pt em tmap preuvetmap (val t2) (preuvetriprop3  (toto (val x))  (valP t2)) i2 in 
+      if (@inCircle ptext2 em (val t1) tmap (preuvetriprop3  (toto (val x)) (valP t1)) preuvetmap)==true 
+                      then Some (x, ptext1, ptext2, ptin1, ptin2, val t1, val t2 (* ,
+                  preuvetriprop3  (toto (val x)) (valP t1),
+                 preuvetriprop3  (toto (val x)) (valP t2) *)) else None.
 
+Let res := [fset f x | x in {: X} & f x != None]%fset.
+Check match pick (pred_of_simpl (@predT {:res})) with
+   Some u => val u | None => None end.
 
+Definition findIllegal := match pick (pred_of_simpl (@predT {:res})) with
+   Some u => val u | None => None end.
+
+End findIllegal.
 
 
 Definition flip (em : edgemap) (tm: trianglemap) (eAdj:E) (ptext1 : point) (ptext2 : point) 
