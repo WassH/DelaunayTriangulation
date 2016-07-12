@@ -317,12 +317,43 @@ have:= valP x.
 rewrite in_fsetE 2!inE => /andP [it _]; exact: it.
 Defined.
 
+(* La définition de edge2stuff qui renvoit pour un edge adjacent les 4 points et les 2 triangles et les 2
+preuves que les triangles sont dans tmap ne passe pas sous Coq (fait planter) *)
+(* 
+Definition edge2stuf (e : E) (em : edgemap) (etm : edgetmap) (tmap : trianglemap) 
+                    (preuvetmap : tmap_prop1 em tmap) (preuvetriprop3 : triangleprop3 etm tmap) 
+                        (preuve : e \in finsupp etm) (preuve2 : #|{:etm e}|==2) :=
+    
+   let S := etm (e) in
+    let t1 := @enum_val  [finType of S] xpredT (change_ord (preuve2)
+            (Ordinal(zero<2)))in
+    let t2 := @enum_val  [finType of S] xpredT (change_ord (preuve2)
+            (Ordinal(un<2)))in 
+
+    let i1 := @edge2index (e) (val t1) em tmap preuvetmap  (preuvetriprop3 (e) (preuve) (val t1) (valP t1)) in
+    let i2 := @edge2index (e) (val t2) em tmap preuvetmap  (preuvetriprop3 (e) (preuve) (val t2) (valP t2))  in
+    let ptext1 := @tr2pt em tmap preuvetmap (val t1) (preuvetriprop3 (e) (preuve) (val t1) (valP t1)) (addOrd3 i1 (Ordinal un<3)) in
+    let ptext2 := @tr2pt em tmap preuvetmap (val t2) (preuvetriprop3 (e) (preuve) (val t2) (valP t2)) (addOrd3 i2 (Ordinal un<3)) in
+    let ptin1 := @tr2pt em tmap preuvetmap (val t1) (preuvetriprop3 (e) (preuve) (val t1) (valP t1)) i1 in
+    let ptin2 := @tr2pt em tmap preuvetmap (val t2) (preuvetriprop3 (e) (preuve) (val t2) (valP t2)) i2 in 
+          (e, ptext1, ptext2, ptin1, ptin2, t1, t2, (preuvetriprop3 (e) (preuve) (val t1) (valP t1)),
+                 (preuvetriprop3 (e) (preuve) (val t2) (valP t2))).
+ *)
+
+Definition titi (etm : edgetmap): 
+  [fset x | x in finsupp etm & #|{: etm x}| == 2]%fset ->
+  {y : [fset x | x in finsupp etm & #|{: etm x}| == 2]%fset
+   | #|{:etm (val y)}| == 2}.
+move => x'; exists x'.
+by case: x' => v /=; rewrite in_fsetE inE; case/andP.
+Defined.
 
 (* findIllegal fait appel aux fonctions tr2pt et edge2index pour récupérer les 4 points *)
 Definition findIllegal (em : edgemap) (etm : edgetmap) (tmap : trianglemap) 
                     (preuvetmap : tmap_prop1 em tmap) (preuvetriprop3 : triangleprop3 etm tmap) :=
   let X := [fset x | x in finsupp etm & (#|{:etm x}|==2)]%fset in
-  let f := fun x : {y : X | #|{:etm (val y)}| == 2} =>
+  let f := fun x' : {: X } =>
+    let x :=  titi x' : {y : X | #|{:etm (val y)}| == 2} in
     (* S est le fset T contenant les 2 noms de triangles t1 et t2 adjacents en l'edge x *)
     let S := etm (val(val x)) in
     let t1 := @enum_val  [finType of S] xpredT (change_ord (valP x)
@@ -337,10 +368,13 @@ Definition findIllegal (em : edgemap) (etm : edgetmap) (tmap : trianglemap)
     let ptin1 := @tr2pt em tmap preuvetmap (val t1) (preuvetriprop3 (val (val x)) (toto (val x)) (val t1) (valP t1)) i1 in
     let ptin2 := @tr2pt em tmap preuvetmap (val t2) (preuvetriprop3 (val (val x)) (toto (val x)) (val t2) (valP t2)) i2 in 
       if (@inCircle ptext2 em (val t1) tmap (preuvetriprop3 (val (val x)) (toto (val x)) (val t1) (valP t1)) preuvetmap)==true 
-                      then Some (x, ptext1, ptext2, ptin1, ptin2, t1, t2, 
+                      then (*Some (x, ptext1, ptext2, ptin1, ptin2, t1, t2 (*, 
                   preuvetriprop3 (val (val x)) (toto (val x)) (val t1) (valP t1),
-                 preuvetriprop3 (val (val x)) (toto (val x)) (val t2) (valP t2))
-      else None in true.
+                 preuvetriprop3 (val (val x)) (toto (val x)) (val t2) (valP t2)*))
+*) Some ptext1      else None in (* if pick {: X} is Some x then f x else None *)
+  [fset f x | x in X & f x != None ]%fset.
+  pick Y.
+
 
 
 
@@ -370,5 +404,5 @@ Fixpoint makeDelaunay (em :edgemap) (etm : edgetmap) (tmap : trianglemap) (preuv
 
   if (findIllegal em etm tmap preuvetmap preuvetriprop3) is Some (x, ptext1, ptext2, ptin1, ptin2, t1, t2,preuve1, preuve2) 
     then  flip (em) (tm) (x) (ptext1) (ptext2) (t1) (preuve1) (t2) (preuve2) (preuvetmap)
-  else ;
+  else makeDelaunay em etm tmap preuvetmap ;
   makeDelaunay em etm tmap preuvetmap.
