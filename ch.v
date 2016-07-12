@@ -128,14 +128,14 @@ Definition edgemapprop2 s (sp : edgemapprop s) :=
   \big[andb/true]_(i : {: domf s}) ((e_hd (s i) == e_tl (s (fnxt s sp i))) &&
      (fnxt s sp (fprv s sp i) == i) && (fprv s sp (fnxt s sp i) == i)).
 
-Lemma fnxtK s sp (sp2 : edgemapprop2 s sp) : cancel (fnxt s sp) (fprv s sp).
+Lemma fprvK s sp (sp2 : edgemapprop2 s sp) : cancel (fnxt s sp) (fprv s sp).
 Proof.
 move => x; apply/eqP; move: sp2.
 rewrite /edgemapprop2 big_andE => /forallP /= sp2.
 by case/andP: (sp2 x) => /andP [].
 Qed.
 
-Lemma fprvK s sp (sp2 : edgemapprop2 s sp) : cancel (fprv s sp) (fnxt s sp).
+Lemma fnxtK s sp (sp2 : edgemapprop2 s sp) : cancel (fprv s sp) (fnxt s sp).
 Proof.
 move => x; apply/eqP; move: sp2.
 rewrite /edgemapprop2 big_andE => /forallP /= sp2.
@@ -145,12 +145,12 @@ Qed.
 (* utiliser le theoreme can_inj *)
 Lemma fnxt_inj s sp (sp2 : edgemapprop2 s sp) : injective (fnxt _ sp).
 Proof.
-by intros x y fxy; rewrite -(fnxtK _ _ sp2 x) -(fnxtK _ _ sp2 y) fxy.
+by intros x y fxy; rewrite -(fprvK _ _ sp2 x) -(fprvK _ _ sp2 y) fxy.
 Qed.
 
 Lemma fprv_inj s sp (sp2 : edgemapprop2 s sp) : injective (fprv _ sp).
 Proof.
-by intros x y fxy; rewrite -(fprvK _ _ sp2 x) -(fprvK _ _ sp2 y) fxy.
+by intros x y fxy; rewrite -(fnxtK _ _ sp2 x) -(fnxtK _ _ sp2 y) fxy.
 Qed.
 
 Definition update_nxt s (sp : edgemapprop s) (x : {: domf s}) (y : E) :=
@@ -244,7 +244,7 @@ Qed.
    the map we obtain does not satify the invariants anymore *)
 (* TODO : remove sp2, not needed in the code. *)
 Definition remove_point s
-  (sp : edgemapprop s)
+  (sp : edgemapprop s) (sp2 : edgemapprop2 _ sp) 
   (pointing_edge : {: domf s}) : {fmap E -> point ^ 2 * E ^ 2} :=
   let edge_values := s pointing_edge in
   let p1 := e_tl edge_values in
@@ -256,7 +256,7 @@ Definition remove_point s
   let old_nxt_values := s old_nxt in
   let s1 := s.[\ ([fset (val pointing_edge)] `|` [fset (val ne) ])%fset] in
   let k := newname (domf s1) in
-  if val old_nxt == val old_prv then
+  if old_nxt == old_prv then
      s1.[k <- mk_edge p2 p1 (val old_nxt) (val old_prv)]
        .[val old_nxt <- mk_edge (e_hd old_nxt_values) (e_tl old_nxt_values)
                     k k]
@@ -268,9 +268,9 @@ Definition remove_point s
                       (nxt old_nxt_values) k].
 
 Lemma remove_pointP (s : {fmap E -> point ^ 2 * E ^ 2})
- sp (sp2 : edgemapprop2 s sp) (pointing_edge : {: domf s}) :
+ sp sp2 (pointing_edge : {: domf s}) :
   fprv _ sp pointing_edge != fnxt _ sp pointing_edge ->
-  edgemapprop (remove_point s sp pointing_edge).
+  edgemapprop (remove_point s sp sp2 pointing_edge).
 Proof.
 move => at_least_three; rewrite /remove_point.
 set edge_values := s pointing_edge.
@@ -283,95 +283,104 @@ set old_nxt := fnxt _ sp ne.
 set old_nxt_values := s old_nxt.
 set s1 := s.[\ ([fset (val pointing_edge)] `|` [fset (val ne) ])%fset].
 set k := newname (domf s1).
-have old_nxt_in_s : val old_nxt \in s  by apply: valP.
-have old_prv_in_s : val old_prv \in s  by apply: valP.
+have old_nxt_in_s : val old_nxt \in s  by clear; case: old_nxt.
+have old_prv_in_s : val old_prv \in s  by clear; case: old_prv.
 have old_nxt_in_s1 : val old_nxt \in s1.
-  rewrite mem_remf old_nxt_in_s in_fsetU !in_fset1 andbT.
-  apply/negP => /orP [/eqP/val_inj a | /eqP/val_inj a];
-    case/negP: at_least_three; apply/eqP/fnxt_inj => //.
-    by rewrite fprvK.
-  by apply/fnxt_inj => //; rewrite fprvK // -/old_nxt a.
+  rewrite /s1 in_fsetE !inE; apply/andP; split;[exact old_nxt_in_s|].
+  apply/andP;split; [ | exact old_nxt_in_s].
+  apply/negP => /orP [/eqP abs1 | /eqP abs2]; case/negP: at_least_three.
+    have onpe : old_nxt = pointing_edge by apply val_inj; rewrite <- abs1.
+    by rewrite -[X in fprv _ _ X]onpe /old_nxt fprvK.
+  have nepe : old_nxt = ne  by apply val_inj; rewrite <- abs2.
+  rewrite -[X in fprv _ _ X](fprvK _ _ _ pointing_edge) //.
+  rewrite -[X in fprv _ _ (fprv _ _ X)]/ne -nepe /old_nxt fprvK // -nepe.
+  by rewrite /old_nxt fprvK.
 have old_prv_in_s1 : val old_prv \in s1.
-  rewrite mem_remf old_prv_in_s in_fsetU !in_fset1 andbT; apply/negP.
-  move => /orP [/eqP/val_inj a1 | /eqP/val_inj a2]; case/negP: at_least_three.
-    by apply/eqP/fprv_inj; rewrite // fnxtK // -/old_prv a1 -/old_prv a1.
-  by apply/eqP.  
+rewrite /s1 in_fsetE !inE; apply/andP; split;[exact old_prv_in_s|].
+  apply/andP;split; [ | exact old_prv_in_s].
+  apply/negP => /orP [/eqP abs1 | /eqP abs2]; case/negP: at_least_three.
+    have onpe : old_prv = pointing_edge by apply val_inj; rewrite <- abs1.
+    by rewrite -[X in fnxt _ _ X]onpe /old_prv fnxtK // -/old_prv onpe.
+  have opne : old_prv = ne by apply: val_inj.
+  by rewrite -/old_prv opne eqxx.
 have kno : k != val old_nxt.
   apply/negP=> /eqP ko; case/negP: (newnameP (domf s1)).
   rewrite -/k ko; exact: old_nxt_in_s1.
 have knp : k != val old_prv.
   apply/negP=> /eqP ko; case/negP: (newnameP (domf s1)).
   rewrite -/k ko; exact: old_prv_in_s1.
-(* The following is a general property about bijections.  Maybe a theorem
-   from perm or graph. *)
-have no_small_loop: forall x, x \in [fset old_nxt; old_prv]%fset ->
-           x \notin [fset pointing_edge; ne]%fset.
-  suff main : old_nxt \notin [fset pointing_edge; ne]%fset.
-    move => x; rewrite inE => /orP [|]; rewrite in_fset1 => /eqP -> // {x}.
-    rewrite inE 2!in_fset1; apply/negP => /orP [/eqP op | /eqP on];
-      case/negP: main; rewrite 3!inE; apply/orP.
-      right; apply/eqP/fprv_inj; rewrite // /old_nxt /ne fnxtK // fnxtK //.
-      by apply: fprv_inj; rewrite // fnxtK.
-    by left; apply/eqP/fprv_inj; rewrite // fnxtK.
-  rewrite inE 2!in_fset1; apply/negP => /orP [/eqP op | /eqP on];
-      case/negP: at_least_three; apply/eqP.
-    by apply: fnxt_inj; rewrite // fprvK //.
-  apply: fnxt_inj => //; apply: fnxt_inj => //; rewrite -/old_nxt on /ne.
-  by rewrite -/old_nxt on fprvK.
-case base : (val old_nxt == val old_prv).
-  set newmap := (s1.[_ <- _].[_ <- _]).
+set newmap := (if _ then _ else _).
+rewrite /edgemapprop.
+case base : (old_nxt == old_prv).
+  rewrite /newmap {newmap}; rewrite base; set newmap := (s1.[_ <- _].[_ <- _]).
   have old_nxt_new_map : val old_nxt \in domf newmap.
     by rewrite /newmap dom_setf inE in_fsetE eqxx.
   have k_new_map : k \in domf newmap.
     by rewrite /newmap !dom_setf 3!inE in_fsetE eqxx orbT.
-  have k_new_map' : (val [` k_new_map]%fset \in domf newmap) &&
+    have k_new_map' : (val [` k_new_map]%fset \in domf newmap) &&
          ([` k_new_map ]%fset != [` old_nxt_new_map ]%fset).
     rewrite k_new_map andTb.
     apply/negP=> /eqP ko.
-    by case/negP: kno; rewrite -[k]/(val [` k_new_map]%fset) ko.
-  rewrite /edgemapprop (bigD1 [` old_nxt_new_map ]%fset) //; apply /andP; split.
-    by rewrite ffunE eqxx nxtK prvK mem_setf inE mem_setf inE eqxx orbT.
+    have abs: 
+     val [` k_new_map]%fset = val [` old_nxt_new_map]%fset by rewrite ko.
+    by case/negP: kno; apply/eqP.
+  rewrite (bigD1 [` old_nxt_new_map ]%fset) //; apply /andP; split.
+    apply/andP; split; rewrite /newmap mem_setf 3!inE.
+      by rewrite /newmap ffunE eqxx nxtK eqxx orbT.
+    by rewrite /newmap ffunE eqxx prvK eqxx orbT.
   rewrite (bigD1 [` k_new_map ]%fset); apply /andP; split => //.
-    rewrite ffunE [X in if X then _ else _](_ : _ = false); last first.
-      by apply/negbTE; exact: kno.
-    rewrite FmapE.fmapE eqxx /= nxtK prvK /newmap mem_setf inE eqxx /=.
-    by rewrite mem_setf inE eq_sym [X in X || _]base.
+    apply/andP; split; rewrite /newmap mem_setf 3!inE ffunE;
+      try (have -> : (val [` k_new_map]%fset == val old_nxt) = false
+        by apply/negbTE; exact: kno).
+      by rewrite FmapE.fmapE eqxx /= nxtK eqxx.
+    rewrite FmapE.fmapE eqxx /= prvK.
+    by rewrite -[(prv (s pointing_edge))]/(val old_prv) -(eqP base) eqxx.
   rewrite big_andE; apply/forallP => x; apply/implyP.
   move => /andP [] /andP [] _ px xk.
   have xs1 : val x \in s1.
-    have : val x \in newmap by clear; case: x.
-    rewrite mem_setf inE; case/orP => [/eqP a1 | ].
+    have : val x \in newmap by clear; case: x. 
+  rewrite /newmap /s1 !in_fsetE !inE.
+    case/orP => [/eqP a1 | ].
       by case/negP: px; apply/eqP; apply: val_inj.
-    rewrite mem_setf inE; case/orP => [/eqP a2 | ]; last by [].
-    by case/negP: xk; apply/eqP; apply:val_inj.
-  have xs : val x \in s  by move: xs1; rewrite in_fsetE =>/andP [].
+    case/orP => [/eqP a2 | ].    
+      by case/negP: xk; apply/eqP; apply:val_inj.
+    by done.
+  have xs : val x \in s.
+    by move: xs1; rewrite /s1 in_fsetE !inE => /andP [] it _.
   have xf : val (fnxt _ sp [` xs]%fset) \in newmap.
-    rewrite 3!in_fsetE; apply/orP; right; apply/orP; right.
+    rewrite /newmap /s1 3!in_fsetE; apply/orP; right; apply/orP; right.
+    rewrite !inE.
     have vfs : val (fnxt s sp [` xs]%fset) \in domf s  by apply: valP.
-    rewrite /s1 mem_remf vfs andbT !in_fsetE; apply/negP => /orP [ /eqP | /eqP].
-      rewrite -[X in _ = val X](fprvK _ _ sp2).
+    rewrite vfs andTb andbT.
+    apply/negP => /orP [ /eqP | /eqP].
+      rewrite -[X in _ = val X](fnxtK _ _ sp2).
       move => a1; move : (val_inj _ _ a1) => a1'.
-      move: (fnxt_inj s sp sp2 _ _ a1'); rewrite -/old_prv => a1''.
+      move: (fnxt_inj s sp sp2 _ _ a1').
+      rewrite -/old_prv => a1''.
       case/negP: px; apply/eqP; apply:val_inj.
-      by rewrite -[val x]/(val [` xs]%fset) a1'' -(eqP base).
+      rewrite -[val x]/(val [` xs]%fset); rewrite a1''.
+      rewrite -[val [` old_nxt_new_map ]%fset]/(val old_nxt).
+      by rewrite (eqP base).
     rewrite /ne => a2; move: (val_inj _ _ a2) => a2'.
     move : (fnxt_inj _ _ sp2 _ _ a2') => a2''.
-    move: xs1; rewrite /s1 mem_remf !in_fsetE /= -[X in _ == fsval X]a2'' eqxx.
-    by rewrite orTb.
+    move: xs1; rewrite /s1 in_fsetE !inE -a2'' eqxx.
+    by rewrite orTb andbF.
 (* The following lines are a duplication of the proof of xf *)
   have xpr : val (fprv _ sp [` xs]%fset) \in newmap.
-    (* was not able to speed up this one. *)
-    rewrite /newmap mem_setf inE mem_setf inE /s1 mem_remf.
+    rewrite /newmap /s1 3!in_fsetE; apply/orP; right; apply/orP; right.
+    rewrite !inE.
     have vfs : val (fprv s sp [` xs]%fset) \in domf s  by apply: valP.
-    apply/predU1r/predU1r/andP;split;[ | exact: vfs].
-    (* Report on this line being excruciatingly slow. *)
-    rewrite in_fsetU 2!in_fset1; apply/negP => /orP [/eqP | /eqP ].
-      rewrite -[X in _ = val X](fnxtK _ _ sp2) => a1.
-      move: (fprv_inj _ _ sp2 _ _ (val_inj _ _ a1)) => a1'.
-      move: xs1; rewrite /s1 in_fsetE !inE /ne -a1' eqxx.
+    rewrite vfs andTb andbT.
+    apply/negP => /orP [ /eqP | /eqP].
+      rewrite -[X in _ = val X](fprvK _ _ sp2).
+(* the two branches are swapped *)
+      move => a1; move: (val_inj _ _ a1) => a1'.
+      move: (fprv_inj _ _ sp2 _ _ a1') => a1''.
+      move: xs1; rewrite /s1 in_fsetE !inE /ne -a1'' eqxx.
       by rewrite orbT andbF.
-    rewrite -[X in _ = val X](fnxtK _ _ sp2).
-    move => a2; move : (fprv_inj s sp sp2 _ _ (val_inj _ _ a2)).
+    rewrite -[X in _ = val X](fprvK _ _ sp2).
+    move => a2; move : (val_inj _ _ a2) => a2'.
+    move: (fprv_inj s sp sp2 _ _ a2').
     rewrite -/old_nxt => a2''.
     case/negP: px; apply/eqP; apply:val_inj.
     by rewrite -[val x]/(val [` xs]%fset) a2''.
@@ -389,7 +398,9 @@ case base : (val old_nxt == val old_prv).
   have -> : (val x \in tst) = (val x \in s1).
     by rewrite in_fsetD /s1 mem_remf; congr (_ && _).
   by rewrite xs1 (in_fnd xs).
-set newm2 := s1.[_ <- _]; rewrite /newm2; set newm1 := s1.[_ <- _].[_ <- _].
+rewrite /newmap base {newmap}.
+set newm2 := s1.[_ <- _].
+rewrite /newm2; set newm1 := s1.[_ <- _].[_ <- _].
 rewrite /newm1; set newmap := _.[_ <- _].
 have old_nxt_new_map : val old_nxt \in domf newmap.
   by rewrite /newmap dom_setf inE in_fsetE eqxx.
@@ -408,23 +419,31 @@ have k_in : k \in newm1.
   by rewrite /newm1 in_fsetE !dom_setf !inE eqxx orbT.
 have k_in2 : k \in newm2.
   by rewrite /newm2 in_fsetE in_fsetE eqxx.
-rewrite /edgemapprop (bigD1 [` old_nxt_new_map ]%fset) //; apply /andP; split.
+rewrite (bigD1 [` old_nxt_new_map ]%fset) //; apply /andP; split.
   set u := nxt newmap.[old_nxt_new_map]; set v := prv newmap.[old_nxt_new_map].
   apply/andP; split.
     rewrite /newmap !in_fsetE !inE andbC -!andbA Bool.andb_diag.
 (* bug : the rule in_fset precedes all others in in_fsetE, not sure it is the
 right choice. *)
-    have uq : u = val (fnxt _ sp old_nxt)  by rewrite /u /newmap getf_set nxtK.
-    have unpe : u <> val pointing_edge.
-      rewrite uq => /val_inj upe; case /negP: base; apply/eqP. 
-      by congr val; apply/fnxt_inj => //; rewrite fprvK.
+    have uq : u = nxt old_nxt_values.
+      by rewrite /u /newmap getf_set nxtK.
+    have us : u \in domf s.
+      by rewrite uq -[nxt _]/(val (fnxt s sp old_nxt)); apply: valP.
+    have unpe : ~ u = val pointing_edge.
+      move=> upe.
+      case/negP: base; apply/eqP.
+      apply: (fnxt_inj _ _ sp2).
+      by rewrite /old_prv fnxtK //; apply: val_inj; rewrite -upe; symmetry.
     have unne : u <> val ne.
-      have t : old_nxt \in [fset old_nxt; old_prv]%fset.
-        by rewrite inE in_fset1 eqxx.
-      rewrite uq => /val_inj une; case/negP : (no_small_loop _ t).
-      by rewrite inE in_fset1; apply/orP/or_introl/eqP/fnxt_inj.
+      move => une.
+      case/negP: at_least_three; apply/eqP.
+      have une' : [` us]%fset = ne  by apply: val_inj; rewrite -une.
+      rewrite -/ne -une'.
+      have uloop : [` us]%fset = fnxt _ sp (fnxt _ sp ne)  by apply: val_inj.
+      rewrite -(fprvK _ sp sp2 pointing_edge) -/ne -une'. 
+      by rewrite [X in fprv _ _ (fprv _ _ X)]uloop !fprvK; symmetry.
     move/eqP: unpe; move/eqP: unne => unne unpe.
-    by rewrite (negbTE unne) (negbTE unpe) uq (valP (fnxt _ _ _)) !orbT.
+    by rewrite (negbTE unne) (negbTE unpe) us !orbT.
   have vk : v == k.
     by rewrite /v /newmap getf_set prvK.
   by rewrite (eqP vk).
@@ -432,39 +451,47 @@ have k_edge : newmap.[k_new_map] = mk_edge p2 p1 (val old_nxt) (val old_prv).
   by rewrite /newmap setfNK (negbTE kno) setfNK (negbTE knp) getf_set.
 rewrite (bigD1 [` k_new_map ]%fset) //; apply /andP; split.
   by rewrite k_edge nxtK prvK old_nxt_new_map old_prv_new_map.  
+have old_df : (val old_prv == val old_nxt) = false.
+  apply/negP => /eqP abs; case/negP: base; apply/eqP; symmetry.
+  by apply: val_inj.
 rewrite (bigD1 [` old_prv_new_map ]%fset) //; apply /andP; last first.
   split.
     rewrite andTb; apply/negP => /eqP => abs; case/eqP: base; symmetry.
+    apply: val_inj.
     by rewrite -[val old_prv]/(val [` old_prv_new_map]%fset) abs.
   apply/negP => /eqP => abs; case/eqP: knp; symmetry.
   by rewrite -[val old_prv]/(val [` old_prv_new_map]%fset) abs.
 have prv_in1 : val old_prv \in newm1.
   by rewrite /newm1 mem_setf inE eqxx.
 split.
-  have old_df : (val old_prv == val old_nxt) = false by rewrite eq_sym.
   have prv_edge :
     newmap.[old_prv_new_map] = mk_edge (e_hd old_prv_values)
         (e_tl old_prv_values) k (prv old_prv_values).
     by rewrite /newmap setfNK old_df getf_set.
   rewrite prv_edge nxtK prvK k_new_map andTb. 
-  set u := prv _; have uq : u = val (fprv _ sp old_prv) by [].
-  have upe : u <> val pointing_edge.
-    have t : old_prv \in [fset old_nxt; old_prv]%fset.
-      by rewrite inE !in_fset1 eqxx orbT.
-    rewrite uq => /val_inj => upe; case/negP : (no_small_loop _ t).
-    by rewrite inE !in_fset1;apply/orP/or_intror/eqP/fprv_inj; rewrite // fnxtK.
-  have une : u <> val ne.
-    rewrite uq => /val_inj une; case /negP: base; apply/eqP. 
-    by congr val; apply/fprv_inj => //; rewrite fnxtK.
-  move/eqP: une; move/eqP: upe => upe une.
-  rewrite /newmap mem_setf inE mem_setf inE inE mem_remf in_fsetU !in_fset1.
-  by rewrite (negbTE une) (negbTE upe) uq (valP (fprv _ _ _)) !orbT.
+  set u := prv old_prv_values.
+  have us : u \in domf s.
+      by rewrite /u -[prv _]/(val (fprv s sp old_prv)); apply: valP.
+  have unpe : ~ u = val pointing_edge.
+    move => upe.
+    case/negP: at_least_three; apply/eqP.
+    have upe' : [` us]%fset = pointing_edge  by apply: val_inj; rewrite -upe.
+    rewrite -/old_prv -upe'.
+    have uloop : [` us]%fset = fprv _ sp (fprv _ sp pointing_edge)
+      by apply: val_inj.
+    by rewrite -(fnxtK _ sp sp2 old_prv) /old_prv -uloop.
+  have unne : u <> val ne.
+    move=> une.
+    case/negP: base; apply/eqP.
+    apply: (fprv_inj _ _ sp2).
+    by rewrite /old_nxt fprvK //; apply: val_inj; rewrite -une.
+  move/eqP: unpe; move/eqP: unne => unne unpe.
+  by rewrite /newmap in_fsetE !inE us (negbTE unne) (negbTE unpe) !orbT.
 rewrite big_andE; apply/forallP => x; rewrite andTb; apply/implyP.
 move => /andP [] /andP [] xnxt xk xprv.
 have xs1 : val x \in s1.
   have : val x \in newmap by clear; case: x. 
   rewrite /newmap /s1 !in_fsetE !inE.
-(* The following step, which is excruciatingly slow, is not a rewrite. *)
   case/orP => [/eqP a1 | ].
     by case/negP: xnxt; apply/eqP; apply: val_inj.
   case/orP => [/eqP a2 | ].    
@@ -477,11 +504,12 @@ have xs1 : val x \in s1.
 have xf : val (fnxt _ sp [` xs]%fset) \in newmap.
   rewrite /newmap /s1 6!in_fsetE.
   apply/orP; right; apply/orP; right; apply/orP; right.
-  rewrite mem_remf in_fsetU !in_fset1.
+  rewrite !inE.
   have vfs : val (fnxt s sp [` xs]%fset) \in domf s  by apply: valP.
-  rewrite vfs andbT.
+  rewrite vfs andTb andbT.
   apply/negP => /orP [ /eqP | /eqP].
-    rewrite -[X in _ = val X](fprvK _ _ sp2).
+(* Wouah: rewrite can't do it.  Why? *)
+    rewrite -[X in _ = val X](fnxtK _ _ sp2).
     move => a1; move : (val_inj _ _ a1) => a1'.
     move: (fnxt_inj s sp sp2 _ _ a1').
     rewrite -/old_prv => a1''.
@@ -495,17 +523,17 @@ have xf : val (fnxt _ sp [` xs]%fset) \in newmap.
 have xpr : val (fprv _ sp [` xs]%fset) \in newmap.
   rewrite /newmap /s1 6?in_fsetE.
   apply/orP; right; apply/orP; right; apply/orP; right.
-  rewrite mem_remf in_fsetU !in_fset1.
+  rewrite !inE.
   have vfs : val (fprv s sp [` xs]%fset) \in domf s  by apply: valP.
-  rewrite vfs andbT.
+  rewrite vfs andTb andbT.
   apply/negP => /orP [ /eqP | /eqP].
-    rewrite -[X in _ = val X](fnxtK _ _ sp2).
+    rewrite -[X in _ = val X](fprvK _ _ sp2).
 (* the two branches are swapped *)
     move => a1; move: (val_inj _ _ a1) => a1'.
     move: (fprv_inj _ _ sp2 _ _ a1') => a1''.
     move: xs1; rewrite /s1 in_fsetE !inE /ne -a1'' eqxx.
     by rewrite orbT andbF.
-  rewrite -[X in _ = val X](fnxtK _ _ sp2).
+  rewrite -[X in _ = val X](fprvK _ _ sp2).
   move => a2; move : (val_inj _ _ a2) => a2'.
   move: (fprv_inj s sp sp2 _ _ a2').
   rewrite -/old_nxt => a2''.

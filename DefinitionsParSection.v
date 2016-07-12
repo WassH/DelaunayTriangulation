@@ -1,3 +1,4 @@
+
 Require Import Arith.
 Require Import EqNat.
 Require Import Ring.
@@ -17,7 +18,6 @@ Unset Printing Implicit Defensive.
 
 
 Section gensym.
-
 Open Scope fmap_scope.
 
 Definition E := nat.
@@ -205,13 +205,17 @@ Definition isDelaunayLocal (em :edgemap) (t1: T) (tm : trianglemap) (preuve1 : t
               then true
               else false.
 
-
+(* 
 (* Fonction bind qui va permettre de faire plusieurs opérations à la suite dans les fonctions qui suivent *)
-(*Definition bind := 
+Definition bind := 
+Notation ";" := bind ...
+(* Fonctions add_point_triangle, add_point_out, add_edge et add_triangle *)
+Definition add_point_triangle := .
+Definition add_point_out := .
+Definition add_edge :=.
+Definition add_triangle := .
+  *)
 
- Notation ";" := bind ...
-
- *)
 
 (* Fonction unhook qui détache une arete commune a deux triangles et qui va etre utile pour 
 l'opération de flip *)
@@ -219,10 +223,6 @@ l'opération de flip *)
 Definition unhookE (e: E) (em : edgemap)  :=
   em.[~ e].
 
-(* Changer unhookEetm pour faire en sorte que etm e renvoie fset0 *)
-(* Definition unhookEetm (e: E) (etm : edgetmap)  :=
-  etm.[~ e].
- *)
 
 Definition unhookT (t1:T) (tm : trianglemap) :=
   tm.[~ t1].
@@ -232,65 +232,9 @@ Definition attachE (p1:point) (p2 : point) (em : edgemap) :=
   em.[(newname (domf em))<- f].
 
 (* 
-Definition attachT (t1: triangle) (tm : trianglemap) := 
-  tm.[(newname (domf tm)) <- t1].
-
+Definition attachT (t1: triangle) (t2 : triangle) (tm : trianglemap) := 
+  tm.[(newname (domf tm)) <- t1]; tm.[(newname (domf tm)) <- t2].
  *)
-
-(* Fonctions inTriangle, inHull, add_point_triangle, add_point_out, add_edge et add_triangle *)
-
-
-(* La fonction inTriangle va dire si un point donné est à l'intérieur d'un triangle donné *)
-Definition inTriangle  (tmap : trianglemap) (em : edgemap) (p:point) (t:T) (preuveT : t \in tmap)
-                              (preuvetmap : tmap_prop1 em tmap) : bool :=
-  
-  let M11 := \col_(j < 3) if j==0 then point2R1 p
-                         else if j==1 then point2R1 (tail (preuvetmap t preuveT (Ordinal (zero<3))) (snd (tmap.[preuveT]%fmap (Ordinal (zero<3)))))
-                         else point2R1 (head (preuvetmap t preuveT (Ordinal (zero<3))) (snd (tmap.[preuveT]%fmap (Ordinal (zero<3))))) in
-
-  let M12 := \col_(j < 3) if j==0 then point2R2 p
-                         else if j==1 then point2R2 (tail (preuvetmap t preuveT (Ordinal (zero<3))) (snd (tmap.[preuveT]%fmap (Ordinal (zero<3)))))
-                         else point2R2 (head (preuvetmap t preuveT (Ordinal (zero<3))) (snd (tmap.[preuveT]%fmap (Ordinal (zero<3))))) in
-
-  let M13 := \col_(j < 3) 1 in 
-     let M1 := row_mx (row_mx M11 M12) M13 in
-
-  let M21 := \col_(j < 3) if j==0 then point2R1 p
-                         else if j==1 then point2R1 (tail (preuvetmap t preuveT (Ordinal (un<3))) (snd (tmap.[preuveT]%fmap (Ordinal (un<3)))))
-                         else point2R1 (head (preuvetmap t preuveT (Ordinal (un<3))) (snd (tmap.[preuveT]%fmap (Ordinal (un<3))))) in
-
-  let M22 := \col_(j < 3) if j==0 then point2R2 p
-                         else if j==1 then point2R2 (tail (preuvetmap t preuveT (Ordinal (un<3))) (snd (tmap.[preuveT]%fmap (Ordinal (un<3)))))
-                         else point2R2 (head (preuvetmap t preuveT (Ordinal (un<3))) (snd (tmap.[preuveT]%fmap (Ordinal (un<3))))) in
-
-  let M23 := \col_(j < 3) 1 in 
-      let M2 := row_mx (row_mx M21 M22) M23 in
-  
-  let M31 := \col_(j < 3) if j==0 then point2R1 p
-                         else if j==1 then point2R1 (tail (preuvetmap t preuveT (Ordinal (deux<3))) (snd (tmap.[preuveT]%fmap (Ordinal (deux<3)))))
-                         else point2R1 (head (preuvetmap t preuveT (Ordinal (deux<3))) (snd (tmap.[preuveT]%fmap (Ordinal (deux<3))))) in
-
-  let M32 := \col_(j < 3) if j==0 then point2R2 p
-                         else if j==1 then point2R2 (tail (preuvetmap t preuveT (Ordinal (deux<3))) (snd (tmap.[preuveT]%fmap (Ordinal (deux<3)))))
-                         else point2R2 (head (preuvetmap t preuveT (Ordinal (deux<3))) (snd (tmap.[preuveT]%fmap (Ordinal (deux<3))))) in
-
-  let M33 := \col_(j < 3) 1 in 
-      let M3 := row_mx (row_mx M31 M32) M33 in
-
-
-    if ((\det M1)*(\det M2)>0) && ((\det M2)*(\det M3) >0)  then true
-    else false.
-
-
-
-(* La fonction inHull va dire si un point donné est à l'intérieur de l'enveloppe convexe
-  dans ce cas elle retourne true ou sinon elle retourne false. Elle est construite 
-  grâce à inTriangle*)
-Definition inHull (tmap : trianglemap) (em : edgemap) (p:point) 
-                          (preuvetmap : tmap_prop1 em tmap) : bool := 
-  let dom1 := domf tmap in 
-  [exists (i: dom1| true), inTriangle p (valP i) preuvetmap].
-
 
 (* tr2pt va prendre un triangle et renvoyer pour un ordinal donné le point associé *)
 Definition tr2pt (em : edgemap) (tmap : trianglemap) (preuvetmap : tmap_prop1 em tmap) (t1:T) (preuve1 : t1\in tmap) 
@@ -307,70 +251,6 @@ Definition edge2index (e:E) (t:T) (em : edgemap) (tmap : trianglemap) (preuvetma
 
 Check fun (etm : edgetmap) (x : {y : {z : E | (z \in finsupp etm) } | ( #|{:etm (val y)}|==2 ) } ) => 
         (valP x : #| {: etm (val (val x))}|==2 ).
-
-(* La fonction findInTriangle va (si c'est le cas) trouver le triangle dans lequel est 
-  le point p *)
-Definition findInTriangle 
-
-
-
-(* Fonction qui va supprimer le triangle extérieur et qui va rajouter les 3 triangles 
-  intérieurs et les 3 edges intérieurs *)
-Definition add_point_triangle (t:T) (preuve1 : t \in tmap) (tm : trianglemap) (em : edgemap)
-           (etm : edgetmap) (p:point) (preuvetmap : tmap_prop1 em tmap) := 
-    unhookT t; attachE p (tr2pt em tm preuvetmap preuve (Ordinal(zero<3))) em;
-               attachE p (tr2pt em tm preuvetmap preuve (Ordinal(un<3))) em;
-               attachE p (tr2pt em tm preuvetmap preuve (Ordinal(deux<3))) em;
-
-let edge1 := [ffun x:'I_2 => if x==0 then p else tr2pt em tm preuvetmap preuve (Ordinal(zero<3))] in
-let edge2 := [ffun x:'I_2 => if x==0 then p else tr2pt em tm preuvetmap preuve (Ordinal(un<3))] in
-let edge3 := [ffun x:'I_2 => if x==0 then p else tr2pt em tm preuvetmap preuve (Ordinal(deux<3))] in
-
-
-(* Il faut remplacer Ordinal(zero<3) dans les 3 triangles qui suivent par l'index de l'edge qui relie 
-le point 0 : (tr2pt em tm preuvetmap preuve (Ordinal(zero<3)))
- et le point 2 :attachE p (tr2pt em tm preuvetmap preuve (Ordinal(deux<3))) em
-et de même pour Ordinal(un<3) et Ordinal(deux<3) *)
-
-    let triangle1 := fun x:'I_3 => if x==0 then 
-          if em.[preuvetmap (triangle2edges ... zero)] == (créer le edge de 0 à 2)
-                                   || em.[preuvetmap (triangle2edges ... zero)] == (créer le edge de 2 à 0) 
-                                              then (fst(tm.[preuve1]%fmap (Ordinal(zero<3)))]
-                                                    ,snd(tm.[preuve1]%fmap (Ordinal(zero<3))))  
-          else if em.[preuvetmap (triangle2edges ... un)] == (créer le edge de 0 à 2)
-                                   || em.[preuvetmap (triangle2edges ... zero)] == (créer le edge de 2 à 0) 
-                                              then (fst(tm.[preuve1]%fmap (Ordinal(un<3)))]
-                                                    ,snd(tm.[preuve1]%fmap (Ordinal(un<3))))  
-          else if em.[preuvetmap (triangle2edges ... deux)] == (créer le edge de 0 à 2)
-                                   || em.[preuvetmap (triangle2edges ... zero)] == (créer le edge de 2 à 0) 
-                                              then (fst(tm.[preuve1]%fmap (Ordinal(deux<3)))]
-                                                    ,snd(tm.[preuve1]%fmap (Ordinal(deux<3))))  
-                               else if x==1 then (\max_(i : domf em) (val i)-2, false)
-                               else (\max_(i : domf em) val i, true) in
-               attachT triangle1 tm;
-
-(* Faire de même qu'au dessus pour triangle2 et triangle3 *)
-  let triangle2 := fun x:'I_3 => if x==0 then (fst(tm.[preuve1]%fmap (Ordinal(un<3)))
-                                                    ,snd(tm.[preuve1]%fmap (Ordinal(un<3)))) 
-                               else if x==1 then  (\max_(i : domf em) (val i)-1,false)
-                               else (\max_(i : domf em) (val i)-2,true) in
-               attachT triangle2 tm;
-
-  let triangle3 := fun x:'I_3 => if x==0 then (fst(tm.[preuve1]%fmap (Ordinal(deux<3)))
-                                                    ,snd(tm.[preuve1]%fmap (Ordinal(deux<3))))
-                               else if x==1 then  (\max_(i : domf em) val i, false)
-                               else (\max_(i : domf em) (val i)-1, true) in
-               attachT triangle3 tm;
-
-
-
-Definition add_point_out := .
-
-
-
-
-
-
 
 Definition change_ord (T : choiceType)(s : {fset T}) (h : #|{:s}| == 2) (x : 'I_2)
   : 'I_(#|{:s}|).
@@ -406,7 +286,6 @@ rewrite /=.
 clear trp.
 apply: in_imfset.
 move => toto; exact:true.
-
 have f : {y : X | #|{:etm (val y)}| == 2} -> bool.
   move => x.
   set S' : {fset T} := etm (val (val x)).
@@ -414,9 +293,7 @@ have f : {y : X | #|{:etm (val y)}| == 2} -> bool.
             (Ordinal(zero<2))).
  set t2 : {: S'} :=@enum_val  [finType of S'] xpredT (change_ord (valP x)
             (Ordinal(un<2))).
-
 have : val t2 \in S'.
-
    exact:valP.
 have : val x \in finsupp etm.
     *)
@@ -429,8 +306,9 @@ rewrite in_fsetE 2!inE => /andP [it _]; exact: it.
 Defined.
 
 (* La définition de edge2stuff qui renvoit pour un edge adjacent les 4 points et les 2 triangles et les 2
-preuves que les triangles sont dans tmap  *)
-Definition edge2stuff (e : E) (em : edgemap) (etm : edgetmap) (tmap : trianglemap) 
+preuves que les triangles sont dans tmap ne passe pas sous Coq (fait planter) *)
+(* 
+Definition edge2stuf (e : E) (em : edgemap) (etm : edgetmap) (tmap : trianglemap) 
                     (preuvetmap : tmap_prop1 em tmap) (preuvetriprop3 : triangleprop3 etm tmap) 
                         (preuve : e \in finsupp etm) (preuve2 : #|{:etm e}|==2) :=
     
@@ -439,30 +317,23 @@ Definition edge2stuff (e : E) (em : edgemap) (etm : edgetmap) (tmap : trianglema
             (Ordinal(zero<2)))in
     let t2 := @enum_val  [finType of S] xpredT (change_ord (preuve2)
             (Ordinal(un<2)))in 
-
     let i1 := @edge2index (e) (val t1) em tmap preuvetmap  (preuvetriprop3 (e) (preuve) (val t1) (valP t1)) in
     let i2 := @edge2index (e) (val t2) em tmap preuvetmap  (preuvetriprop3 (e) (preuve) (val t2) (valP t2))  in
     let ptext1 := @tr2pt em tmap preuvetmap (val t1) (preuvetriprop3 (e) (preuve) (val t1) (valP t1)) (addOrd3 i1 (Ordinal un<3)) in
     let ptext2 := @tr2pt em tmap preuvetmap (val t2) (preuvetriprop3 (e) (preuve) (val t2) (valP t2)) (addOrd3 i2 (Ordinal un<3)) in
     let ptin1 := @tr2pt em tmap preuvetmap (val t1) (preuvetriprop3 (e) (preuve) (val t1) (valP t1)) i1 in
     let ptin2 := @tr2pt em tmap preuvetmap (val t2) (preuvetriprop3 (e) (preuve) (val t2) (valP t2)) i2 in 
-         if true then  (e, ptext1, ptext2, ptin1, ptin2, t1, t2, (preuvetriprop3 (e) (preuve) (val t1) (valP t1)),
-                 (preuvetriprop3 (e) (preuve) (val t2) (valP t2)))
-         else (e, ptext1, ptext2, ptin1, ptin2, t1, t2, (preuvetriprop3 (e) (preuve) (val t1) (valP t1)),
+          (e, ptext1, ptext2, ptin1, ptin2, t1, t2, (preuvetriprop3 (e) (preuve) (val t1) (valP t1)),
                  (preuvetriprop3 (e) (preuve) (val t2) (valP t2))).
-
+ *)
 
 Definition titi (etm : edgetmap): 
   [fset x | x in finsupp etm & #|{: etm x}| == 2]%fset ->
   {y : [fset x | x in finsupp etm & #|{: etm x}| == 2]%fset
-   | #|{:etm (val y)}| == 2}. 
+   | #|{:etm (val y)}| == 2}.
 move => x'; exists x'.
 by case: x' => v /=; rewrite in_fsetE inE; case/andP.
 Defined.
-
-
-
-(* findIllegal fait appel aux fonctions tr2pt et edge2index pour récupérer les 4 points *)
 
 Section findIllegal.
 
@@ -494,21 +365,22 @@ Let f (* : X -> option ({y : X | #|{: etm (val y)}| == 2} * point * point *
                  preuvetriprop3  (toto (val x)) (valP t2) *)) else None.
 
 Let res := [fset f x | x in {: X} & f x != None]%fset.
+Check match pick (pred_of_simpl (@predT {:res})) with
+   Some u => val u | None => None end.
 
 Definition findIllegal := match pick (pred_of_simpl (@predT {:res})) with
    Some u => val u | None => None end.
+About findIllegal.
 
 End findIllegal.
 
-
-(* J'ai besoin de démontrer à part que les 2 triangles t1 et t2 sont dans tmap 
-et je réutiliserai ces preuves dans flip *)
+Print findIllegal.
 
 
 Definition flip (em : edgemap) (tm: trianglemap) (eAdj:E) (ptext1 : point) (ptext2 : point) 
                        (t1:T)  (preuve1 : t1 \in tm) (t2 :T) (preuve2: t2 \in tm) 
                                 (preuvetmap : tmap_prop1 em tm):=
-unhookE eAdj em; unhookEetm eAdj etm; unhookT t tm1; unhookT t2 tm;  attachE ptext1 ptext2 em;
+unhookE eAdj em; unhookT t tm1; unhookT t2 tm;  attachE ptext1 ptext2 em;
 let triangle1 := fun x:'I_3 => if x==0 then (fst(tm.[preuve1]%fmap (addOrd3 (@edge2index eAdj t1 em tm preuvetmap preuve1) 1))
                                                     ,snd(tm.[preuve1]%fmap (addOrd3 (@edge2index eAdj t1 em tm preuvetmap preuve1) 1)))  
                                else if x==1 then  (\max_(i : domf em) val i, true)
@@ -520,7 +392,7 @@ in let triangle2 := fun x:'I_3 => if x==0 then (fst(tm.[preuve1]%fmap (addOrd3 (
                                                     ,snd(tm.[preuve2]%fmap (addOrd3 (@edge2index eAdj t2 em tm preuvetmap preuve2) (Ordinal(un<3)))))
                                else (\max_(i : domf em) val i, false) 
 
-in attachT triangle1 tm; attachT triangle2 tm.
+in attachT triangle1 triangle2 tm. 
 
 
 
@@ -533,3 +405,5 @@ Fixpoint makeDelaunay (em :edgemap) (etm : edgetmap) (tmap : trianglemap) (preuv
     then  flip (em) (tm) (x) (ptext1) (ptext2) (t1) (preuve1) (t2) (preuve2) (preuvetmap)
   else makeDelaunay em etm tmap preuvetmap ;
   makeDelaunay em etm tmap preuvetmap.
+Contact GitHub API Training Shop Blog About
+© 2016 GitHub, Inc. Terms Privacy Security Status Help
