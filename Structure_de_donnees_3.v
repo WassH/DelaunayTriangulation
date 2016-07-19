@@ -57,6 +57,23 @@ Notation "deux<5" := (ltn_trans (ltn_trans (ltnSn 2) (ltnSn 3)) (ltnSn 4)).
 Notation "trois<5" := (ltn_trans (ltnSn 3) (ltnSn 4)).
 Notation "quatre<5" := (ltnSn 4).
 
+Axiom modulo : forall i n:nat,  (i%%n)< n.
+
+Definition addOrd2 : 'I_2 -> 'I_2 -> 'I_2 :=
+  fun (p q : 'I_2) => Ordinal(modulo (p+q) 2).
+
+Definition addOrd3 : 'I_3 -> 'I_3 -> 'I_3 :=
+  fun (p q : 'I_3) => Ordinal(modulo (p+q) 3).
+
+Definition minOrd2 : 'I_2 -> 'I_2 -> 'I_2 :=
+  fun (p q : 'I_2) => Ordinal(modulo (p-q) 2).
+
+Definition minrd3 : 'I_3 -> 'I_3 -> 'I_3 :=
+  fun (p q : 'I_3) => Ordinal(modulo (p-q) 3).
+
+Definition addOrdn (n:nat) : 'I_n -> 'I_n -> 'I_n :=
+  fun (p q : 'I_n) => Ordinal(modulo (p-q) n).
+
 
 Variable R : numDomainType.
 Variable P : finType.
@@ -151,15 +168,17 @@ Definition unhookT (t1:T) (tm : trianglemap) (g:graph) :=
 
 (* attachT va seulement rajouter un triangle t1 dans la tmap *)
 (* Le rajout du nouveau triangle dans le graph sera fait au cas par cas dans les fonctions le nécessitant *)
-(* Definition attachT (t1: triangle) (tm : trianglemap) (pm : pointmap)  := 
-  if 
+Definition attachT (t1: triangle) (tm : trianglemap) (pm : pointmap)  := 
+  if  point2namefun (t1 (Ordinal(zero<3))) pm is Some i1 then let i1' := i1 in
+      if  point2namefun (t1 (Ordinal(un<3))) pm is Some i2 then let i2' := i2 in
+          if point2namefun (t1 (Ordinal(deux<3))) pm is Some i3 then let i3' := i3 in
+                let tm' :=[ffun i :T => if i != [ffun x : 'I_3 => if x==0 then i1'
+                                                                  else if x==1 then i2'
+                                                                  else i3']  then tm i else t1] in Some tm'
+          else None
+      else None
+  else None.
 
-let i1 := point2namefun (t1 (Ordinal(zero<3))) pm in
-  let i2 := point2namefun (t1 (Ordinal(un<3))) pm in
-  let i3 := point2namefun (t1 (Ordinal(deux<3))) pm in 
-  let tm' :=[ffun i :T => if i !=(i1,i2,i3)  then tm i else t1] in
-    tm'. *)
-(* J'ai besoin pour attachT de quelque chose qui me donne connaissant un point son nom. *)
 
 
 (* Fonctions inTriangle, inHull, add_point_triangle, add_point_out, add_edge et add_triangle *)
@@ -244,30 +263,33 @@ Defined.
 
 
 (* Fonction qui va supprimer le triangle extérieur et qui va rajouter les 3 triangles intérieurs *)
-(* Definition add_point_triangle  (p:point) (t:T) (tm : trianglemap) (g:graph) :=  *)
-(* Rajouter le point p à pointmap en utilisant newname *)
-(*   let triangle1 := fun x:'I_3 => if x==0 then tr2pt t tm (Ordinal(zero<3))
-                               else if x==1 then tr2pt t tm (Ordinal(un<3))
+(* Definition add_point_triangle  (p:point) (t:T) (tm : trianglemap) (g:graph) :=   *)
+(* Rajouter le point p à pointmap en utilisant newname ???*)
+(* let (tm1,g1):= unhookT t tm g in
+  let triangle1 := fun x:'I_3 => if x==0 then tm t (Ordinal(zero<3))
+                               else if x==1 then tm t (Ordinal(un<3))
                                else p in
-           let attachT triangle1 tm in
+          if attachT triangle1 tm1 is Some tm2' then let tm2 := tm2' in
 
 
-  let triangle2 := fun x:'I_3 => if x==0 then tr2pt t tm (Ordinal(un<3))
-                               else if x==1 then tr2pt t tm (Ordinal(deux<3))
+  let triangle2 := fun x:'I_3 => if x==0 then tm t (Ordinal(un<3))
+                               else if x==1 then tm t (Ordinal(deux<3))
                                else p in
-             let  attachT triangle2 tm in
+           if attachT triangle2 tm2 is Some tm3' then let tm3 := tm3' in
 
 
-  let triangle3 := fun x:'I_3 => if x==0 then tr2pt t tm (Ordinal(deux<3))
-                               else if x==1 then  tr2pt t tm (Ordinal(zero<3))
+  let triangle3 := fun x:'I_3 => if x==0 then tm t (Ordinal(deux<3))
+                               else if x==1 then tm t (Ordinal(zero<3))
                                else p in
-             let  attachT triangle3 tm in
-                 let  unhookT t tm g in
+            if attachT triangle3 tm3 is Some tm4' then let tm4 := tm4' in
 
-  (* mettre à jour le graph g *)
+  (* mettre à jour le graph g1 *)
 
 let g' : T -> seq T := fun i :T => 
- *)
+
+else None
+else None
+else None. *)
 
 (* La fonction add_point_out va rajouter les edges et supprimer les edges qu'il faut *)
 (* Cette fonction (comme add_point_triangle) sera appliquée dans add_point qui déterminera 
@@ -301,28 +323,117 @@ Definition change_ord (T : choiceType)(ss : {fset T}) (h : #|{:ss}| == 2) (x : '
 rewrite (eqP h); exact x.
 Defined.
 
-(* Definition findIllegal :=
-*)
+
+Section findIllegal.
+
+Variables (tm : trianglemap) (g:graph).
+
+Let triangleSet := [fset t:P^3 | true]%fset.
+
+
+Let f := fun x : {:triangleSet} =>
+  if g (val x) is t1 :: _ then 
+
+let p0t1:= tm t1 (Ordinal(zero<3)) in
+let p1t1:= tm t1 (Ordinal(un<3)) in
+let p2t1:= tm t1 (Ordinal(deux<3)) in
+let p0t2:= tm (val x) (Ordinal(zero<3)) in
+let p1t2:= tm (val x) (Ordinal(un<3)) in
+let p2t2:= tm (val x) (Ordinal(deux<3)) in
+
+
+                                  if isDelaunayLocal (val x) t1 tm==true then None
+                                  else if ~~((p0t1 == p0t2) ||(p0t1 == p1t2) ||(p0t1 == p2t2)) && ~~((p0t2 == p0t1) ||(p0t2 == p1t1) ||(p0t2 == p2t1)) then let ptext1 := p0t1 in let ptext2 := p0t2 in Some(ptext1, ptext2, val x, t1)
+                                       else if ~~((p0t1 == p0t2) ||(p0t1 == p1t2) ||(p0t1 == p2t2)) && ~~((p1t2 == p0t1) ||(p1t2 == p1t1) ||(p1t2 == p2t1)) then let ptext1 := p0t1 in let ptext2 := p1t2 in Some(ptext1, ptext2, val x, t1)
+                                       else if ~~((p0t1 == p0t2) ||(p0t1 == p1t2) ||(p0t1 == p2t2)) && ~~((p2t2 == p0t1) ||(p2t2 == p1t1) ||(p2t2 == p2t1)) then let ptext1 := p0t1 in let ptext2 := p2t2 in Some(ptext1, ptext2, val x, t1)
+
+                                       else if ~~((p1t1 == p0t2) ||(p1t1 == p1t2) ||(p1t1 == p2t2)) && ~~((p0t2 == p0t1) ||(p0t2 == p1t1) ||(p0t2 == p2t1)) then let ptext1 := p1t1 in let ptext2 := p0t2 in Some(ptext1, ptext2, val x, t1)
+                                       else if ~~((p1t1 == p0t2) ||(p1t1 == p1t2) ||(p1t1 == p2t2)) && ~~((p1t2 == p0t1) ||(p1t2 == p1t1) ||(p1t2 == p2t1)) then let ptext1 := p1t1 in let ptext2 := p1t2 in Some(ptext1, ptext2, val x, t1)
+                                       else if ~~((p1t1 == p0t2) ||(p1t1 == p1t2) ||(p1t1 == p2t2)) && ~~((p2t2 == p0t1) ||(p2t2 == p1t1) ||(p2t2 == p2t1)) then let ptext1 := p1t1 in let ptext2 := p2t2 in Some(ptext1, ptext2, val x, t1)
+
+                                       else if ~~((p2t1 == p0t2) ||(p2t1 == p1t2) ||(p2t1 == p2t2)) && ~~((p0t2 == p0t1) ||(p0t2 == p1t1) ||(p0t2 == p2t1)) then let ptext1 := p2t1 in let ptext2 := p0t2 in Some(ptext1, ptext2, val x, t1)
+                                       else if ~~((p2t1 == p0t2) ||(p2t1 == p1t2) ||(p2t1 == p2t2)) && ~~((p1t2 == p0t1) ||(p1t2 == p1t1) ||(p1t2 == p2t1)) then let ptext1 := p2t1 in let ptext2 := p1t2 in Some(ptext1, ptext2, val x, t1)
+                                       else let ptext1 := p2t1 in let ptext2 := p2t2 in Some(ptext1, ptext2, val x, t1)
+
+  else None.
+
+Let res := [fset f x | x in {: triangleSet} & f x != None]%fset.
+
+Definition findIllegal := match pick (pred_of_simpl (@predT {:res})) with
+   Some u => val u | None => None end.
+
+
+End findIllegal.
+
+About findIllegal.
+
+
+(* point2index va prendre un point, un T et va fournir un 'I_3 qui est l'index de l'arete dans ce triangle *)
+(* RMQ : Si ce point n'est pas un des 3 sommets du triangle alors la fonction retourne Ordinal(deux<3) *)
+Definition point2index (p:point) (t:T) (tmap : trianglemap) : 'I_3 :=
+  if (tmap t (Ordinal(zero<3))) == p then Ordinal(zero<3)
+  else if (tmap t (Ordinal(un<3))) == p then Ordinal(un<3)
+  else Ordinal(deux<3).
 
 
 Definition flip (tm: trianglemap)  (ptext1 : point) (ptext2 : point) (t1:T) (t2 :T) (g:graph) (pm: pointmap) :=
+let p0t1:= tm t1 (Ordinal(zero<3)) in
+let p1t1:= tm t1 (Ordinal(un<3)) in
+let p2t1:= tm t1 (Ordinal(deux<3)) in
+let p0t2:= tm t2 (Ordinal(zero<3)) in
+let p1t2:= tm t2 (Ordinal(un<3)) in
+let p2t2:= tm t2 (Ordinal(deux<3)) in
 
-let (tm2, g2) := fst unhookT t tm g in let (tm3,g3):= unhookT t2 tm2 g2 in
-let triangle1 := fun x:'I_3 => if x==0 then if ((triangle2points t1 tm (Ordinal(zero<3))) != ptext1) 
-                                                    && ((triangle2points t1 tm (Ordinal(zero<3))) != ptext2)
-                                            then (triangle2points t1 tm (Ordinal(zero<3)))
-                                            else if ((triangle2points t1 tm (Ordinal(un<3))) != ptext1) 
-                                                    && ((triangle2points t1 tm (Ordinal(un<3))) != ptext2)
-                                            then (triangle2points t1 tm (Ordinal(un<3)))
-                                            else triangle2points t1 tm (Ordinal(deux<3))
-                               else if x==1 then ptext1
-                               else ptext2
+if ptext1 == p0t1 then let indexptext1 := (Ordinal(zero<3)) in
+else if ptext1 == p1t1 then let indexptext1 := (Ordinal(un<3)) in
+else if ptext1 == p2t1 then let indexptext1 := (Ordinal(deux<3)) in
+else if ptext1 == p0t2 then let indexptext1 := (Ordinal(zero<3)) in
+else if ptext1 == p1t2 then let indexptext1 := (Ordinal(un<3)) in
+else then let indexptext1 := (Ordinal(deux<3)) in
 
-in let triangle2 := fun x:'I_3 => if x==0 then ptext1
-                               else if x==1 then  (fst(tm.[preuve2]%fmap (addOrd3 (@edge2index eAdj t2 em tm preuvetmap preuve2) (Ordinal(un<3))))
-                                                    ,snd(tm.[preuve2]%fmap (addOrd3 (@edge2index eAdj t2 em tm preuvetmap preuve2) (Ordinal(un<3)))))
-                               else ptext2
-
-in attachT triangle1 tm pm ; attachT triangle2 tm pm.
+if ptext2 == p0t1 then let indexptext2 := (Ordinal(zero<3)) in
+else if ptext2 == p1t1 then let indexptext2 := (Ordinal(un<3)) in
+else if ptext2 == p2t1 then let indexptext2 := (Ordinal(deux<3)) in
+else if ptext2 == p0t2 then let indexptext2 := (Ordinal(zero<3)) in
+else if ptext2 == p1t2 then let indexptext2 := (Ordinal(un<3)) in
+else then let indexptext2 := (Ordinal(deux<3)) in
 
 
+let (tm2, g2) := fst unhookT t1 tm g in let (tm3,g3):= unhookT t2 tm2 g2 in
+
+
+let triangle1 := fun x:'I_3 => if x==0 then if ptext1 == p0t1 || ptext1 == p1t1 || ptext1 == p2t1 then tm3 t1 indexptext1
+                                            else tm3 t2 indexptext1
+                               else if x==1 then if ptext2 == p0t1 || ptext2 == p1t1 || ptext2 == p2t1 then tm3 t1 indexptext2 
+                                            else tm3 t2 indexptext2 
+                               else if ptext1 == p0t1 || ptext1 == p1t1 || ptext1 == p2t1 then tm3 t1 addOrd3 indexptext1 2
+                                            else tm3 t2 addOrd3 indexptext1 2
+
+
+in let triangle2 := fun x:'I_3 => if x==0 then if ptext2 == p0t2 || ptext2 == p1t2 || ptext2 == p2t2 then tm3 t2 indexptext2
+                                            else tm3 t1 indexptext2
+                               else if x==1 then if ptext1 == p0t2 || ptext1 == p1t2 || ptext1 == p2t2 then tm3 t2 indexptext1
+                                            else tm3 t1 indexptext1
+                               else if ptext2 == p0t2 || ptext2 == p1t2 || ptext2 == p2t2 then tm3 t2 addOrd3 indexptext2 2
+                                            else tm3 t1 addOrd3 indexptext2 2
+
+in if attachT triangle1 tm3 pm is Some tm4' then let tm4 := tm4' in 
+      if attachT triangle2 tm4 pm is Some tm5' then let tm5 := tm5' in
+
+(* Mise à jour des adjacences dans le graph g3 : *)
+
+
+
+      else None 
+   else None.
+(* Faire en sorte que flip ressorte un tmap, un graph *)
+
+
+(* Dans makeDelaunay faire un test findIllegal et si oui alors faire flip et rappeler 
+makeDelaunay *)
+Fixpoint makeDelaunay (tmap : trianglemap) (g:graph) (pm : pointmap):=
+
+  if (findIllegal tmap graph) is Some (ptext1', ptext2', t1', t2') then 
+            let (ptext1, ptext2, t1, t2):= (ptext1', ptext2', t1', t2') in
+             let (tmap1, g1) :=flip tmap ptext1 ptext2 t1 t2 g pm in makeDelaunay tmap1 g1 pm
+  else makeDelaunay  tmap g pm.
