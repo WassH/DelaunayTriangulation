@@ -374,10 +374,6 @@ pour la queue du premier. Ensuite il faut créer les triangles *)
 (* add_point_out va renvoyer une option d'un nouveau graph et d'une nouvelle trianglemap  *)
 
 
-Definition add_point_out  (p:point) (tm: trianglemap) (g:graph) :=
-  if true then Some (g,tm)
-  else None.
-
 
 (* Fonction add_point globale, qui va faire appel selon les cas à add_point_triangle ou add_point_out *)
 Definition add_point (p:point) (tm:trianglemap) (g:graph) (pm : pointmap) := 
