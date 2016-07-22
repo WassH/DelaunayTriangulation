@@ -582,36 +582,36 @@ let p0t2:= tm t2 (Ordinal(zero<3)) in
 let p1t2:= tm t2 (Ordinal(un<3)) in
 let p2t2:= tm t2 (Ordinal(deux<3)) in
 
-let (g2, tm2) := unhookT t1 tm g in let (g3,tm3):= unhookT t2 tm2 g2 in
-
 let indexptext1 := point2indext1t2 ptext1 t1 t2 tm in
 let indexptext2 := point2indext1t2 ptext2 t1 t2 tm in
 
-
 let triangle1 := fun x:'I_3 => 
     if x==0 then if (ptext1 == p0t1) || (ptext1 == p1t1) || (ptext1 == p2t1)
-                        then tm3 t1 indexptext1
-                 else tm3 t2 indexptext1
+                        then tm t1 indexptext1
+                 else tm t2 indexptext1
     else if x==1 then if (ptext2 == p0t1) || (ptext2 == p1t1) 
-                            || (ptext2 == p2t1) then tm3 t1 indexptext2
-                      else tm3 t2 indexptext2 
+                            || (ptext2 == p2t1) then tm t1 indexptext2
+                      else tm t2 indexptext2 
     else if (ptext1 == p0t1) || (ptext1 == p1t1) || (ptext1 == p2t1) 
-            then tm3 t1 (addOrd3 indexptext1 (Ordinal(deux<3)))
-    else tm3 t2 (addOrd3 indexptext1 (Ordinal(deux<3)))
+            then tm t1 (addOrd3 indexptext1 (Ordinal(deux<3)))
+    else tm t2 (addOrd3 indexptext1 (Ordinal(deux<3)))
 
 
 in let triangle2 := fun x:'I_3 => 
    if x==0 then if (ptext2 == p0t2) || (ptext2 == p1t2) || (ptext2 == p2t2)
-                     then tm3 t2 indexptext2
-                else tm3 t1 indexptext2
+                     then tm t2 indexptext2
+                else tm t1 indexptext2
    else if x==1 then if (ptext1 == p0t2) || (ptext1 == p1t2) 
-                           || (ptext1 == p2t2) then tm3 t2 indexptext1
-                     else tm3 t1 indexptext1
+                           || (ptext1 == p2t2) then tm t2 indexptext1
+                     else tm t1 indexptext1
    else if (ptext2 == p0t2) || (ptext2 == p1t2) || (ptext2 == p2t2) 
-            then tm3 t2 (addOrd3 indexptext2 (Ordinal(deux<3)))
-   else tm3 t1 (addOrd3 indexptext2 (Ordinal(deux<3)))
+            then tm t2 (addOrd3 indexptext2 (Ordinal(deux<3)))
+   else tm t1 (addOrd3 indexptext2 (Ordinal(deux<3)))
 
-in if attachT triangle1 tm3 pm is Some tm4' then let tm4 := tm4' in 
+in 
+let (g2, tm2) := unhookT t1 tm g in let (g3,tm3):= unhookT t2 tm2 g2 in
+
+if attachT triangle1 tm3 pm is Some tm4' then let tm4 := tm4' in 
       if attachT triangle2 tm4 pm is Some tm5' then let tm5 := tm5' in
 
 (* Mise à jour des adjacences dans le graph g3 : *)
