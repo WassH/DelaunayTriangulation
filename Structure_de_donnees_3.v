@@ -734,3 +734,6 @@ let p2 := tm3 nomt2 (addOrd3 indexptext2 (Ordinal(deux<3))) in
              let tmap1 := tmap1' in makeDelaunay tmap1 g1 pm
       else (tmap, g, pm)
   else (tmap, g, pm). *)
+
+End Delaunay.
+
