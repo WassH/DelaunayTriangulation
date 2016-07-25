@@ -9,7 +9,7 @@ From mathcomp Require Import div ssreflect eqtype ssrbool ssrnat seq fintype.
 From mathcomp Require Import finset zmodp matrix bigop ssralg matrix ssrnum.
 From mathcomp Require Import finmap seq ssrfun finfun matrix ssrnum ssrfun.
 From mathcomp Require Import bigop ssralg finset fingroup zmodp poly fingraph.
-From mathcomp Require Import tuple choice path.
+From mathcomp Require Import tuple choice path ssrint rat.
 (* -------------------------------------------------------------------- *)
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -76,15 +76,14 @@ Definition addOrdn (n:nat) : 'I_n -> 'I_n -> 'I_n :=
   fun (p q : 'I_n) => Ordinal(modulo (p-q) n).
 
 
-Variable R : numDomainType.
 Variable P : finType.
-Definition point := 'rV[R]_2.
+Definition point := 'rV[rat]_2.
 
-Definition point2R1 (p: point) : R :=
+Definition point2R1 (p: point) : rat :=
   p (Ordinal zero<1) (Ordinal(zero<2)).
 
 
-Definition point2R2 (p: point) : R :=
+Definition point2R2 (p: point) : rat :=
   p (Ordinal zero<1) (Ordinal(un<2)).
 
 
@@ -308,7 +307,6 @@ case h':(@ofindtriangle p tm) => [ v | ].
 move:h'; rewrite /ofindtriangle.
 case: pickP =>//.
 move => abs _.
-Search in_mem in ssrbool fintype.
 elimtype False.
 move: h. 
 rewrite /inHull.
@@ -545,10 +543,6 @@ Definition findIllegal := match pick (pred_of_simpl (@predT {:res})) with
 (* findIllegal doit renvoyer un Some(ptext1', ptext2', t1', t2') ou un None *)
 
 End findIllegal.
-
-About f.
-About findIllegal.
-
 
 (* point2index va prendre un point, deux T : t1 et 2 et va fournir un 'I_3 
    qui est l'index de p dans le triangle dans lequel il se trouve t1 ou t2 *)

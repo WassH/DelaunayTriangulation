@@ -9,7 +9,7 @@ From mathcomp Require Import div ssreflect eqtype ssrbool ssrnat seq fintype.
 From mathcomp Require Import finset zmodp matrix bigop ssralg matrix ssrnum.
 From mathcomp Require Import finmap seq ssrfun finfun matrix ssrnum ssrfun.
 From mathcomp Require Import bigop ssralg finset fingroup zmodp poly fingraph.
-From mathcomp Require Import tuple choice path.
+From mathcomp Require Import tuple choice path rat.
 (* -------------------------------------------------------------------- *)
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -21,23 +21,19 @@ Section on_map.
 
 Open Scope ring_scope.
 
-Variable R : numDomainType.
-
 Variable P : finType.
 
 Definition T := T P.
 
 Check trianglemap.
 
-Definition trianglemap := trianglemap R P.
-
-Definition point := 'rV[R]_2.
+Definition trianglemap := trianglemap P.
 
 Variable default_triangle : point ^ 3.
 
 Hypothesis leftpoint_default :
-  leftpoint (default_triangle (inZp 0))
-            (default_triangle (inZp 1))(default_triangle (inZp 2)) > 0.
+  (leftpoint (default_triangle (inZp 0))
+            (default_triangle (inZp 1))(default_triangle (inZp 2)) > 0)%R.
 
 Definition graph := T -> seq T.
 
