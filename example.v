@@ -132,7 +132,7 @@ Definition oriented (t : T) (tm :trianglemap) :=
 (* -------------------------------------------------------------------- *)
 
 
-Lemma eq_bar (t:T) (tm : trianglemap) (p:point) 
+(* Lemma eq_bar (t:T) (tm : trianglemap) (p:point) 
   (toriented  : (leftpoint ((tm t) (Ordinal(zero<3))) ((tm t) (Ordinal(un<3))) 
                   ((tm t) (Ordinal(deux<3))) > 0)) :
    (leftpoint p ((tm t) (Ordinal(zero<3))) ((tm t) (Ordinal(un<3))) 
@@ -169,19 +169,48 @@ exists (leftpoint (tm t (Ordinal(zero<3))) (tm t (Ordinal(un<3))) p).
 exists (leftpoint (tm t (Ordinal(un<3))) (tm t (Ordinal(deux<3))) p).
 exists (leftpoint (tm t (Ordinal(deux<3))) (tm t (Ordinal(zero<3))) p).
 rewrite /leftpoint.
-to_rat_type.
+to_rat_type. *)
 
 
 
 Lemma oriented_triangles_after_flip (p:point) (t :T) (tm: trianglemap)  :
    (leftpoint p ((tm t) (Ordinal(zero<3))) ((tm t) (Ordinal(un<3))) 
                    > 0)
-&& (leftpoint p ((tm t) (Ordinal(un<3))) ((tm t) (Ordinal(deux<3))) 
+/\ (leftpoint p ((tm t) (Ordinal(un<3))) ((tm t) (Ordinal(deux<3))) 
                    > 0)
-&& (leftpoint p ((tm t) (Ordinal(deux<3))) ((tm t) (Ordinal(zero<3))) 
+/\ (leftpoint p ((tm t) (Ordinal(deux<3))) ((tm t) (Ordinal(zero<3))) 
                   > 0) -> inCircle p t tm ==false.
 Proof.
-Abort.
+move=> [H1 H2].
+move:H2.
+move=> [H2 H3].
+rewrite /inCircle.
+set M1 := \col_(j < 4) if j==0 then
+                           point2R1 (triangle2points t tm (Ordinal (zero<3)))
+                         else if  j==1 then 
+                           point2R1 (triangle2points t tm (Ordinal (un<3)))
+                         else if  nat_of_ord j==2 then 
+                           point2R1 (triangle2points t tm (Ordinal (deux<3)))
+                         else point2R1 p.
+set M2 := \col_(j < 4) if j==0 then 
+                           point2R2 (triangle2points t tm (Ordinal (zero<3)))
+                         else if  j==1 then 
+                           point2R2 (triangle2points t tm (Ordinal (un<3)))
+                         else if  nat_of_ord j==2 then 
+                           point2R2 (triangle2points t tm (Ordinal (deux<3)))
+                         else point2R2 p.
+set M3 := \col_(j < 4) if j==0 then
+                (point2R1 (triangle2points t tm (Ordinal (zero<3))))^+2
+                   + (point2R2 (triangle2points t tm (Ordinal (zero<3))))^+2
+                         else if j==1 then 
+                (point2R1 (triangle2points t tm (Ordinal (un<3))))^+2 
+                   + (point2R2 (triangle2points t tm (Ordinal (un<3))))^+2
+                         else if  nat_of_ord j==2 then 
+                (point2R1 (triangle2points t tm (Ordinal (deux<3))))^+2 
+                   + (point2R2 (triangle2points t tm (Ordinal (deux<3))))^+2
+                         else (point2R1 p)^+2 + (point2R2 p)^+2.
+set M4 := \col_(j < 4) 1.
+
 
 
 Lemma orientedunhookT (tm : trianglemap) (g : T -> seq T) t1 :
