@@ -132,6 +132,7 @@ Definition oriented (t : T) (tm :trianglemap) :=
 (* -------------------------------------------------------------------- *)
 
 
+
 Lemma eq_bar (t:T) (tm : trianglemap) (p:point) 
   (toriented  : (leftpoint ((tm t) (Ordinal(zero<3))) ((tm t) (Ordinal(un<3))) 
                   ((tm t) (Ordinal(deux<3))) > 0)) :
@@ -169,201 +170,251 @@ split; last first.
   rewrite /u1.
   rewrite (expand_det_row _ (Ordinal (deux<3))).
   rewrite big_ord_recl.
-Search lshift.
-set w := (X in row_mx X _).
-set w2 := cofactor _ _ _.
-have := (row_mxEl w (\col_ _ 1) (Ordinal (deux<3)) ord0).
-set the_guy := (X in (_ _ X = _)) => w3.
-set the_other := (X in _ (Ordinal _) X).
-have -> : the_other = the_guy.
-  by rewrite /the_other /the_guy lshift0.
-rewrite w3 /w.
+  rewrite mxE. rewrite //=.
+  rewrite big_ord_recl.
+  rewrite big_ord_recl.
+  rewrite big_ord0.
+  rewrite mxE. rewrite //=.
+  rewrite mxE. rewrite //=.
+  
+  rewrite /cofactor.
+  rewrite !//=.
+  
+  rewrite (expand_det_row _ (Ordinal (un<2))).
+  rewrite big_ord_recl.
+  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
+  rewrite /cofactor.
+  rewrite !//=.
 
-set w4 := (X in row_mx X _).
-set w5 := (X in row_mx _ X).
-have := (row_mxEl w4 w5 (Ordinal (deux<3)) ord0).
-set the_guy2 := (X in ((row_mx _ _) _ X)) => w6.
-set the_other2 := (X in _ (Ordinal _) X).
-have -> : the_other2 = the_guy2.
-  by rewrite /the_other2 /the_guy2 lshift0.
-rewrite w6 /w.
+  rewrite big_ord_recl.
+  rewrite big_ord0.
+  rewrite !mxE !//=.
+rewrite /row' /col'.
+Locate "\matrix_".
+set F := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F i j = (F ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
 
-rewrite big_ord_recl.
-
-set w7 := (X in row_mx X _).
-set w8 := cofactor _ _ _.
-have := (row_mxEl w7 (\col_ _ 1) (Ordinal (deux<3)) (Ordinal (un<2))).
-set the_guy3 := (X in (_ _ X = _)) => w9.
-set the_other3 := lift ord0 ord0.
-have -> : the_other3 = the_guy3.
-  rewrite /the_other3 /the_guy3. 
-  Search lshift.
-  Search lift.
-  About lift0.
-  by apply: val_inj.
-rewrite w9 /w.
-
-rewrite /w7.
-have := (row_mxEr w4 w5 (Ordinal (deux<3)) ord0).
-set the_guy32 := (X in (_ _ X = _)) => ww9.
-set the_other32 := (Ordinal un<2).
-have -> : the_other32 = the_guy32.
-  rewrite /the_other32 /the_guy32. 
-  Search lshift.
-  Search lift.
-  About lift0.
-  by apply: val_inj.
-rewrite ww9 /w.
-
-rewrite big_ord_recl.
-rewrite big_ord0.
-
-set w10 := cofactor _ _ _.
-have := (row_mxEr w7 (\col_ _ 1) (Ordinal (deux<3)) (Ordinal (zero<1))).
-set the_guy4 := (X in (_ _ X = _)) => w11.
-set the_other4 := lift ord0 (lift ord0 ord0).
-have -> : the_other4 = the_guy4.
-  rewrite /the_other4 /the_guy4.
-  apply: val_inj.
-  rewrite ![LHS]lift0.
-  rewrite //=.
-rewrite w11 /w.
+set F2 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F2 i j = (F2 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
 
 
-(* On développe bd *)
-rewrite /bd.
-rewrite /leftpoint.
+  rewrite (expand_det_row _ (Ordinal (un<2))).
+  rewrite big_ord_recl.
+  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
+  rewrite /cofactor.
+  rewrite !//=.
+
+rewrite /row' /col'.
+
+set F3 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F3 i j = (F3 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+  rewrite big_ord_recl.
+  rewrite big_ord0.
+  rewrite (expand_det_row _ (Ordinal (un<2))).
+  rewrite big_ord_recl.
+  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
+  rewrite /cofactor.
+  rewrite !//=.
+
+set F4 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F4 i j = (F4 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+  rewrite big_ord_recl.
+  rewrite big_ord0.
+  rewrite !mxE !//=.
+
+rewrite /col' /row'.
+set F5 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F5 i j = (F5 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+set F6 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F6 i j = (F6 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+(* Expansion de bd *)
+
+rewrite /bd /leftpoint.
 rewrite (expand_det_row _ (Ordinal (deux<3))).
 rewrite big_ord_recl.
-set w12 := (X in row_mx X _).
-set w13 := cofactor _ _ _.
-have := (row_mxEl w12 (\col_ _ 1) (Ordinal (deux<3)) ord0).
-set the_guy5 := (lshift 1 ord0) => w14.
-set the_other5 := (X in w4 (Ordinal deux<3) ord0 * w2 +
-(w5 (Ordinal deux<3) ord0 * w8 +
- ((\col__ 1) (Ordinal deux<3) (Ordinal zero<1) * w10 + 0)) =
-k3 *
-((row_mx w12 (\col__ 1)) (Ordinal deux<3) X * w13 +
- \sum_(i < 2)
-    (row_mx w12 (\col__ 1)) (Ordinal deux<3) (lift ord0 i) *
-    cofactor (row_mx w12 (\col__ 1)) (Ordinal deux<3) (lift ord0 i))).
-have -> : the_other5 = the_guy5.
-  by rewrite /the_other5 /the_guy5 lshift0.
-rewrite w14 /w.
-
-rewrite /w12.
-set w12b := (X in row_mx X _).
-set w12c := (X in row_mx _ X).
-have := (row_mxEl w12b w12c (Ordinal (deux<3)) ord0).
-set the_guy5b := (lshift 1 ord0) => w14b.
-set the_other5b := (X in w4 (Ordinal deux<3) ord0 * w2 +
-(w5 (Ordinal deux<3) ord0 * w8 +
- ((\col__ 1) (Ordinal deux<3) (Ordinal zero<1) * w10 + 0)) =
-k3 *
-((row_mx w12b w12c) (Ordinal deux<3) X * w13 +
- \sum_(i < 2)
-    (row_mx (row_mx w12b w12c) (\col__ 1)) (Ordinal deux<3)
-      (lift ord0 i) *
-    cofactor (row_mx (row_mx w12b w12c) (\col__ 1)) 
-      (Ordinal deux<3) (lift ord0 i))).
-have -> : the_other5b = the_guy5b.
-  by rewrite /the_other5b /the_guy5b lshift0.
-rewrite w14b /w.
-
-
-rewrite big_ord_recl.
-set w15 := (row_mx w12 (\col__ 1)).
-set w16 := cofactor (row_mx w12 (\col__ 1)) (Ordinal deux<3) (lift ord0 ord0).
-have := (row_mxEl w12 (\col_ _ 1) (Ordinal (deux<3)) (Ordinal(un<2))).
-set the_guy6 := lshift 1 (Ordinal un<2) => w17.
-set the_other6 := (X in w4 (Ordinal deux<3) ord0 * w2 +
-(w5 (Ordinal deux<3) ord0 * w8 +
- ((\col__ 1) (Ordinal deux<3) (Ordinal zero<1) * w10 + 0)) =
-k3 *
-(w12b (Ordinal deux<3) ord0 * w13 +
- (w15 (Ordinal deux<3) X * w16 +
-  \sum_(i < 1)
-     w15 (Ordinal deux<3) (lift ord0 (lift ord0 i)) *
-     cofactor w15 (Ordinal deux<3) (lift ord0 (lift ord0 i))))).
-have -> : the_other6 = the_guy6.
-  rewrite /the_other6 /the_guy6.
-  apply: val_inj.
-  by rewrite //=.
-rewrite w17 /w.
-
-
-rewrite /w12.
-have := (row_mxEr w12b w12c (Ordinal (deux<3)) ord0).
-set the_guy5b2 := (rshift 1 ord0) => w14b2.
-set the_other5b2 := (X in w4 (Ordinal deux<3) ord0 * w2 +
-(w5 (Ordinal deux<3) ord0 * w8 +
- ((\col__ 1) (Ordinal deux<3) (Ordinal zero<1) * w10 + 0)) =
-k3 *
-(w12b (Ordinal deux<3) ord0 * w13 +
- ((row_mx
-     (\col_j (if j == 0
-              then point2R1 (tm t (Ordinal zero<3))
-              else
-               if j == 1
-               then point2R1 (tm t (Ordinal un<3))
-               else point2R1 (tm t (Ordinal deux<3))))
-     (\col_j (if j == 0
-              then point2R2 (tm t (Ordinal zero<3))
-              else
-               if j == 1
-               then point2R2 (tm t (Ordinal un<3))
-               else point2R2 (tm t (Ordinal deux<3)))))
-    (Ordinal deux<3) X * w16 +
-  \sum_(i < 1)
-     w15 (Ordinal deux<3) (lift ord0 (lift ord0 i)) *
-     cofactor w15 (Ordinal deux<3) (lift ord0 (lift ord0 i))))).
-have -> : the_other5b2 = the_guy5b2.
-  rewrite /the_other5b2 /the_guy5b2.
-  apply: val_inj.
-  rewrite //=.
-rewrite w14b2 /w.
-
-
-
-rewrite big_ord_recl.
-rewrite big_ord0.
-
-set w18 := cofactor _ _ _.
-have := (row_mxEr w12 (\col_ _ 1) (Ordinal (deux<3)) (Ordinal (zero<1))).
-set the_guy7 := (X in (_ _ X = _)) => w19.
-set the_other7 := lift ord0 (lift ord0 ord0).
-have -> : the_other7 = the_guy7.
-  rewrite /the_other7 /the_guy7.
-  apply: val_inj.
-  rewrite ![LHS]lift0.
-  rewrite //=.
-rewrite w19 /w.
-
-
-rewrite /w4.
-rewrite mxE //=.
-rewrite /w5.
-rewrite mxE //=.
-rewrite /w12b.
-rewrite mxE /=. rewrite mxE //=.
-rewrite /w12c.
-rewrite mxE /=.
-
-
-(* Il reste encore à expanser les 6 cofacteurs w2, w8, w10, w13, w16 et w18 *)
-rewrite /w2 /cofactor.
+rewrite !mxE !//=.
+rewrite /cofactor.
 rewrite (expand_det_row _ (Ordinal (un<2))).
 rewrite big_ord_recl.
-rewrite mxE /=.
+rewrite !mxE !//=.
+rewrite /cofactor.
+
+rewrite /row' /col'.
+set F7 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F7 i j = (F7 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+rewrite big_ord_recl big_ord0.
+rewrite !mxE !//=.
+set F8 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F8 i j = (F8 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+rewrite big_ord_recl.
+  rewrite (expand_det_row _ (Ordinal (un<2))).
+  rewrite big_ord_recl.
+  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
+  rewrite /cofactor.
+  rewrite !//=.
+rewrite big_ord0 big_ord_recl.
+rewrite !mxE !//=.
+
+rewrite /col' /row'.
+set F9 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F9 i j = (F9 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+rewrite big_ord_recl big_ord0.
+rewrite !mxE !//=.
+
+set F10 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F10 i j = (F10 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+  rewrite (expand_det_row _ (Ordinal (un<2))).
+  rewrite big_ord_recl.
+  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
+  rewrite /cofactor.
+  rewrite !//=.
+rewrite !mxE !//=.
+
+rewrite /col' /row'.
+set F11 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F11 i j = (F11 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+rewrite big_ord_recl big_ord0.
+rewrite !mxE !//=.
+set F12 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F12 i j = (F12 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+rewrite !//=.
+rewrite /bump !//=.
+rewrite /F6. rewrite 4!mxE /=.
+rewrite /F. rewrite 4!mxE /=.
+rewrite /F2. rewrite 4!mxE /=.
+rewrite /F4. rewrite 4!mxE /=.
+rewrite /F5. rewrite 4!mxE /=.
+rewrite /F7. rewrite 4!mxE /=.
+rewrite /F8. rewrite 4!mxE /=.
+rewrite /F9. rewrite 4!mxE /=.
+rewrite /F12. rewrite 4!mxE /=.
+rewrite /F11. rewrite 4!mxE /=.
+rewrite /F3. rewrite 4!mxE /=.
+rewrite /F10. rewrite 4!mxE /=.
+
+rewrite !mulN1r !addr0 !//=.
+rewrite !expr2 !//=.
+rewrite !exprD !expr1 !expr0 !//= !mulr1 !//= .
+rewrite !mulN1r !//=.
+rewrite !mul1r.
+rewrite !mulrN1.
+
+set a := point2R1 (tm t (Ordinal zero<3)).
+set b := point2R2 (tm t (Ordinal zero<3)).
+set c := point2R1 (tm t (Ordinal un<3)).
+set d := point2R2 (tm t (Ordinal un<3)).
+set e := point2R1 (tm t (Ordinal deux<3)).
+set f := point2R2 (tm t (Ordinal deux<3)).
 
 
 
-
-
-
-
-
-
+rat_field.
 
 
 
@@ -407,43 +458,248 @@ to_rat_type.
 
 
 
-Lemma oriented_triangles_after_flip (p:point) (t :T) (tm: trianglemap)  :
+Lemma oriented_triangles_after_flip (p:point) (t :T) (tm: trianglemap)  
+ (toriented  : (leftpoint ((tm t) (Ordinal(zero<3))) ((tm t) (Ordinal(un<3))) 
+                  ((tm t) (Ordinal(deux<3))) > 0)) :
    (leftpoint p ((tm t) (Ordinal(zero<3))) ((tm t) (Ordinal(un<3))) 
                    > 0)
-/\ (leftpoint p ((tm t) (Ordinal(un<3))) ((tm t) (Ordinal(deux<3))) 
+&& (leftpoint p ((tm t) (Ordinal(un<3))) ((tm t) (Ordinal(deux<3))) 
                    > 0)
-/\ (leftpoint p ((tm t) (Ordinal(deux<3))) ((tm t) (Ordinal(zero<3))) 
+&& (leftpoint p ((tm t) (Ordinal(deux<3))) ((tm t) (Ordinal(zero<3))) 
                   > 0) -> inCircle p t tm ==false.
 Proof.
-move=> [H1 H2].
+rewrite /inCircle.
+case info: (Num.lt 0
+    (\det (\matrix_(i<4, j<4) if i ==0 then if j==0 then
+                                       point2R1 (triangle2points t tm (Ordinal (zero<3)))
+                                           else if j==1 then
+                                       point2R2 (triangle2points t tm (Ordinal (zero<3)))
+                                           else if nat_of_ord j==2 then 
+                         (point2R1 (triangle2points t tm (Ordinal (zero<3))))^+2
+                            + (point2R2 (triangle2points t tm (Ordinal (zero<3))))^+2
+                                         else 1
+                           else if i ==1 then if j==0 then
+                                     point2R1 (triangle2points t tm (Ordinal (un<3)))
+                                         else if j==1 then
+                                     point2R2 (triangle2points t tm (Ordinal (un<3)))
+                                         else if nat_of_ord j==2 then 
+                         (point2R1 (triangle2points t tm (Ordinal (un<3))))^+2
+                            + (point2R2 (triangle2points t tm (Ordinal (un<3))))^+2
+                                         else 1
+                           else if nat_of_ord i ==2 then if j==0 then
+                                     point2R1 (triangle2points t tm (Ordinal (deux<3)))
+                                         else if j==1 then
+                                     point2R2 (triangle2points t tm (Ordinal (deux<3)))
+                                         else if nat_of_ord j==2 then 
+                         (point2R1 (triangle2points t tm (Ordinal (deux<3))))^+2
+                            + (point2R2 (triangle2points t tm (Ordinal (deux<3))))^+2
+                                         else 1
+                           else if j==0 then
+                                     point2R1 p
+                                         else if j==1 then
+                                     point2R2 p
+                                         else if nat_of_ord j==2 then 
+                                     (point2R1 p)^+2 + (point2R2 p)^+2 
+                                         else 1))); last first.
+  by [].
+rewrite <-info.
+rewrite {info}.
+rewrite eq_bar; last first.
+  by [].
+move=> [k1 [k2 [k3 [H1 H2]]]].
 move:H2.
 move=> [H2 H3].
-rewrite /inCircle.
-set M1 := \col_(j < 4) if j==0 then
-                           point2R1 (triangle2points t tm (Ordinal (zero<3)))
-                         else if  j==1 then 
-                           point2R1 (triangle2points t tm (Ordinal (un<3)))
-                         else if  nat_of_ord j==2 then 
-                           point2R1 (triangle2points t tm (Ordinal (deux<3)))
-                         else point2R1 p.
-set M2 := \col_(j < 4) if j==0 then 
-                           point2R2 (triangle2points t tm (Ordinal (zero<3)))
-                         else if  j==1 then 
-                           point2R2 (triangle2points t tm (Ordinal (un<3)))
-                         else if  nat_of_ord j==2 then 
-                           point2R2 (triangle2points t tm (Ordinal (deux<3)))
-                         else point2R2 p.
-set M3 := \col_(j < 4) if j==0 then
-                (point2R1 (triangle2points t tm (Ordinal (zero<3))))^+2
-                   + (point2R2 (triangle2points t tm (Ordinal (zero<3))))^+2
-                         else if j==1 then 
-                (point2R1 (triangle2points t tm (Ordinal (un<3))))^+2 
-                   + (point2R2 (triangle2points t tm (Ordinal (un<3))))^+2
-                         else if  nat_of_ord j==2 then 
-                (point2R1 (triangle2points t tm (Ordinal (deux<3))))^+2 
-                   + (point2R2 (triangle2points t tm (Ordinal (deux<3))))^+2
-                         else (point2R1 p)^+2 + (point2R2 p)^+2.
-set M4 := \col_(j < 4) 1.
+move:H3.
+move=> [H3 H4].
+move:H4.
+move=> [H4 H5].
+move:H5.
+move=> [H5 H6].
+
+have hyp: (\det (\matrix_(i<4, j<4) (if i == 0
+                                      then
+                                       if j == 0
+                                       then
+                                        point2R1
+                                          ((triangle2points t tm)
+                                            (Ordinal zero<3))
+                                       else
+                                        if j == 1
+                                        then
+                                         point2R2
+                                           ((triangle2points t tm)
+                                            (Ordinal zero<3))
+                                        else
+                                         if nat_of_ord j == 2
+                                         then
+                                          point2R1
+                                            ((triangle2points t tm)
+                                            (Ordinal zero<3)) ^+ 2 +
+                                          point2R2
+                                            ((triangle2points t tm)
+                                            (Ordinal zero<3)) ^+ 2
+                                         else 1
+                                      else
+                                       if i == 1
+                                       then
+                                        if j == 0
+                                        then
+                                         point2R1
+                                           ((triangle2points t tm)
+                                            (Ordinal un<3))
+                                        else
+                                         if j == 1
+                                         then
+                                          point2R2
+                                            ((triangle2points t tm)
+                                            (Ordinal un<3))
+                                         else
+                                          if nat_of_ord j == 2
+                                          then
+                                           point2R1
+                                            ((triangle2points t tm)
+                                            (Ordinal un<3)) ^+ 2 +
+                                           point2R2
+                                            ((triangle2points t tm)
+                                            (Ordinal un<3)) ^+ 2
+                                          else 1
+                                       else
+                                        if nat_of_ord i == 2
+                                        then
+                                         if j == 0
+                                         then
+                                          point2R1
+                                            ((triangle2points t tm)
+                                            (Ordinal deux<3))
+                                         else
+                                          if j == 1
+                                          then
+                                           point2R2
+                                            ((triangle2points t tm)
+                                            (Ordinal deux<3))
+                                          else
+                                           if nat_of_ord j == 2
+                                           then
+                                            point2R1
+                                            ((triangle2points t tm)
+                                            (Ordinal deux<3)) ^+ 2 +
+                                            point2R2
+                                            ((triangle2points t tm)
+                                            (Ordinal deux<3)) ^+ 2
+                                           else 1
+                                        else
+                                         if j == 0
+                                         then point2R1 p
+                                         else
+                                          if j == 1
+                                          then point2R2 p
+                                          else
+                                           if nat_of_ord j == 2
+                                           then
+                                            point2R1 p ^+ 2 +
+                                            point2R2 p ^+ 2
+                                           else 1)) = 
+
+              \det (\matrix_(i<4, j<4) (if i == 0
+                         then
+                          if j == 0
+                          then
+                           point2R1
+                             ((triangle2points t tm)
+                                (Ordinal zero<3))
+                          else
+                           if j == 1
+                           then
+                            point2R2
+                              ((triangle2points t tm)
+                                 (Ordinal zero<3))
+                           else
+                            if nat_of_ord j == 2
+                            then
+                             point2R1
+                               ((triangle2points t tm)
+                                  (Ordinal zero<3)) ^+ 2 +
+                             point2R2
+                               ((triangle2points t tm)
+                                  (Ordinal zero<3)) ^+ 2
+                            else 1
+                         else
+                          if i == 1
+                          then
+                           if j == 0
+                           then
+                            point2R1
+                              ((triangle2points t tm) (Ordinal un<3))
+                           else
+                            if j == 1
+                            then
+                             point2R2
+                               ((triangle2points t tm)
+                                  (Ordinal un<3))
+                            else
+                             if nat_of_ord j == 2
+                             then
+                              point2R1
+                                ((triangle2points t tm)
+                                   (Ordinal un<3)) ^+ 2 +
+                              point2R2
+                                ((triangle2points t tm)
+                                   (Ordinal un<3)) ^+ 2
+                             else 1
+                          else
+                           if nat_of_ord i == 2
+                           then
+                            if j == 0
+                            then
+                             point2R1
+                               ((triangle2points t tm)
+                                  (Ordinal deux<3))
+                            else
+                             if j == 1
+                             then
+                              point2R2
+                                ((triangle2points t tm)
+                                   (Ordinal deux<3))
+                             else
+                              if nat_of_ord j == 2
+                              then
+                               point2R1
+                                 ((triangle2points t tm)
+                                    (Ordinal deux<3)) ^+ 2 +
+                               point2R2
+                                 ((triangle2points t tm)
+                                    (Ordinal deux<3)) ^+ 2
+                              else 1
+                           else
+                            if j == 0
+                            then 0
+                            else
+                             if j == 1
+                             then 0
+                             else
+                              if nat_of_ord j == 2
+                              then point2R1 p ^+ 2 + point2R2 p ^+ 2 
+                - k1* (point2R1((triangle2points t tm)
+                                  (Ordinal zero<3)) ^+ 2 +
+                             point2R2
+                               ((triangle2points t tm)
+                                  (Ordinal zero<3)) ^+ 2)
+                - k2* (point2R1((triangle2points t tm)
+                                  (Ordinal un<3)) ^+ 2 +
+                             point2R2
+                               ((triangle2points t tm)
+                                  (Ordinal un<3)) ^+ 2)
+                - k3* (point2R1((triangle2points t tm)
+                                  (Ordinal deux<3)) ^+ 2 +
+                             point2R2
+                               ((triangle2points t tm)
+                                  (Ordinal deux<3)) ^+ 2)
+                              else 0))); last first.
+
+rewrite [X in Num.lt 0 X == false]hyp.
+
+
+
 Abort.
 
 
