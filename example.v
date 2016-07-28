@@ -51,8 +51,6 @@ Notation "quatre<5" := (ltnSn 4).
 
 Open Scope ring_scope.
 
-Variable R : numDomainType.
-
 Variable P : finType.
 
 Definition T := T P.
@@ -64,8 +62,8 @@ Definition trianglemap := trianglemap P.
 Variable default_triangle : point ^ 3.
 
 Hypothesis leftpoint_default :
-  leftpoint (default_triangle (inZp 0))
-            (default_triangle (inZp 1))(default_triangle (inZp 2)) > 0.
+  (leftpoint (default_triangle (inZp 0))
+            (default_triangle (inZp 1))(default_triangle (inZp 2)) > 0)%R.
 
 Definition graph := T -> seq T.
 
