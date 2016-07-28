@@ -1,24 +1,27 @@
 Require Import Arith.
 Require Import EqNat.
 Require Import Ring.
+Require Import Field.
+Require Import QArith.
 
 
 
 (* -------------------------------------------------------------------- *)
 From mathcomp Require Import div ssreflect eqtype ssrbool ssrnat seq fintype.
 From mathcomp Require Import finset zmodp matrix bigop ssralg matrix ssrnum.
-From mathcomp Require Import finmap seq ssrfun finfun matrix ssrnum ssrfun.
+From mathcomp Require Import seq ssrfun finfun matrix ssrnum ssrfun.
 From mathcomp Require Import bigop ssralg finset fingroup zmodp poly fingraph.
-From mathcomp Require Import tuple choice path ssrint rat.
+From mathcomp Require Import tuple choice path ssrint.
+From mathcomp Require Import finmap rat.
+
 (* -------------------------------------------------------------------- *)
 Set Implicit Arguments.
 Unset Strict Implicit.
 Unset Printing Implicit Defensive.
 
-
+Open Scope nat_scope.
 Section gensym.
 
-Open Scope fmap_scope.
 
 Definition E := nat.
 
@@ -87,6 +90,29 @@ Definition point2R2 (p: point) : rat :=
   p (Ordinal zero<1) (Ordinal(un<2)).
 
 
+
+(* La fonction norm_carre p1 p2 donne la norme au carré du vecteur allant 
+   de p1 à p2 *)
+Definition norm_carre (p1:point) (p2 :point) : rat :=
+  (point2R1 p2 - point2R1 p1)*(point2R1 p2 - point2R1 p1)
+    + (point2R2 p2 - point2R2 p1)*(point2R2 p2 - point2R2 p1).
+
+Section prod_scal.
+Open Local Scope ring_scope.
+Definition prod_scal (p1 : point) (p2 : point) (p3 : point) (p4 : point) :rat :=
+  let v1 := \col_(j<2) if j==0 then point2R1 p2 - point2R1 p1
+                       else point2R2 p2 - point2R2 p1 in
+  let v2 := \col_(j<2) if j==0 then point2R1 p4 - point2R1 p3
+                       else point2R2 p4 - point2R2 p3 in
+  let M := (v1 (Ordinal(zero<2)) (Ordinal(zero<1)))
+              *(v2 (Ordinal(zero<2)) (Ordinal(zero<1)))
+                  + (v1 (Ordinal(un<2)) (Ordinal(zero<1)))
+                        *(v2 (Ordinal(un<2)) (Ordinal(zero<1))) in
+  M.
+
+End prod_scal.
+
+
 Open Local Scope type_scope.
 Definition T := P^3.
 
@@ -140,36 +166,39 @@ Open Local Scope ring_scope.
 (* Définition de inCircle, RMQ : si un point est sur le cercle circonscrit 
    alors il n'est pas inCircle *)
 Definition inCircle (p1 : point) (t1: T) (tm : trianglemap) : bool :=
-  let M1 := \col_(j < 4) if j==0 then
-                           point2R1 (triangle2points t1 tm (Ordinal (zero<3)))
-                         else if  j==1 then 
-                           point2R1 (triangle2points t1 tm (Ordinal (un<3)))
-                         else if  nat_of_ord j==2 then 
-                           point2R1 (triangle2points t1 tm (Ordinal (deux<3)))
-                         else point2R1 p1 in
-
-  let M2 := \col_(j < 4) if j==0 then 
-                           point2R2 (triangle2points t1 tm (Ordinal (zero<3)))
-                         else if  j==1 then 
-                           point2R2 (triangle2points t1 tm (Ordinal (un<3)))
-                         else if  nat_of_ord j==2 then 
-                           point2R2 (triangle2points t1 tm (Ordinal (deux<3)))
-                         else point2R2 p1 in
-
-  let M3 := \col_(j < 4) if j==0 then
-                (point2R1 (triangle2points t1 tm (Ordinal (zero<3))))^+2
-                   + (point2R2 (triangle2points t1 tm (Ordinal (zero<3))))^+2
-                         else if j==1 then 
-                (point2R1 (triangle2points t1 tm (Ordinal (un<3))))^+2 
-                   + (point2R2 (triangle2points t1 tm (Ordinal (un<3))))^+2
-                         else if  nat_of_ord j==2 then 
-                (point2R1 (triangle2points t1 tm (Ordinal (deux<3))))^+2 
-                   + (point2R2 (triangle2points t1 tm (Ordinal (deux<3))))^+2
-                         else (point2R1 p1)^+2 + (point2R2 p1)^+2 in
-
-  let M4 := \col_(j < 4) 1 in
-  let M := row_mx (row_mx M1 M2) (row_mx M3 M4) in if \det M > 0 then true 
-                                                   else false.
+  let M:= \matrix_(i<4, j<4) if i ==0 then if j==0 then
+                                     point2R1 (triangle2points t1 tm (Ordinal (zero<3)))
+                                         else if j==1 then
+                                     point2R2 (triangle2points t1 tm (Ordinal (zero<3)))
+                                         else if nat_of_ord j==2 then 
+                         (point2R1 (triangle2points t1 tm (Ordinal (zero<3))))^+2
+                            + (point2R2 (triangle2points t1 tm (Ordinal (zero<3))))^+2
+                                         else 1
+                           else if i ==1 then if j==0 then
+                                     point2R1 (triangle2points t1 tm (Ordinal (un<3)))
+                                         else if j==1 then
+                                     point2R2 (triangle2points t1 tm (Ordinal (un<3)))
+                                         else if nat_of_ord j==2 then 
+                         (point2R1 (triangle2points t1 tm (Ordinal (un<3))))^+2
+                            + (point2R2 (triangle2points t1 tm (Ordinal (un<3))))^+2
+                                         else 1
+                           else if nat_of_ord i ==2 then if j==0 then
+                                     point2R1 (triangle2points t1 tm (Ordinal (deux<3)))
+                                         else if j==1 then
+                                     point2R2 (triangle2points t1 tm (Ordinal (deux<3)))
+                                         else if nat_of_ord j==2 then 
+                         (point2R1 (triangle2points t1 tm (Ordinal (deux<3))))^+2
+                            + (point2R2 (triangle2points t1 tm (Ordinal (deux<3))))^+2
+                                         else 1
+                           else if j==0 then
+                                     point2R1 p1
+                                         else if j==1 then
+                                     point2R2 p1
+                                         else if nat_of_ord j==2 then 
+                                     (point2R1 p1)^+2 + (point2R2 p1)^+2 
+                                         else 1
+   in if \det M > 0 then true
+      else false.
 
 
 
@@ -251,16 +280,17 @@ Definition attachT (t1: triangle) (tm : trianglemap) (pm : pointmap)  :=
    add_edge et add_triangle *)
 
 Definition leftpoint := fun (p a b : point) =>
-  let M11 := \col_(j < 3) if j==0 then point2R1 p
-                         else if j==1 then point2R1 a
-                         else point2R1 b in
+  let M1 := \matrix_(i<3, j<3) if i==0 then if j==0 then point2R1 p
+                                          else if j==1 then point2R2 p
+                                          else 1
+                             else if i==1 then if j==0 then point2R1 a
+                                               else if j==1 then point2R2 a
+                                               else 1
+                             else if j==0 then point2R1 b
+                                               else if j==1 then point2R2 b
+                                               else 1
 
-  let M12 := \col_(j < 3) if j==0 then point2R2 p
-                         else if j==1 then point2R2  a
-                         else point2R2 b in
-
-  let M13 := \col_(j < 3) 1 in 
-     let M1 := row_mx (row_mx M11 M12) M13 in \det M1.
+              in \det M1.
 
 
 
@@ -399,7 +429,6 @@ else None.
 
 (*
 Section add_point_out.
-
 Let detfun := fun (nomp1 : P) (nomp2:P) (p:point) (pm : pointmap) => 
     let M1 := \col_(j < 3) if j==0 then point2R1 (pm nomp1)
                            else if j==1 then point2R1 (pm nomp2)
@@ -410,11 +439,9 @@ Let detfun := fun (nomp1 : P) (nomp2:P) (p:point) (pm : pointmap) =>
     let M3 := \col_(j < 3) 1 in
     let M := row_mx (row_mx M1 M2) M3 in
     \det M.
-
 (* hullmap1 est la finfun donnant pour un nom de point, le nom du point 
    prédecesseur et du successeur dans l'enveloppe convexe *)
 Variable hullmap1 : {ffun P -> P*P}.
-
 (* La fonction add_point_out va rajouter les triangles qu'il faut *)
 (* Cette fonction (comme add_point_triangle) sera appliquée dans add_point 
    qui déterminera à laquelle de ces deux fonctions il faut faire appel *)
@@ -430,24 +457,12 @@ Definition add_point_out  (p:point) (tm: trianglemap) (g:graph)
   let badHull:= [fset nomp|nomp in hull 
                             & detfun nomp (snd(hullmap2 nomp)) p pm < 0]%fset
      in
-
-
   (* mise à jour de la tmap *)
   let 
-
-
-
-
-
-
   (* mise à jour du graph *)
-
  
-
 (* add_point_out va renvoyer une option d'un nouveau graph et d'une nouvelle
    trianglemap  *)
-
-
 End add_point_out.
 *)
 
@@ -699,7 +714,6 @@ let p2 := tm3 nomt2 (addOrd3 indexptext2 (Ordinal(deux<3))) in
 (* Dans makeDelaunay faire un test findIllegal et si oui alors faire flip et 
    rappeler makeDelaunay *)
 (* Fixpoint makeDelaunay (tmap : trianglemap) (g:graph) (pm : pointmap) :=
-
   if (findIllegal tmap g) is Some (ptext1', ptext2', t1', t2') then if 
         (flip tmap ptext1' ptext2' t1' t2' g pm) is Some (g1',tmap1') then
              let g1 := g1' in
