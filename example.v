@@ -2,7 +2,7 @@ Require Import Arith.
 Require Import EqNat.
 Require Import Ring.
 Require Import Bool.
-
+Require Coq.Init.Nat.
 Require Import ZArith.
 Require Import Field.
 
@@ -26,6 +26,7 @@ Import Num.Theory.
 Open Scope ring_scope.
 
 Require Import Structure_de_donnees_3.
+Require Import determinant_complements.
 
 Section on_map.
 
@@ -51,6 +52,8 @@ Notation "quatre<5" := (ltnSn 4).
 
 Open Scope ring_scope.
 
+Variable R : numDomainType.
+
 Variable P : finType.
 
 Definition T := T P.
@@ -62,8 +65,8 @@ Definition trianglemap := trianglemap P.
 Variable default_triangle : point ^ 3.
 
 Hypothesis leftpoint_default :
-  (leftpoint (default_triangle (inZp 0))
-            (default_triangle (inZp 1))(default_triangle (inZp 2)) > 0)%R.
+  leftpoint (default_triangle (inZp 0))
+            (default_triangle (inZp 1))(default_triangle (inZp 2)) > 0.
 
 Definition graph := T -> seq T.
 
@@ -145,7 +148,7 @@ Lemma eq_bar (t:T) (tm : trianglemap) (p:point)
  (point2R2 p = k1*point2R2 ((tm t) (Ordinal(zero<3)))
                 + k2*point2R2 ((tm t) (Ordinal(un<3)))
                 + k3*point2R2 ((tm t) (Ordinal(deux<3))))
-            /\ (k1+k2+k3 ==1)
+            /\ (k1+k2+k3 == 1)
             /\ k1 > 0 /\ k2 > 0 /\ k3 > 0.
 Proof.
   move: toriented; set bd := leftpoint _ _ _ => toriented.
@@ -947,13 +950,178 @@ rewrite toriented !//=.
 move/andP=> [H2 H3].
 move: H2; move/andP=> [H1 H2].
 
-exists ((leftpoint (tm t (Ordinal(zero<3))) (tm t (Ordinal(un<3))) p)/bd).
 exists ((leftpoint (tm t (Ordinal(un<3))) (tm t (Ordinal(deux<3))) p)/bd).
 exists ((leftpoint (tm t (Ordinal(deux<3))) (tm t (Ordinal(zero<3))) p)/bd).
+exists ((leftpoint (tm t (Ordinal(zero<3))) (tm t (Ordinal(un<3))) p)/bd).
+split.
+move: toriented.
+rewrite /bd.
 rewrite /leftpoint.
-to_rat_type.
+rewrite expand_det33 !mxE !//=.
+rewrite /leftpoint.
+rewrite expand_det33 !mxE !//=.
+rewrite expand_det33 !mxE !//=.
+rewrite expand_det33 !mxE !//=.
+set a := point2R1 (tm t (Ordinal zero<3)).
+set b := point2R2 (tm t (Ordinal zero<3)).
+set c := point2R1 (tm t (Ordinal un<3)).
+set d := point2R2 (tm t (Ordinal un<3)).
+set e := point2R1 (tm t (Ordinal deux<3)).
+set f := point2R2 (tm t (Ordinal deux<3)).
+set g := point2R1 p.
+set h := point2R2 p.
+move=> toriented.
+prefield.
+field.
+rewrite/not.
+move=>hyp_contra.
+move:toriented.
+rewrite !mulr1 !mul1r.
+rewrite [X in (Num.lt 0 X-> False)]hyp_contra.
+Search _ (Num.lt _ _ = _).
+auto.
+
+split.
+move: toriented.
+rewrite /bd.
+rewrite /leftpoint.
+rewrite expand_det33 !mxE !//=.
+rewrite /leftpoint.
+rewrite expand_det33 !mxE !//=.
+rewrite expand_det33 !mxE !//=.
+rewrite expand_det33 !mxE !//=.
+set a := point2R1 (tm t (Ordinal zero<3)).
+set b := point2R2 (tm t (Ordinal zero<3)).
+set c := point2R1 (tm t (Ordinal un<3)).
+set d := point2R2 (tm t (Ordinal un<3)).
+set e := point2R1 (tm t (Ordinal deux<3)).
+set f := point2R2 (tm t (Ordinal deux<3)).
+set g := point2R1 p.
+set h := point2R2 p.
+move=> toriented.
+prefield.
+field.
+rewrite/not.
+move=>hyp_contra.
+move:toriented.
+rewrite !mulr1 !mul1r.
+rewrite [X in (Num.lt 0 X-> False)]hyp_contra.
+Search _ (Num.lt _ _ = _).
+auto.
+
+split.
+move:toriented.
+rewrite /bd.
+rewrite /leftpoint.
+rewrite expand_det33 !mxE !//=.
+rewrite /leftpoint.
+rewrite expand_det33 !mxE !//=.
+rewrite expand_det33 !mxE !//=.
+rewrite expand_det33 !mxE !//=.
+set a := point2R1 (tm t (Ordinal zero<3)).
+set b := point2R2 (tm t (Ordinal zero<3)).
+set c := point2R1 (tm t (Ordinal un<3)).
+set d := point2R2 (tm t (Ordinal un<3)).
+set e := point2R1 (tm t (Ordinal deux<3)).
+set f := point2R2 (tm t (Ordinal deux<3)).
+set g := point2R1 p.
+set h := point2R2 p.
+rewrite !mul1r !mulr1.
+move=> toriented.
+set i := (c * f - c * h - d * e + d * g + e * h - f * g) /
+(a * d - a * f - b * c + b * e + c * f - d * e) +
+(e * b - e * h - f * a + f * g + a * h - b * g) /
+(a * d - a * f - b * c + b * e + c * f - d * e) +
+(a * d - a * h - b * c + b * g + c * h - d * g) /
+(a * d - a * f - b * c + b * e + c * f - d * e).
+simpl in i.
+set i2 := 1.
+simpl in i2.
+apply/eqP.
+rewrite /i /i2.
+prefield.
+field.
+rewrite/not.
+move=>hyp_contra.
+move:toriented.
+rewrite [X in (Num.lt 0 X-> False)]hyp_contra.
+Search _ (Num.lt _ _ = _).
+auto.
+
+split.
+Search _ (_/_>0).
+rewrite divr_gt0; last first.
+      by [].
+    have egal_det12 : leftpoint (tm t (Ordinal un<3)) (tm t (Ordinal deux<3)) p
+                   = leftpoint p (tm t (Ordinal un<3)) (tm t (Ordinal deux<3));
+    last first.
+      rewrite egal_det12.
+      by [].
+    rewrite /leftpoint.
+    rewrite expand_det33 !mxE !//=.
+    rewrite expand_det33 !mxE !//=.
+    rewrite !mulr1 !mul1r.
+    prefield.
+    field.
+  by [].
+
+split.
+Search _ (_/_>0).
+rewrite divr_gt0; last first.
+      by [].
+    have egal_det20 : leftpoint (tm t (Ordinal deux<3)) (tm t (Ordinal zero<3)) p
+                   = leftpoint p (tm t (Ordinal deux<3)) (tm t (Ordinal zero<3));
+    last first.
+      rewrite egal_det20.
+      by [].
+    rewrite /leftpoint.
+    rewrite expand_det33 !mxE !//=.
+    rewrite expand_det33 !mxE !//=.
+    rewrite !mulr1 !mul1r.
+    prefield.
+    field.
+  by [].
+
+rewrite divr_gt0; last first.
+      by [].
+    have egal_det01 : leftpoint (tm t (Ordinal zero<3)) (tm t (Ordinal un<3)) p
+                   = leftpoint p (tm t (Ordinal zero<3)) (tm t (Ordinal un<3));
+    last first.
+      rewrite egal_det01.
+      by [].
+    rewrite /leftpoint.
+    rewrite expand_det33 !mxE !//=.
+    rewrite expand_det33 !mxE !//=.
+    rewrite !mulr1 !mul1r.
+    prefield.
+    field.
+  by [].
+Qed.
+
+Lemma mul0l (n :rat_Ring) : 0*n = 0.
+Proof.
+prefield.
+field.
+Qed.
+
+Lemma mul0r (n :rat_Ring) : n*0 = 0.
+Proof.
+prefield.
+field.
+Qed.
+
+Lemma plus0l (n :rat_Ring) : 0+n = n.
+Proof.
+prefield.
+field.
+Qed.
 
 
+Lemma plus0r (n :rat_Ring) : n+0 = n.
+Proof.
+prefield.
+field.
+Qed.
 
 
 Lemma oriented_triangles_after_flip (p:point) (t :T) (tm: trianglemap)  
@@ -964,44 +1132,9 @@ Lemma oriented_triangles_after_flip (p:point) (t :T) (tm: trianglemap)
 && (leftpoint p ((tm t) (Ordinal(un<3))) ((tm t) (Ordinal(deux<3))) 
                    > 0)
 && (leftpoint p ((tm t) (Ordinal(deux<3))) ((tm t) (Ordinal(zero<3))) 
-                  > 0) -> inCircle p t tm ==false.
+                  > 0) -> inCircle p t tm ==true.
 Proof.
 rewrite /inCircle.
-case info: (Num.lt 0
-    (\det (\matrix_(i<4, j<4) if i ==0 then if j==0 then
-                                       point2R1 (triangle2points t tm (Ordinal (zero<3)))
-                                           else if j==1 then
-                                       point2R2 (triangle2points t tm (Ordinal (zero<3)))
-                                           else if nat_of_ord j==2 then 
-                         (point2R1 (triangle2points t tm (Ordinal (zero<3))))^+2
-                            + (point2R2 (triangle2points t tm (Ordinal (zero<3))))^+2
-                                         else 1
-                           else if i ==1 then if j==0 then
-                                     point2R1 (triangle2points t tm (Ordinal (un<3)))
-                                         else if j==1 then
-                                     point2R2 (triangle2points t tm (Ordinal (un<3)))
-                                         else if nat_of_ord j==2 then 
-                         (point2R1 (triangle2points t tm (Ordinal (un<3))))^+2
-                            + (point2R2 (triangle2points t tm (Ordinal (un<3))))^+2
-                                         else 1
-                           else if nat_of_ord i ==2 then if j==0 then
-                                     point2R1 (triangle2points t tm (Ordinal (deux<3)))
-                                         else if j==1 then
-                                     point2R2 (triangle2points t tm (Ordinal (deux<3)))
-                                         else if nat_of_ord j==2 then 
-                         (point2R1 (triangle2points t tm (Ordinal (deux<3))))^+2
-                            + (point2R2 (triangle2points t tm (Ordinal (deux<3))))^+2
-                                         else 1
-                           else if j==0 then
-                                     point2R1 p
-                                         else if j==1 then
-                                     point2R2 p
-                                         else if nat_of_ord j==2 then 
-                                     (point2R1 p)^+2 + (point2R2 p)^+2 
-                                         else 1))); last first.
-  by [].
-rewrite <-info.
-rewrite {info}.
 rewrite eq_bar; last first.
   by [].
 move=> [k1 [k2 [k3 [H1 H2]]]].
@@ -1013,28 +1146,27 @@ move:H4.
 move=> [H4 H5].
 move:H5.
 move=> [H5 H6].
-
 have hyp: (\det (\matrix_(i<4, j<4) (if i == 0
                                       then
                                        if j == 0
                                        then
                                         point2R1
-                                          ((triangle2points t tm)
+                                          (tm t
                                             (Ordinal zero<3))
                                        else
                                         if j == 1
                                         then
                                          point2R2
-                                           ((triangle2points t tm)
+                                           (tm t
                                             (Ordinal zero<3))
                                         else
                                          if nat_of_ord j == 2
                                          then
                                           point2R1
-                                            ((triangle2points t tm)
+                                            (tm t
                                             (Ordinal zero<3)) ^+ 2 +
                                           point2R2
-                                            ((triangle2points t tm)
+                                            (tm t
                                             (Ordinal zero<3)) ^+ 2
                                          else 1
                                       else
@@ -1043,22 +1175,22 @@ have hyp: (\det (\matrix_(i<4, j<4) (if i == 0
                                         if j == 0
                                         then
                                          point2R1
-                                           ((triangle2points t tm)
+                                           (tm t
                                             (Ordinal un<3))
                                         else
                                          if j == 1
                                          then
                                           point2R2
-                                            ((triangle2points t tm)
+                                            (tm t
                                             (Ordinal un<3))
                                          else
                                           if nat_of_ord j == 2
                                           then
                                            point2R1
-                                            ((triangle2points t tm)
+                                            (tm t
                                             (Ordinal un<3)) ^+ 2 +
                                            point2R2
-                                            ((triangle2points t tm)
+                                            (tm t
                                             (Ordinal un<3)) ^+ 2
                                           else 1
                                        else
@@ -1067,22 +1199,22 @@ have hyp: (\det (\matrix_(i<4, j<4) (if i == 0
                                          if j == 0
                                          then
                                           point2R1
-                                            ((triangle2points t tm)
+                                            (tm t
                                             (Ordinal deux<3))
                                          else
                                           if j == 1
                                           then
                                            point2R2
-                                            ((triangle2points t tm)
+                                            (tm t
                                             (Ordinal deux<3))
                                           else
                                            if nat_of_ord j == 2
                                            then
                                             point2R1
-                                            ((triangle2points t tm)
+                                            (tm t
                                             (Ordinal deux<3)) ^+ 2 +
                                             point2R2
-                                            ((triangle2points t tm)
+                                            (tm t
                                             (Ordinal deux<3)) ^+ 2
                                            else 1
                                         else
@@ -1103,22 +1235,22 @@ have hyp: (\det (\matrix_(i<4, j<4) (if i == 0
                           if j == 0
                           then
                            point2R1
-                             ((triangle2points t tm)
+                             (tm t
                                 (Ordinal zero<3))
                           else
                            if j == 1
                            then
                             point2R2
-                              ((triangle2points t tm)
+                              (tm t
                                  (Ordinal zero<3))
                            else
                             if nat_of_ord j == 2
                             then
                              point2R1
-                               ((triangle2points t tm)
+                               (tm t
                                   (Ordinal zero<3)) ^+ 2 +
                              point2R2
-                               ((triangle2points t tm)
+                               (tm t
                                   (Ordinal zero<3)) ^+ 2
                             else 1
                          else
@@ -1127,21 +1259,21 @@ have hyp: (\det (\matrix_(i<4, j<4) (if i == 0
                            if j == 0
                            then
                             point2R1
-                              ((triangle2points t tm) (Ordinal un<3))
+                              (tm t (Ordinal un<3))
                            else
                             if j == 1
                             then
                              point2R2
-                               ((triangle2points t tm)
+                               (tm t
                                   (Ordinal un<3))
                             else
                              if nat_of_ord j == 2
                              then
                               point2R1
-                                ((triangle2points t tm)
+                                (tm t
                                    (Ordinal un<3)) ^+ 2 +
                               point2R2
-                                ((triangle2points t tm)
+                                (tm t
                                    (Ordinal un<3)) ^+ 2
                              else 1
                           else
@@ -1150,22 +1282,22 @@ have hyp: (\det (\matrix_(i<4, j<4) (if i == 0
                             if j == 0
                             then
                              point2R1
-                               ((triangle2points t tm)
+                               (tm t
                                   (Ordinal deux<3))
                             else
                              if j == 1
                              then
                               point2R2
-                                ((triangle2points t tm)
+                                (tm t
                                    (Ordinal deux<3))
                              else
                               if nat_of_ord j == 2
                               then
                                point2R1
-                                 ((triangle2points t tm)
+                                 (tm t
                                     (Ordinal deux<3)) ^+ 2 +
                                point2R2
-                                 ((triangle2points t tm)
+                                 (tm t
                                     (Ordinal deux<3)) ^+ 2
                               else 1
                            else
@@ -1177,24 +1309,959 @@ have hyp: (\det (\matrix_(i<4, j<4) (if i == 0
                              else
                               if nat_of_ord j == 2
                               then point2R1 p ^+ 2 + point2R2 p ^+ 2 
-                - k1* (point2R1((triangle2points t tm)
+                - k1* (point2R1(tm t
                                   (Ordinal zero<3)) ^+ 2 +
                              point2R2
-                               ((triangle2points t tm)
+                               (tm t
                                   (Ordinal zero<3)) ^+ 2)
-                - k2* (point2R1((triangle2points t tm)
+                - k2* (point2R1(tm t
                                   (Ordinal un<3)) ^+ 2 +
                              point2R2
-                               ((triangle2points t tm)
+                               (tm t
                                   (Ordinal un<3)) ^+ 2)
-                - k3* (point2R1((triangle2points t tm)
+                - k3* (point2R1(tm t
                                   (Ordinal deux<3)) ^+ 2 +
                              point2R2
-                               ((triangle2points t tm)
+                               (tm t
                                   (Ordinal deux<3)) ^+ 2)
-                              else 0))); last first.
+                              else 0))).
 
-rewrite [X in Num.lt 0 X == false]hyp.
+
+  rewrite (expand_det_row _ (Ordinal (trois<4))).
+  rewrite big_ord_recl.
+  rewrite !mxE !//=.
+  set cof1 := cofactor
+  (\matrix_(i, j) (if i == 0
+                   then
+                    if j == 0
+                    then point2R1 (tm t (Ordinal zero<3))
+                    else
+                     if j == 1
+                     then point2R2 (tm t (Ordinal zero<3))
+                     else
+                      if nat_of_ord j == 2
+                      then
+                       point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
+                       point2R2 (tm t (Ordinal zero<3)) ^+ 2
+                      else 1
+                   else
+                    if i == 1
+                    then
+                     if j == 0
+                     then point2R1 (tm t (Ordinal un<3))
+                     else
+                      if j == 1
+                      then point2R2 (tm t (Ordinal un<3))
+                      else
+                       if nat_of_ord j == 2
+                       then
+                        point2R1 (tm t (Ordinal un<3)) ^+ 2 +
+                        point2R2 (tm t (Ordinal un<3)) ^+ 2
+                       else 1
+                    else
+                     if nat_of_ord i == 2
+                     then
+                      if j == 0
+                      then point2R1 (tm t (Ordinal deux<3))
+                      else
+                       if j == 1
+                       then point2R2 (tm t (Ordinal deux<3))
+                       else
+                        if nat_of_ord j == 2
+                        then
+                         point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
+                         point2R2 (tm t (Ordinal deux<3)) ^+ 2
+                        else 1
+                     else
+                      if j == 0
+                      then point2R1 p
+                      else
+                       if j == 1
+                       then point2R2 p
+                       else
+                        if nat_of_ord j == 2
+                        then point2R1 p ^+ 2 + point2R2 p ^+ 2
+                        else 1)) (Ordinal trois<4) ord0.
+
+  rewrite big_ord_recl.
+  rewrite !mxE !//=.
+  set cof2 := cofactor
+   (\matrix_(i, j) (if i == 0
+                    then
+                     if j == 0
+                     then point2R1 (tm t (Ordinal zero<3))
+                     else
+                      if j == 1
+                      then point2R2 (tm t (Ordinal zero<3))
+                      else
+                       if nat_of_ord j == 2
+                       then
+                        point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
+                        point2R2 (tm t (Ordinal zero<3)) ^+ 2
+                       else 1
+                    else
+                     if i == 1
+                     then
+                      if j == 0
+                      then point2R1 (tm t (Ordinal un<3))
+                      else
+                       if j == 1
+                       then point2R2 (tm t (Ordinal un<3))
+                       else
+                        if nat_of_ord j == 2
+                        then
+                         point2R1 (tm t (Ordinal un<3)) ^+ 2 +
+                         point2R2 (tm t (Ordinal un<3)) ^+ 2
+                        else 1
+                     else
+                      if nat_of_ord i == 2
+                      then
+                       if j == 0
+                       then point2R1 (tm t (Ordinal deux<3))
+                       else
+                        if j == 1
+                        then point2R2 (tm t (Ordinal deux<3))
+                        else
+                         if nat_of_ord j == 2
+                         then
+                          point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
+                          point2R2 (tm t (Ordinal deux<3)) ^+ 2
+                         else 1
+                      else
+                       if j == 0
+                       then point2R1 p
+                       else
+                        if j == 1
+                        then point2R2 p
+                        else
+                         if nat_of_ord j == 2
+                         then point2R1 p ^+ 2 + point2R2 p ^+ 2
+                         else 1)) (Ordinal trois<4) 
+   (lift ord0 ord0).
+
+  rewrite big_ord_recl.
+  rewrite !mxE !//=.
+  set cof3 := cofactor
+    (\matrix_(i, j) (if i == 0
+                     then
+                      if j == 0
+                      then point2R1 (tm t (Ordinal zero<3))
+                      else
+                       if j == 1
+                       then point2R2 (tm t (Ordinal zero<3))
+                       else
+                        if nat_of_ord j == 2
+                        then
+                         point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
+                         point2R2 (tm t (Ordinal zero<3)) ^+ 2
+                        else 1
+                     else
+                      if i == 1
+                      then
+                       if j == 0
+                       then point2R1 (tm t (Ordinal un<3))
+                       else
+                        if j == 1
+                        then point2R2 (tm t (Ordinal un<3))
+                        else
+                         if nat_of_ord j == 2
+                         then
+                          point2R1 (tm t (Ordinal un<3)) ^+ 2 +
+                          point2R2 (tm t (Ordinal un<3)) ^+ 2
+                         else 1
+                      else
+                       if nat_of_ord i == 2
+                       then
+                        if j == 0
+                        then point2R1 (tm t (Ordinal deux<3))
+                        else
+                         if j == 1
+                         then point2R2 (tm t (Ordinal deux<3))
+                         else
+                          if nat_of_ord j == 2
+                          then
+                           point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
+                           point2R2 (tm t (Ordinal deux<3)) ^+ 2
+                          else 1
+                       else
+                        if j == 0
+                        then point2R1 p
+                        else
+                         if j == 1
+                         then point2R2 p
+                         else
+                          if nat_of_ord j == 2
+                          then point2R1 p ^+ 2 + point2R2 p ^+ 2
+                          else 1)) (Ordinal trois<4)
+    (lift ord0 (lift ord0 ord0)).
+
+  rewrite big_ord_recl.
+  rewrite !mxE !//=.
+  set cof4 := cofactor
+     (\matrix_(i, j) (if i == 0
+                      then
+                       if j == 0
+                       then point2R1 (tm t (Ordinal zero<3))
+                       else
+                        if j == 1
+                        then point2R2 (tm t (Ordinal zero<3))
+                        else
+                         if nat_of_ord j == 2
+                         then
+                          point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
+                          point2R2 (tm t (Ordinal zero<3)) ^+ 2
+                         else 1
+                      else
+                       if i == 1
+                       then
+                        if j == 0
+                        then point2R1 (tm t (Ordinal un<3))
+                        else
+                         if j == 1
+                         then point2R2 (tm t (Ordinal un<3))
+                         else
+                          if nat_of_ord j == 2
+                          then
+                           point2R1 (tm t (Ordinal un<3)) ^+ 2 +
+                           point2R2 (tm t (Ordinal un<3)) ^+ 2
+                          else 1
+                       else
+                        if nat_of_ord i == 2
+                        then
+                         if j == 0
+                         then point2R1 (tm t (Ordinal deux<3))
+                         else
+                          if j == 1
+                          then point2R2 (tm t (Ordinal deux<3))
+                          else
+                           if nat_of_ord j == 2
+                           then
+                            point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
+                            point2R2 (tm t (Ordinal deux<3)) ^+ 2
+                           else 1
+                        else
+                         if j == 0
+                         then point2R1 p
+                         else
+                          if j == 1
+                          then point2R2 p
+                          else
+                           if nat_of_ord j == 2
+                           then point2R1 p ^+ 2 + point2R2 p ^+ 2
+                           else 1)) (Ordinal trois<4)
+     (lift ord0 (lift ord0 (lift ord0 ord0))).
+
+  rewrite big_ord0.
+  rewrite /cof1.
+  rewrite /cofactor.
+  rewrite expand_det33 !mxE !//=.
+  rewrite /cof2.
+  rewrite /cofactor.
+  rewrite expand_det33 !mxE !//=.
+  rewrite /cof3.
+  rewrite /cofactor.
+  rewrite expand_det33 !mxE !//=.
+  rewrite /cof4.
+  rewrite /cofactor.
+  rewrite expand_det33 !mxE !//=.
+
+
+rewrite (expand_det_row _ (Ordinal (trois<4))).
+rewrite big_ord_recl.
+rewrite !mxE !//=.
+set cof1' := cofactor
+  (\matrix_(i, j) (if i == 0
+                   then
+                    if j == 0
+                    then point2R1 (tm t (Ordinal zero<3))
+                    else
+                     if j == 1
+                     then point2R2 (tm t (Ordinal zero<3))
+                     else
+                      if nat_of_ord j == 2
+                      then
+                       point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
+                       point2R2 (tm t (Ordinal zero<3)) ^+ 2
+                      else 1
+                   else
+                    if i == 1
+                    then
+                     if j == 0
+                     then point2R1 (tm t (Ordinal un<3))
+                     else
+                      if j == 1
+                      then point2R2 (tm t (Ordinal un<3))
+                      else
+                       if nat_of_ord j == 2
+                       then
+                        point2R1 (tm t (Ordinal un<3)) ^+ 2 +
+                        point2R2 (tm t (Ordinal un<3)) ^+ 2
+                       else 1
+                    else
+                     if nat_of_ord i == 2
+                     then
+                      if j == 0
+                      then point2R1 (tm t (Ordinal deux<3))
+                      else
+                       if j == 1
+                       then point2R2 (tm t (Ordinal deux<3))
+                       else
+                        if nat_of_ord j == 2
+                        then
+                         point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
+                         point2R2 (tm t (Ordinal deux<3)) ^+ 2
+                        else 1
+                     else
+                      if j == 0
+                      then 0
+                      else
+                       if j == 1
+                       then 0
+                       else
+                        if nat_of_ord j == 2
+                        then
+                         point2R1 p ^+ 2 + point2R2 p ^+ 2 -
+                         k1 *
+                         (point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
+                          point2R2 (tm t (Ordinal zero<3)) ^+ 2) -
+                         k2 *
+                         (point2R1 (tm t (Ordinal un<3)) ^+ 2 +
+                          point2R2 (tm t (Ordinal un<3)) ^+ 2) -
+                         k3 *
+                         (point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
+                          point2R2 (tm t (Ordinal deux<3)) ^+ 2)
+                        else 0)) (Ordinal trois<4) ord0.
+rewrite big_ord_recl.
+rewrite !mxE !//=.
+set cof2' := cofactor
+   (\matrix_(i, j) (if i == 0
+                    then
+                     if j == 0
+                     then point2R1 (tm t (Ordinal zero<3))
+                     else
+                      if j == 1
+                      then point2R2 (tm t (Ordinal zero<3))
+                      else
+                       if nat_of_ord j == 2
+                       then
+                        point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
+                        point2R2 (tm t (Ordinal zero<3)) ^+ 2
+                       else 1
+                    else
+                     if i == 1
+                     then
+                      if j == 0
+                      then point2R1 (tm t (Ordinal un<3))
+                      else
+                       if j == 1
+                       then point2R2 (tm t (Ordinal un<3))
+                       else
+                        if nat_of_ord j == 2
+                        then
+                         point2R1 (tm t (Ordinal un<3)) ^+ 2 +
+                         point2R2 (tm t (Ordinal un<3)) ^+ 2
+                        else 1
+                     else
+                      if nat_of_ord i == 2
+                      then
+                       if j == 0
+                       then point2R1 (tm t (Ordinal deux<3))
+                       else
+                        if j == 1
+                        then point2R2 (tm t (Ordinal deux<3))
+                        else
+                         if nat_of_ord j == 2
+                         then
+                          point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
+                          point2R2 (tm t (Ordinal deux<3)) ^+ 2
+                         else 1
+                      else
+                       if j == 0
+                       then 0
+                       else
+                        if j == 1
+                        then 0
+                        else
+                         if nat_of_ord j == 2
+                         then
+                          point2R1 p ^+ 2 + point2R2 p ^+ 2 -
+                          k1 *
+                          (point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
+                           point2R2 (tm t (Ordinal zero<3)) ^+ 2) -
+                          k2 *
+                          (point2R1 (tm t (Ordinal un<3)) ^+ 2 +
+                           point2R2 (tm t (Ordinal un<3)) ^+ 2) -
+                          k3 *
+                          (point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
+                           point2R2 (tm t (Ordinal deux<3)) ^+ 2)
+                         else 0)) (Ordinal trois<4) 
+   (lift ord0 ord0).
+rewrite big_ord_recl.
+rewrite !mxE !//=.
+set cof3' := cofactor
+    (\matrix_(i, j) (if i == 0
+                     then
+                      if j == 0
+                      then point2R1 (tm t (Ordinal zero<3))
+                      else
+                       if j == 1
+                       then point2R2 (tm t (Ordinal zero<3))
+                       else
+                        if nat_of_ord j == 2
+                        then
+                         point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
+                         point2R2 (tm t (Ordinal zero<3)) ^+ 2
+                        else 1
+                     else
+                      if i == 1
+                      then
+                       if j == 0
+                       then point2R1 (tm t (Ordinal un<3))
+                       else
+                        if j == 1
+                        then point2R2 (tm t (Ordinal un<3))
+                        else
+                         if nat_of_ord j == 2
+                         then
+                          point2R1 (tm t (Ordinal un<3)) ^+ 2 +
+                          point2R2 (tm t (Ordinal un<3)) ^+ 2
+                         else 1
+                      else
+                       if nat_of_ord i == 2
+                       then
+                        if j == 0
+                        then point2R1 (tm t (Ordinal deux<3))
+                        else
+                         if j == 1
+                         then point2R2 (tm t (Ordinal deux<3))
+                         else
+                          if nat_of_ord j == 2
+                          then
+                           point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
+                           point2R2 (tm t (Ordinal deux<3)) ^+ 2
+                          else 1
+                       else
+                        if j == 0
+                        then 0
+                        else
+                         if j == 1
+                         then 0
+                         else
+                          if nat_of_ord j == 2
+                          then
+                           point2R1 p ^+ 2 + point2R2 p ^+ 2 -
+                           k1 *
+                           (point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
+                            point2R2 (tm t (Ordinal zero<3)) ^+ 2) -
+                           k2 *
+                           (point2R1 (tm t (Ordinal un<3)) ^+ 2 +
+                            point2R2 (tm t (Ordinal un<3)) ^+ 2) -
+                           k3 *
+                           (point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
+                            point2R2 (tm t (Ordinal deux<3)) ^+ 2)
+                          else 0)) (Ordinal trois<4)
+    (lift ord0 (lift ord0 ord0)).
+
+rewrite big_ord_recl.
+rewrite !mxE !//=.
+set cof4' :=  cofactor
+     (\matrix_(i, j) (if i == 0
+                      then
+                       if j == 0
+                       then point2R1 (tm t (Ordinal zero<3))
+                       else
+                        if j == 1
+                        then point2R2 (tm t (Ordinal zero<3))
+                        else
+                         if nat_of_ord j == 2
+                         then
+                          point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
+                          point2R2 (tm t (Ordinal zero<3)) ^+ 2
+                         else 1
+                      else
+                       if i == 1
+                       then
+                        if j == 0
+                        then point2R1 (tm t (Ordinal un<3))
+                        else
+                         if j == 1
+                         then point2R2 (tm t (Ordinal un<3))
+                         else
+                          if nat_of_ord j == 2
+                          then
+                           point2R1 (tm t (Ordinal un<3)) ^+ 2 +
+                           point2R2 (tm t (Ordinal un<3)) ^+ 2
+                          else 1
+                       else
+                        if nat_of_ord i == 2
+                        then
+                         if j == 0
+                         then point2R1 (tm t (Ordinal deux<3))
+                         else
+                          if j == 1
+                          then point2R2 (tm t (Ordinal deux<3))
+                          else
+                           if nat_of_ord j == 2
+                           then
+                            point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
+                            point2R2 (tm t (Ordinal deux<3)) ^+ 2
+                           else 1
+                        else
+                         if j == 0
+                         then 0
+                         else
+                          if j == 1
+                          then 0
+                          else
+                           if nat_of_ord j == 2
+                           then
+                            point2R1 p ^+ 2 + point2R2 p ^+ 2 -
+                            k1 *
+                            (point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
+                             point2R2 (tm t (Ordinal zero<3)) ^+ 2) -
+                            k2 *
+                            (point2R1 (tm t (Ordinal un<3)) ^+ 2 +
+                             point2R2 (tm t (Ordinal un<3)) ^+ 2) -
+                            k3 *
+                            (point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
+                             point2R2 (tm t (Ordinal deux<3)) ^+ 2)
+                           else 0)) (Ordinal trois<4)
+     (lift ord0 (lift ord0 (lift ord0 ord0))).
+rewrite big_ord0.
+
+rewrite /cof3'.
+rewrite /cofactor.
+rewrite expand_det33 !mxE !//=.
+
+rewrite !mulN1r !addr0 !//=.
+rewrite !expr2 !//=.
+rewrite !exprD !expr1 !expr0 !//= !mulr1 !//= .
+rewrite !mulN1r !//=.
+rewrite !mul1r.
+rewrite !mul0l !plus0l !plus0r.
+
+
+
+rewrite H1 H2.
+  set a := point2R1 (tm t (Ordinal zero<3)).
+  set b := point2R2 (tm t (Ordinal zero<3)).
+  set c := point2R1 (tm t (Ordinal un<3)).
+  set d := point2R2 (tm t (Ordinal un<3)).
+  set e := point2R1 (tm t (Ordinal deux<3)).
+  set f := point2R2 (tm t (Ordinal deux<3)).
+  set g := point2R1 p.
+  set h := point2R2 p.
+have infok1: k1 = 1 - k2 - k3.
+  rewrite -(eqP H3).  simpl in k1. prefield; ring.
+rewrite infok1.
+prefield.
+ring.
+
+
+
+rewrite [X in Num.lt 0 X == true]hyp.
+rewrite (expand_det_row _ (Ordinal (trois<4))).
+rewrite big_ord_recl.
+rewrite !mxE !//=.
+set cof1 := cofactor
+     (\matrix_(i, j) (if i == 0
+                      then
+                       if j == 0
+                       then
+                        point2R1
+                          (tm t (Ordinal zero<3))
+                       else
+                        if j == 1
+                        then
+                         point2R2
+                           (tm t (Ordinal zero<3))
+                        else
+                         if nat_of_ord j == 2
+                         then
+                          point2R1
+                            (tm t (Ordinal zero<3))
+                          ^+ 2 +
+                          point2R2
+                            (tm t (Ordinal zero<3))
+                          ^+ 2
+                         else 1
+                      else
+                       if i == 1
+                       then
+                        if j == 0
+                        then
+                         point2R1
+                           (tm t (Ordinal un<3))
+                        else
+                         if j == 1
+                         then
+                          point2R2
+                            (tm t (Ordinal un<3))
+                         else
+                          if nat_of_ord j == 2
+                          then
+                           point2R1
+                             (tm t (Ordinal un<3))
+                           ^+ 2 +
+                           point2R2
+                             (tm t (Ordinal un<3))
+                           ^+ 2
+                          else 1
+                       else
+                        if nat_of_ord i == 2
+                        then
+                         if j == 0
+                         then
+                          point2R1
+                            (tm t (Ordinal deux<3))
+                         else
+                          if j == 1
+                          then
+                           point2R2
+                             (tm t
+                                (Ordinal deux<3))
+                          else
+                           if nat_of_ord j == 2
+                           then
+                            point2R1
+                              (tm t
+                                 (Ordinal deux<3)) ^+ 2 +
+                            point2R2
+                              (tm t
+                                 (Ordinal deux<3)) ^+ 2
+                           else 1
+                        else
+                         if j == 0
+                         then 0
+                         else
+                          if j == 1
+                          then 0
+                          else
+                           if nat_of_ord j == 2
+                           then
+                            point2R1 p ^+ 2 + point2R2 p ^+ 2 -
+                            k1 *
+                            (point2R1
+                               (tm t
+                                  (Ordinal zero<3)) ^+ 2 +
+                             point2R2
+                               (tm t
+                                  (Ordinal zero<3)) ^+ 2) -
+                            k2 *
+                            (point2R1
+                               (tm t
+                                  (Ordinal un<3)) ^+ 2 +
+                             point2R2
+                               (tm t
+                                  (Ordinal un<3)) ^+ 2) -
+                            k3 *
+                            (point2R1
+                               (tm t
+                                  (Ordinal deux<3)) ^+ 2 +
+                             point2R2
+                               (tm t
+                                  (Ordinal deux<3)) ^+ 2)
+                           else 0)) (Ordinal trois<4) ord0.
+rewrite big_ord_recl.
+rewrite !mxE !//=.
+set cof2 := cofactor
+     (\matrix_(i, j) (if i == 0
+                      then
+                       if j == 0
+                       then
+                        point2R1
+                          (tm t (Ordinal zero<3))
+                       else
+                        if j == 1
+                        then
+                         point2R2
+                           (tm t (Ordinal zero<3))
+                        else
+                         if nat_of_ord j == 2
+                         then
+                          point2R1
+                            (tm t (Ordinal zero<3))
+                          ^+ 2 +
+                          point2R2
+                            (tm t (Ordinal zero<3))
+                          ^+ 2
+                         else 1
+                      else
+                       if i == 1
+                       then
+                        if j == 0
+                        then
+                         point2R1
+                           (tm t (Ordinal un<3))
+                        else
+                         if j == 1
+                         then
+                          point2R2
+                            (tm t (Ordinal un<3))
+                         else
+                          if nat_of_ord j == 2
+                          then
+                           point2R1
+                             (tm t (Ordinal un<3))
+                           ^+ 2 +
+                           point2R2
+                             (tm t (Ordinal un<3))
+                           ^+ 2
+                          else 1
+                       else
+                        if nat_of_ord i == 2
+                        then
+                         if j == 0
+                         then
+                          point2R1
+                            (tm t (Ordinal deux<3))
+                         else
+                          if j == 1
+                          then
+                           point2R2
+                             (tm t
+                                (Ordinal deux<3))
+                          else
+                           if nat_of_ord j == 2
+                           then
+                            point2R1
+                              (tm t
+                                 (Ordinal deux<3)) ^+ 2 +
+                            point2R2
+                              (tm t
+                                 (Ordinal deux<3)) ^+ 2
+                           else 1
+                        else
+                         if j == 0
+                         then 0
+                         else
+                          if j == 1
+                          then 0
+                          else
+                           if nat_of_ord j == 2
+                           then
+                            point2R1 p ^+ 2 + point2R2 p ^+ 2 -
+                            k1 *
+                            (point2R1
+                               (tm t
+                                  (Ordinal zero<3)) ^+ 2 +
+                             point2R2
+                               (tm t
+                                  (Ordinal zero<3)) ^+ 2) -
+                            k2 *
+                            (point2R1
+                               (tm t
+                                  (Ordinal un<3)) ^+ 2 +
+                             point2R2
+                               (tm t
+                                  (Ordinal un<3)) ^+ 2) -
+                            k3 *
+                            (point2R1
+                               (tm t
+                                  (Ordinal deux<3)) ^+ 2 +
+                             point2R2
+                               (tm t
+                                  (Ordinal deux<3)) ^+ 2)
+                           else 0)) (Ordinal trois<4)
+                                          (lift ord0 ord0).
+rewrite big_ord_recl.
+rewrite !mxE !//=.
+rewrite /cofactor.
+rewrite expand_det33 !mxE !//=.
+rewrite big_ord_recl.
+rewrite big_ord0.
+rewrite !mxE !//=.
+rewrite expand_det33 !mxE !//=.
+
+move:toriented.
+rewrite /leftpoint.
+rewrite expand_det33 !mxE !//=.
+
+rewrite !mulN1r !addr0 !//=.
+rewrite !expr2 !//=.
+rewrite !exprD !expr1 !expr0 !//= !mulr1 !//= .
+rewrite !mulN1r !//=.
+rewrite !mul1r.
+
+have : k1 = 1 - k2 - k3.
+  rewrite -(eqP H3).  simpl in k1. prefield; ring.
+move=> hypk1.
+rewrite hypk1.
+
+move=> toriented.
+apply/eqP.
+move:toriented.
+set bd := (point2R1 (tm t (Ordinal zero<3)) *
+               point2R2 (tm t (Ordinal un<3)) -
+               point2R1 (tm t (Ordinal zero<3)) *
+               point2R2 (tm t (Ordinal deux<3)) -
+               point2R2 (tm t (Ordinal zero<3)) *
+               point2R1 (tm t (Ordinal un<3)) +
+               point2R2 (tm t (Ordinal zero<3)) *
+               point2R1 (tm t (Ordinal deux<3)) +
+               point2R1 (tm t (Ordinal un<3)) *
+               point2R2 (tm t (Ordinal deux<3)) -
+               point2R2 (tm t (Ordinal un<3)) *
+               point2R1 (tm t (Ordinal deux<3))).
+move=>toriented.
+have devpt: (0 * cof1 +
+   (0 * cof2 +
+    ((point2R1 p * point2R1 p + point2R2 p * point2R2 p -
+      (1 - k2 - k3) *
+      (point2R1 (tm t (Ordinal zero<3)) *
+       point2R1 (tm t (Ordinal zero<3)) +
+       point2R2 (tm t (Ordinal zero<3)) *
+       point2R2 (tm t (Ordinal zero<3))) -
+      k2 *
+      (point2R1 (tm t (Ordinal un<3)) *
+       point2R1 (tm t (Ordinal un<3)) +
+       point2R2 (tm t (Ordinal un<3)) *
+       point2R2 (tm t (Ordinal un<3))) -
+      k3 *
+      (point2R1 (tm t (Ordinal deux<3)) *
+       point2R1 (tm t (Ordinal deux<3)) +
+       point2R2 (tm t (Ordinal deux<3)) *
+       point2R2 (tm t (Ordinal deux<3)))) *
+     -
+     (point2R1 (tm t (Ordinal zero<3)) *
+      point2R2 (tm t (Ordinal un<3)) -
+      point2R1 (tm t (Ordinal zero<3)) *
+      point2R2 (tm t (Ordinal deux<3)) -
+      point2R2 (tm t (Ordinal zero<3)) *
+      point2R1 (tm t (Ordinal un<3)) +
+      point2R2 (tm t (Ordinal zero<3)) *
+      point2R1 (tm t (Ordinal deux<3)) +
+      point2R1 (tm t (Ordinal un<3)) *
+      point2R2 (tm t (Ordinal deux<3)) -
+      point2R2 (tm t (Ordinal un<3)) *
+      point2R1 (tm t (Ordinal deux<3))) +
+     0 *
+     (point2R1 (tm t (Ordinal zero<3)) *
+      point2R2 (tm t (Ordinal un<3)) *
+      (point2R1 (tm t (Ordinal deux<3)) *
+       point2R1 (tm t (Ordinal deux<3)) +
+       point2R2 (tm t (Ordinal deux<3)) *
+       point2R2 (tm t (Ordinal deux<3))) -
+      point2R1 (tm t (Ordinal zero<3)) *
+      (point2R1 (tm t (Ordinal un<3)) *
+       point2R1 (tm t (Ordinal un<3)) +
+       point2R2 (tm t (Ordinal un<3)) *
+       point2R2 (tm t (Ordinal un<3))) *
+      point2R2 (tm t (Ordinal deux<3)) -
+      point2R2 (tm t (Ordinal zero<3)) *
+      point2R1 (tm t (Ordinal un<3)) *
+      (point2R1 (tm t (Ordinal deux<3)) *
+       point2R1 (tm t (Ordinal deux<3)) +
+       point2R2 (tm t (Ordinal deux<3)) *
+       point2R2 (tm t (Ordinal deux<3))) +
+      point2R2 (tm t (Ordinal zero<3)) *
+      (point2R1 (tm t (Ordinal un<3)) *
+       point2R1 (tm t (Ordinal un<3)) +
+       point2R2 (tm t (Ordinal un<3)) *
+       point2R2 (tm t (Ordinal un<3))) *
+      point2R1 (tm t (Ordinal deux<3)) +
+      (point2R1 (tm t (Ordinal zero<3)) *
+       point2R1 (tm t (Ordinal zero<3)) +
+       point2R2 (tm t (Ordinal zero<3)) *
+       point2R2 (tm t (Ordinal zero<3))) *
+      point2R1 (tm t (Ordinal un<3)) *
+      point2R2 (tm t (Ordinal deux<3)) -
+      (point2R1 (tm t (Ordinal zero<3)) *
+       point2R1 (tm t (Ordinal zero<3)) +
+       point2R2 (tm t (Ordinal zero<3)) *
+       point2R2 (tm t (Ordinal zero<3))) *
+      point2R2 (tm t (Ordinal un<3)) *
+      point2R1 (tm t (Ordinal deux<3))))))
+  = (-(    (point2R1 p)^+2 + (point2R2 p)^+2 
+        -(1-k2-k3) *  (   (point2R1 (tm t (Ordinal zero<3)))^+2 
+                   +     (point2R2 (tm t (Ordinal zero<3)))^+2)
+        -k2*(   (point2R1 (tm t (Ordinal un<3)))^+2
+                   + (point2R2 (tm t (Ordinal un<3)))^+2  )
+        -k3*(   (point2R1 (tm t (Ordinal deux<3)))^+2 
+                   + (point2R2 (tm t (Ordinal deux<3)))^+2)  ))
+                           * bd.
+  rewrite /bd.
+  set a := point2R1 (tm t (Ordinal zero<3)).
+  set b := point2R2 (tm t (Ordinal zero<3)).
+  set c := point2R1 (tm t (Ordinal un<3)).
+  set d := point2R2 (tm t (Ordinal un<3)).
+  set e := point2R1 (tm t (Ordinal deux<3)).
+  set f := point2R2 (tm t (Ordinal deux<3)).
+  set g := point2R1 p.
+  set h := point2R2 p.
+  rewrite !expr2 !//=.
+  rewrite !mul0l !plus0l !plus0r.
+  prefield.
+  ring.
+rewrite devpt.
+Check pmulr_llt0.
+Search _ (Num.lt _ (_*_)).
+   rewrite (pmulr_lgt0 (-
+   (point2R1 p ^+ 2 + point2R2 p ^+ 2 -
+    (1 - k2 - k3) *
+    (point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
+     point2R2 (tm t (Ordinal zero<3)) ^+ 2) -
+    k2 *
+    (point2R1 (tm t (Ordinal un<3)) ^+ 2 +
+     point2R2 (tm t (Ordinal un<3)) ^+ 2) -
+    k3 *
+    (point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
+     point2R2 (tm t (Ordinal deux<3)) ^+ 2))) toriented). 
+
+
+About ltr_oppr.
+rewrite ltr_oppr oppr0.
+rewrite H1 H2 !//=.
+
+rewrite hypk1.
+
+(*Ne pas oublier d'utiliser le fait que k1, k2 et k3 >0 *)
+have: ((1 - k2 - k3) * point2R1 (tm t (Ordinal zero<3)) +
+    k2 * point2R1 (tm t (Ordinal un<3)) +
+    k3 * point2R1 (tm t (Ordinal deux<3))) ^+ 2 +
+   ((1 - k2 - k3) * point2R2 (tm t (Ordinal zero<3)) +
+    k2 * point2R2 (tm t (Ordinal un<3)) +
+    k3 * point2R2 (tm t (Ordinal deux<3))) ^+ 2 -
+   (1 - k2 - k3) *
+   (point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
+    point2R2 (tm t (Ordinal zero<3)) ^+ 2) -
+   k2 *
+   (point2R1 (tm t (Ordinal un<3)) ^+ 2 +
+    point2R2 (tm t (Ordinal un<3)) ^+ 2) -
+   k3 *
+   (point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
+    point2R2 (tm t (Ordinal deux<3)) ^+ 2) 
+
+= ( k2 * (point2R1 (tm t (Ordinal un<3))-point2R1 (tm t (Ordinal zero<3))) +
+    k3 * (point2R1 (tm t (Ordinal deux<3))-point2R1 (tm t (Ordinal zero<3)))) ^+ 2 +
+   (k2 * (point2R2 (tm t (Ordinal un<3))-point2R2 (tm t (Ordinal zero<3))) +
+    k3 * (point2R2 (tm t (Ordinal deux<3))-point2R2 (tm t (Ordinal zero<3)))) ^+ 2 
+  - k2 *
+   ((point2R1 (tm t (Ordinal un<3))-point2R1 (tm t (Ordinal zero<3))) ^+ 2 +
+    (point2R2 (tm t (Ordinal un<3))-point2R2 (tm t (Ordinal zero<3))) ^+ 2) -
+   k3 *
+   ((point2R1 (tm t (Ordinal deux<3))-point2R1 (tm t (Ordinal zero<3))) ^+ 2 +
+    (point2R2 (tm t (Ordinal deux<3))-point2R2 (tm t (Ordinal zero<3))) ^+ 2).
+
+
+  set a := point2R1 (tm t (Ordinal zero<3)).
+  set b := point2R2 (tm t (Ordinal zero<3)).
+  set c := point2R1 (tm t (Ordinal un<3)).
+  set d := point2R2 (tm t (Ordinal un<3)).
+  set e := point2R1 (tm t (Ordinal deux<3)).
+  set f := point2R2 (tm t (Ordinal deux<3)).
+  rewrite !expr2 !//=.
+  prefield.
+  ring.
+
+move=> egalite_wlog.
+rewrite egalite_wlog.
+  set c := point2R1 (tm t (Ordinal un<3)) - point2R1 (tm t (Ordinal zero<3)).
+  set d := point2R2 (tm t (Ordinal un<3)) - point2R2 (tm t (Ordinal zero<3)).
+  set e := point2R1 (tm t (Ordinal deux<3)) - point2R1 (tm t (Ordinal zero<3)).
+  set f := point2R2 (tm t (Ordinal deux<3)) - point2R2 (tm t (Ordinal zero<3)).
+
+
 
 
 
@@ -1206,7 +2273,7 @@ Lemma orientedunhookT (tm : trianglemap) (g : T -> seq T) t1 :
   forall t, oriented t (unhookT default_triangle t1 tm g).2.
 Proof.
 move => univ_o t.
-rewrite /unhookT/=/oriented ffunE; case h : (t == t1); first by [].   
+rewrite /unhookT/=/oriented ffunE; case h : (t == t1); first by [].
 exact: (univ_o t).
 Qed.
 
