@@ -131,8 +131,6 @@ Definition oriented (t : T) (tm :trianglemap) :=
    un triangle et s'écrire comme un barycentre des 3 sommets *)
 (* -------------------------------------------------------------------- *)
 
-
-
 Lemma eq_bar (t:T) (tm : trianglemap) (p:point) 
   (toriented  : (leftpoint ((tm t) (Ordinal(zero<3))) ((tm t) (Ordinal(un<3))) 
                   ((tm t) (Ordinal(deux<3))) > 0)) :
@@ -142,7 +140,7 @@ Lemma eq_bar (t:T) (tm : trianglemap) (p:point)
                    > 0)
 && (leftpoint p ((tm t) (Ordinal(deux<3))) ((tm t) (Ordinal(zero<3))) 
                   > 0)
-<-> exists k1, exists k2, exists k3,
+<-> exists (k1 k2 k3 :rat),
  (point2R1 p = k1*point2R1 ((tm t) (Ordinal(zero<3)))
                 + k2*point2R1 ((tm t) (Ordinal(un<3)))
                 + k3*point2R1 ((tm t) (Ordinal(deux<3)))) /\
@@ -411,50 +409,552 @@ set c := point2R1 (tm t (Ordinal un<3)).
 set d := point2R2 (tm t (Ordinal un<3)).
 set e := point2R1 (tm t (Ordinal deux<3)).
 set f := point2R2 (tm t (Ordinal deux<3)).
+rewrite (_ : k1 = 1 - k2 - k3).
+simpl in k1, k2, k3.
+prefield. field.
+
+
+rewrite -(eqP H3). simpl in k1. prefield; ring.
+
+
+rewrite u1q.
+Search _ (Num.lt _ (_*_)).
+rewrite pmulr_rgt0; last first.
+exact: H6.
+rewrite toriented !//=.
+
+
+(* On refait de même avec les points un<3 et deux<3 *)
+set u2 := \det _.
+  have u2q : u2 = k1 * bd.
+  rewrite /u2.
+  rewrite (expand_det_row _ (Ordinal (deux<3))).
+  rewrite big_ord_recl.
+  rewrite mxE. rewrite //=.
+  rewrite big_ord_recl.
+  rewrite big_ord_recl.
+  rewrite big_ord0.
+  rewrite mxE. rewrite //=.
+  rewrite mxE. rewrite //=.
+  
+  rewrite /cofactor.
+  rewrite !//=.
+  
+  rewrite (expand_det_row _ (Ordinal (un<2))).
+  rewrite big_ord_recl.
+  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
+  rewrite /cofactor.
+  rewrite !//=.
+
+  rewrite big_ord_recl.
+  rewrite big_ord0.
+  rewrite !mxE !//=.
+rewrite /row' /col'.
+Locate "\matrix_".
+set F := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F i j = (F ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+set F2 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F2 i j = (F2 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+
+  rewrite (expand_det_row _ (Ordinal (un<2))).
+  rewrite big_ord_recl.
+  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
+  rewrite /cofactor.
+  rewrite !//=.
+
+rewrite /row' /col'.
+
+set F3 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F3 i j = (F3 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+  rewrite big_ord_recl.
+  rewrite big_ord0.
+  rewrite (expand_det_row _ (Ordinal (un<2))).
+  rewrite big_ord_recl.
+  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
+  rewrite /cofactor.
+  rewrite !//=.
+
+set F4 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F4 i j = (F4 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+  rewrite big_ord_recl.
+  rewrite big_ord0.
+  rewrite !mxE !//=.
+
+rewrite /col' /row'.
+set F5 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F5 i j = (F5 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+set F6 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F6 i j = (F6 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+(* Expansion de bd *)
+
+rewrite /bd /leftpoint.
+rewrite (expand_det_row _ (Ordinal (deux<3))).
+rewrite big_ord_recl.
+rewrite !mxE !//=.
+rewrite /cofactor.
+rewrite (expand_det_row _ (Ordinal (un<2))).
+rewrite big_ord_recl.
+rewrite !mxE !//=.
+rewrite /cofactor.
+
+rewrite /row' /col'.
+set F7 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F7 i j = (F7 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+rewrite big_ord_recl big_ord0.
+rewrite !mxE !//=.
+set F8 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F8 i j = (F8 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+rewrite big_ord_recl.
+  rewrite (expand_det_row _ (Ordinal (un<2))).
+  rewrite big_ord_recl.
+  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
+  rewrite /cofactor.
+  rewrite !//=.
+rewrite big_ord0 big_ord_recl.
+rewrite !mxE !//=.
+
+rewrite /col' /row'.
+set F9 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F9 i j = (F9 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+rewrite big_ord_recl big_ord0.
+rewrite !mxE !//=.
+
+set F10 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F10 i j = (F10 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+  rewrite (expand_det_row _ (Ordinal (un<2))).
+  rewrite big_ord_recl.
+  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
+  rewrite /cofactor.
+  rewrite !//=.
+rewrite !mxE !//=.
+
+rewrite /col' /row'.
+set F11 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F11 i j = (F11 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+rewrite big_ord_recl big_ord0.
+rewrite !mxE !//=.
+set F12 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F12 i j = (F12 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+rewrite !//=.
+rewrite /bump !//=.
+rewrite /F6. rewrite 4!mxE /=.
+rewrite /F. rewrite 4!mxE /=.
+rewrite /F2. rewrite 4!mxE /=.
+rewrite /F4. rewrite 4!mxE /=.
+rewrite /F5. rewrite 4!mxE /=.
+rewrite /F7. rewrite 4!mxE /=.
+rewrite /F8. rewrite 4!mxE /=.
+rewrite /F9. rewrite 4!mxE /=.
+rewrite /F12. rewrite 4!mxE /=.
+rewrite /F11. rewrite 4!mxE /=.
+rewrite /F3. rewrite 4!mxE /=.
+rewrite /F10. rewrite 4!mxE /=.
+
+rewrite !mulN1r !addr0 !//=.
+rewrite !expr2 !//=.
+rewrite !exprD !expr1 !expr0 !//= !mulr1 !//= .
+rewrite !mulN1r !//=.
+rewrite !mul1r.
+rewrite !mulrN1.
+
+set a := point2R1 (tm t (Ordinal zero<3)).
+set b := point2R2 (tm t (Ordinal zero<3)).
+set c := point2R1 (tm t (Ordinal un<3)).
+set d := point2R2 (tm t (Ordinal un<3)).
+set e := point2R1 (tm t (Ordinal deux<3)).
+set f := point2R2 (tm t (Ordinal deux<3)).
+rewrite (_ : k1 = 1 - k2 - k3); last first.
+  rewrite -(eqP H3). simpl in k1. prefield; ring.
+simpl in k2, k3.
+prefield.
+field.
+
+rewrite u2q.
+Search _ (Num.lt _ (_*_)).
+rewrite pmulr_rgt0; last first.
+exact: H4.
+rewrite toriented !//=.
+
+
+(* On refait de même avec les points deux<3 et zero<3 *)
+set u3 := \det _.
+  have u3q : u3 = k2 * bd.
+  rewrite /u3.
+  rewrite (expand_det_row _ (Ordinal (deux<3))).
+  rewrite big_ord_recl.
+  rewrite mxE. rewrite //=.
+  rewrite big_ord_recl.
+  rewrite big_ord_recl.
+  rewrite big_ord0.
+  rewrite mxE. rewrite //=.
+  rewrite mxE. rewrite //=.
+  
+  rewrite /cofactor.
+  rewrite !//=.
+  
+  rewrite (expand_det_row _ (Ordinal (un<2))).
+  rewrite big_ord_recl.
+  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
+  rewrite /cofactor.
+  rewrite !//=.
+
+  rewrite big_ord_recl.
+  rewrite big_ord0.
+  rewrite !mxE !//=.
+rewrite /row' /col'.
+Locate "\matrix_".
+set F := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F i j = (F ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+set F2 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F2 i j = (F2 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+
+  rewrite (expand_det_row _ (Ordinal (un<2))).
+  rewrite big_ord_recl.
+  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
+  rewrite /cofactor.
+  rewrite !//=.
+
+rewrite /row' /col'.
+
+set F3 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F3 i j = (F3 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+  rewrite big_ord_recl.
+  rewrite big_ord0.
+  rewrite (expand_det_row _ (Ordinal (un<2))).
+  rewrite big_ord_recl.
+  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
+  rewrite /cofactor.
+  rewrite !//=.
+
+set F4 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F4 i j = (F4 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+  rewrite big_ord_recl.
+  rewrite big_ord0.
+  rewrite !mxE !//=.
+
+rewrite /col' /row'.
+set F5 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F5 i j = (F5 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+set F6 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F6 i j = (F6 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+(* Expansion de bd *)
+
+rewrite /bd /leftpoint.
+rewrite (expand_det_row _ (Ordinal (deux<3))).
+rewrite big_ord_recl.
+rewrite !mxE !//=.
+rewrite /cofactor.
+rewrite (expand_det_row _ (Ordinal (un<2))).
+rewrite big_ord_recl.
+rewrite !mxE !//=.
+rewrite /cofactor.
+
+rewrite /row' /col'.
+set F7 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F7 i j = (F7 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+rewrite big_ord_recl big_ord0.
+rewrite !mxE !//=.
+set F8 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F8 i j = (F8 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+rewrite big_ord_recl.
+  rewrite (expand_det_row _ (Ordinal (un<2))).
+  rewrite big_ord_recl.
+  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
+  rewrite /cofactor.
+  rewrite !//=.
+rewrite big_ord0 big_ord_recl.
+rewrite !mxE !//=.
+
+rewrite /col' /row'.
+set F9 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F9 i j = (F9 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+rewrite big_ord_recl big_ord0.
+rewrite !mxE !//=.
+
+set F10 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F10 i j = (F10 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+  rewrite (expand_det_row _ (Ordinal (un<2))).
+  rewrite big_ord_recl.
+  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
+  rewrite /cofactor.
+  rewrite !//=.
+rewrite !mxE !//=.
+
+rewrite /col' /row'.
+set F11 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F11 i j = (F11 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+rewrite big_ord_recl big_ord0.
+rewrite !mxE !//=.
+set F12 := (X in matrix_of_fun _ X).
+rewrite (_ : \matrix_(i, j) F12 i j = (F12 ord0 ord0)%:M);[
+rewrite det_scalar1 |]; last first.
+apply/matrixP.
+move => [[ | n] pn ]; last by [].
+move => [[ | m] pm ]; last by [].
+rewrite !mxE.
+have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
+rewrite eqxx /= mulr1n.
+by have-> : (Ordinal pm = ord0) by apply val_inj.
+
+rewrite !//=.
+rewrite /bump !//=.
+rewrite /F6. rewrite 4!mxE /=.
+rewrite /F. rewrite 4!mxE /=.
+rewrite /F2. rewrite 4!mxE /=.
+rewrite /F4. rewrite 4!mxE /=.
+rewrite /F5. rewrite 4!mxE /=.
+rewrite /F7. rewrite 4!mxE /=.
+rewrite /F8. rewrite 4!mxE /=.
+rewrite /F9. rewrite 4!mxE /=.
+rewrite /F12. rewrite 4!mxE /=.
+rewrite /F11. rewrite 4!mxE /=.
+rewrite /F3. rewrite 4!mxE /=.
+rewrite /F10. rewrite 4!mxE /=.
+
+rewrite !mulN1r !addr0 !//=.
+rewrite !expr2 !//=.
+rewrite !exprD !expr1 !expr0 !//= !mulr1 !//= .
+rewrite !mulN1r !//=.
+rewrite !mul1r.
+rewrite !mulrN1.
+
+set a := point2R1 (tm t (Ordinal zero<3)).
+set b := point2R2 (tm t (Ordinal zero<3)).
+set c := point2R1 (tm t (Ordinal un<3)).
+set d := point2R2 (tm t (Ordinal un<3)).
+set e := point2R1 (tm t (Ordinal deux<3)).
+set f := point2R2 (tm t (Ordinal deux<3)).
+rewrite (_ : k1 = 1 - k2 - k3); last first.
+  rewrite -(eqP H3). simpl in k1. prefield; ring.
+simpl in k2, k3.
+prefield.
+field.
+
+rewrite u3q.
+Search _ (Num.lt _ (_*_)).
+rewrite pmulr_rgt0; last first.
+exact: H5.
+rewrite toriented !//=.
 
 
 
-rat_field.
+(* Preuve de l'autre implication *)
+move/andP=> [H2 H3].
+move: H2; move/andP=> [H1 H2].
 
-
-
-
-  (* rewrite lift0.
-  rewrite /lift !//=.
-  rewrite 
-rewrite w9 /w7.
-
-
-
-
-rewrite -[X in _ (Ordinal _) X](_ : _ = the_guy).
-(* (_ : _ = (lshift 1 (ord0 : 'I_2))). *)
-set w := (X in row_mx X _).
-set w2 := cofactor _ _ _.
-
-rewrite row_mxEl.
-
-(* utiliser big_nat_recl *)
-
-
-  set u2 := \det _.
-
-  rewrite (expand
-  rewrite /determinant.
-  to_rat_type.
-  rat_field.
-
-
-
-
-exists (leftpoint (tm t (Ordinal(zero<3))) (tm t (Ordinal(un<3)))
-                                                  (tm t (Ordinal(deux<3)))).
-exists (leftpoint (tm t (Ordinal(zero<3))) (tm t (Ordinal(un<3))) p).
-exists (leftpoint (tm t (Ordinal(un<3))) (tm t (Ordinal(deux<3))) p).
-exists (leftpoint (tm t (Ordinal(deux<3))) (tm t (Ordinal(zero<3))) p).
+exists ((leftpoint (tm t (Ordinal(zero<3))) (tm t (Ordinal(un<3))) p)/bd).
+exists ((leftpoint (tm t (Ordinal(un<3))) (tm t (Ordinal(deux<3))) p)/bd).
+exists ((leftpoint (tm t (Ordinal(deux<3))) (tm t (Ordinal(zero<3))) p)/bd).
 rewrite /leftpoint.
 to_rat_type.
- *)
+
 
 
 
