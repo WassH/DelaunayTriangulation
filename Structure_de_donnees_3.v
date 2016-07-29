@@ -11,9 +11,8 @@ From mathcomp Require Import div ssreflect eqtype ssrbool ssrnat seq fintype.
 From mathcomp Require Import finset zmodp matrix bigop ssralg matrix ssrnum.
 From mathcomp Require Import seq ssrfun finfun matrix ssrnum ssrfun.
 From mathcomp Require Import bigop ssralg finset fingroup zmodp poly fingraph.
-From mathcomp Require Import tuple choice path ssrint.
+From mathcomp Require Import tuple choice path.
 From mathcomp Require Import finmap rat.
-
 (* -------------------------------------------------------------------- *)
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -79,6 +78,7 @@ Definition addOrdn (n:nat) : 'I_n -> 'I_n -> 'I_n :=
   fun (p q : 'I_n) => Ordinal(modulo (p-q) n).
 
 
+Variable R : numDomainType.
 Variable P : finType.
 Definition point := 'rV[rat]_2.
 
@@ -167,28 +167,28 @@ Open Local Scope ring_scope.
    alors il n'est pas inCircle *)
 Definition inCircle (p1 : point) (t1: T) (tm : trianglemap) : bool :=
   let M:= \matrix_(i<4, j<4) if i ==0 then if j==0 then
-                                     point2R1 (triangle2points t1 tm (Ordinal (zero<3)))
+                                     point2R1 (tm t1 (Ordinal (zero<3)))
                                          else if j==1 then
-                                     point2R2 (triangle2points t1 tm (Ordinal (zero<3)))
+                                     point2R2 (tm t1 (Ordinal (zero<3)))
                                          else if nat_of_ord j==2 then 
-                         (point2R1 (triangle2points t1 tm (Ordinal (zero<3))))^+2
-                            + (point2R2 (triangle2points t1 tm (Ordinal (zero<3))))^+2
+                         (point2R1 (tm t1 (Ordinal (zero<3))))^+2
+                            + (point2R2 (tm t1 (Ordinal (zero<3))))^+2
                                          else 1
                            else if i ==1 then if j==0 then
-                                     point2R1 (triangle2points t1 tm (Ordinal (un<3)))
+                                     point2R1 (tm t1 (Ordinal (un<3)))
                                          else if j==1 then
-                                     point2R2 (triangle2points t1 tm (Ordinal (un<3)))
+                                     point2R2 (tm t1 (Ordinal (un<3)))
                                          else if nat_of_ord j==2 then 
-                         (point2R1 (triangle2points t1 tm (Ordinal (un<3))))^+2
-                            + (point2R2 (triangle2points t1 tm (Ordinal (un<3))))^+2
+                         (point2R1 (tm t1 (Ordinal (un<3))))^+2
+                            + (point2R2 (tm t1 (Ordinal (un<3))))^+2
                                          else 1
                            else if nat_of_ord i ==2 then if j==0 then
-                                     point2R1 (triangle2points t1 tm (Ordinal (deux<3)))
+                                     point2R1 (tm t1 (Ordinal (deux<3)))
                                          else if j==1 then
-                                     point2R2 (triangle2points t1 tm (Ordinal (deux<3)))
+                                     point2R2 (tm t1 (Ordinal (deux<3)))
                                          else if nat_of_ord j==2 then 
-                         (point2R1 (triangle2points t1 tm (Ordinal (deux<3))))^+2
-                            + (point2R2 (triangle2points t1 tm (Ordinal (deux<3))))^+2
+                         (point2R1 (tm t1 (Ordinal (deux<3))))^+2
+                            + (point2R2 (tm t1 (Ordinal (deux<3))))^+2
                                          else 1
                            else if j==0 then
                                      point2R1 p1
@@ -197,8 +197,8 @@ Definition inCircle (p1 : point) (t1: T) (tm : trianglemap) : bool :=
                                          else if nat_of_ord j==2 then 
                                      (point2R1 p1)^+2 + (point2R2 p1)^+2 
                                          else 1
-   in if \det M > 0 then true
-      else false.
+   in (\det M >0).
+
 
 
 
@@ -337,6 +337,7 @@ case h':(@ofindtriangle p tm) => [ v | ].
 move:h'; rewrite /ofindtriangle.
 case: pickP =>//.
 move => abs _.
+Search in_mem in ssrbool fintype.
 elimtype False.
 move: h. 
 rewrite /inHull.
@@ -558,6 +559,10 @@ Definition findIllegal := match pick (pred_of_simpl (@predT {:res})) with
 (* findIllegal doit renvoyer un Some(ptext1', ptext2', t1', t2') ou un None *)
 
 End findIllegal.
+
+About f.
+About findIllegal.
+
 
 (* point2index va prendre un point, deux T : t1 et 2 et va fournir un 'I_3 
    qui est l'index de p dans le triangle dans lequel il se trouve t1 ou t2 *)
