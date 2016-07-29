@@ -1124,6 +1124,68 @@ field.
 Qed.
 
 
+Definition convex_strict_fun (f : rat*rat -> rat) :=
+ forall (k:rat), forall (x:rat*rat), forall (y:rat*rat), (0<k) -> (k<1) 
+          -> (x.1 != y.1) || (x.2 != y.2) ->
+         f (k*x.1 + (1-k)*y.1, k*x.2 + (1-k)*y.2) 
+                  < k*(f x) + (1-k)* (f y).
+
+Lemma Jensen_inequality_3 (f : rat*rat -> rat) (f_is_convex : convex_strict_fun f)
+          (k1 k2 k3 :rat) (somme_egal_1 : k1+k2+k3 = 1) (x1 x2 x3 :rat*rat) :
+  f (k1*x1.1 + k2*x2.1 + k3*x3.1, k1*x1.2 + k2*x2.2 + k3*x3.2)
+            < k1*(f x1) + k2*(f x2) + k3*(f x3).
+Proof.
+Admitted.
+
+Definition fJensen:= fun x:rat*rat => x.1 ^+2 + x.2 ^+2.
+
+Lemma fJensen_convex : (convex_strict_fun fJensen).
+Proof.
+rewrite /convex_strict_fun.
+move=>k x y H0k Hk1.
+move/orP => Hxdify.
+move:Hxdify.
+move=> [Hxdify1 | Hxdify2].
+rewrite /fJensen.
+rewrite !expr2 !//=.
+Search _ ( Num.lt 0 (_-_)).
+rewrite -subr_gt0.
+have info_egalite: (k * (x.1 * x.1 + x.2 * x.2) + (1 - k) * (y.1 * y.1 + y.2 * y.2) -
+   ((k * x.1 + (1 - k) * y.1) * (k * x.1 + (1 - k) * y.1) +
+    (k * x.2 + (1 - k) * y.2) * (k * x.2 + (1 - k) * y.2)))
+  = k*(1-k)*((x.1 - y.1)^+2 + (x.2 - y.2)^+2).
+  rewrite !expr2 !//=.
+  prefield; ring.
+rewrite info_egalite.
+Search _ (Num.lt 0 (_*_)).
+rewrite pmulr_rgt0; last first.
+rewrite pmulr_rgt0.
+Search _ (Num.lt 0 (_-_)).
+rewrite subr_gt0.
+exact:Hk1.
+exact H0k.
+Search _ (Num.lt 0 (_+_)).
+apply: addr_gt0.
+set a := (x.1 -y.1).
+rewrite expr2.
+rewrite ltr_def.
+apply/andP.
+split; last first.
+  
+
+
+
+
+set b := (x.2 - y.2).
+rewrite expr2.
+
+
+
+
+
+Admitted.
+
+
 Lemma oriented_triangles_after_flip (p:point) (t :T) (tm: trianglemap)  
  (toriented  : (leftpoint ((tm t) (Ordinal(zero<3))) ((tm t) (Ordinal(un<3))) 
                   ((tm t) (Ordinal(deux<3))) > 0)) :
@@ -2261,11 +2323,124 @@ rewrite egalite_wlog.
   set e := point2R1 (tm t (Ordinal deux<3)) - point2R1 (tm t (Ordinal zero<3)).
   set f := point2R2 (tm t (Ordinal deux<3)) - point2R2 (tm t (Ordinal zero<3)).
 
+simpl in c, d, e, f.
+
+have : k2 = 1 - k1 - k3.
+  rewrite -(eqP H3).  simpl in k2. prefield; ring.
+move=> hypk2.
+
+have : k3 = 1 - k1 - k2.
+  rewrite -(eqP H3).  simpl in k3. prefield; ring.
+move=> hypk3.
+
+have: k2<1.
+rewrite  hypk2.
+rewrite -{2}[1]plus0r.
+Search _ (Num.lt (_+_) (_+_)).
+rewrite !ltr_subl_addr.
+rewrite -{1}[1]plus0r.
+rewrite -{1}[1]plus0r.
+change (Num.lt ((1 + 0) + 0) ((1 + 0) + k3 + k1)).
+About ltr_add2l.
+set z:= 1+0.
+rewrite -[z]plus0r.
+About ltr_add2l.
+Check (ltr_add2l z 0 (0+k3+k1)).
+rewrite (_ : z+0+k3+k1 = z+(0+k3+k1)); last first.
+  prefield; ring.
+rewrite (ltr_add2l z 0 (0+k3+k1)).
+rewrite plus0l.
+Search _ (Num.lt _ (_+_)).
+apply: Num.Internals.addr_gt0.
+apply: H6.
+apply: H4.
+
+have: k3<1.
+rewrite  hypk3.
+rewrite -{2}[1]plus0r.
+Search _ (Num.lt (_+_) (_+_)).
+rewrite !ltr_subl_addr.
+rewrite -{1}[1]plus0r.
+rewrite -{1}[1]plus0r.
+change (Num.lt ((1 + 0) + 0) ((1 + 0) + k2 + k1)).
+About ltr_add2l.
+set z:= 1+0.
+rewrite -[z]plus0r.
+About ltr_add2l.
+Check (ltr_add2l z 0 (0+k2+k1)).
+rewrite (_ : z+0+k2+k1 = z+(0+k2+k1)); last first.
+  prefield; ring.
+rewrite (ltr_add2l z 0 (0+k2+k1)).
+rewrite plus0l.
+Search _ (Num.lt _ (_+_)).
+apply: Num.Internals.addr_gt0.
+apply: H5.
+apply: H4.
+
+have: k1<1.
+rewrite  hypk1.
+rewrite -{2}[1]plus0r.
+Search _ (Num.lt (_+_) (_+_)).
+rewrite !ltr_subl_addr.
+rewrite -{1}[1]plus0r.
+rewrite -{1}[1]plus0r.
+change (Num.lt ((1 + 0) + 0) ((1 + 0) + k3 + k2)).
+About ltr_add2l.
+set z:= 1+0.
+rewrite -[z]plus0r.
+About ltr_add2l.
+Check (ltr_add2l z 0 (0+k3+k2)).
+rewrite (_ : z+0+k3+k2 = z+(0+k3+k2)); last first.
+  prefield; ring.
+rewrite (ltr_add2l z 0 (0+k3+k2)).
+rewrite plus0l.
+Search _ (Num.lt _ (_+_)).
+apply: Num.Internals.addr_gt0.
+apply: H6.
+apply: H5.
+
+move=> hypk1inf1.
+move=> hypk2inf1.
+move=> hypk3inf1.
+
+Search _ (Num.lt (_-_) 0).
+rewrite (_ : ((k2 * c + k3 * e) ^+ 2 + (k2 * d + k3 * f) ^+ 2 -
+   k2 * (c ^+ 2 + d ^+ 2) - k3 * (e ^+ 2 + f ^+ 2)) = 
+            ((k2 * c + k3 * e) ^+ 2 + (k2 * d + k3 * f) ^+ 2 -
+   (k2 * (c ^+ 2 + d ^+ 2) + k3 * (e ^+ 2 + f ^+ 2)))); last first.
+  rewrite !expr2 !//=.
+  prefield; ring.
+rewrite subr_lt0.
+
+set fJensen:= fun x:rat*rat => x.1 ^+2 + x.2 ^+2.
+set x1 := (0:rat, 0:rat).
+set x2 := (c, d).
+set x3:= (e, f).
+
+have :((k2 * c + k3 * e) ^+ 2 + (k2 * d + k3 * f) ^+ 2)
+              = (fJensen (k1*x1.1 + k2*x2.1 + k3*x3.1, 
+                                k1*x1.2 + k2*x2.2 + k3*x3.2)    ).
+  rewrite /fJensen.
+  rewrite !expr2 !//=.
+  prefield; ring.
+move=> hypoJensen.
+have : (k2 * (c ^+ 2 + d ^+ 2) + k3 * (e ^+ 2 + f ^+ 2) 
+          = k1*fJensen x1 + k2*fJensen x2 + k3*fJensen x3).
+  rewrite /fJensen.
+  rewrite !expr2 !//=.
+  prefield; ring.
+move=>hypo2Jensen.
+
+rewrite hypoJensen.
+rewrite hypo2Jensen.
 
 
+move/eqP:H3.
+move=> H3.
 
+apply: (Jensen_inequality_3 fJensen_convex H3 x1 x2 x3).
+Qed.
 
-Abort.
 
 
 Lemma orientedunhookT (tm : trianglemap) (g : T -> seq T) t1 :
