@@ -1,6 +1,6 @@
 Require Import ZArith.
 Require Import Field.
-Require Import ssreflect ssrbool ssrfun eqtype ssrnat ssralg ssrint rat.
+From mathcomp Require Import ssreflect ssrbool ssrfun eqtype ssrnat ssralg ssrint rat.
 
 Require Import rat_of_Z.
 Export rat_of_Z.
@@ -162,10 +162,11 @@ Ltac rat_transf t :=
 
 (* Reduction of elaborated instances of rat to a mere rat *)
 Ltac to_rat_type := 
-  rewrite -?[GRing.Ring.sort _]/rat;
-  rewrite -?[GRing.Zmodule.sort _]/rat;
-  rewrite -?[Equality.sort (GRing.Zmodule.eqType _)]/rat;
-  rewrite -?[Equality.sort (GRing.Ring.eqType _)]/rat.
+  change (GRing.Ring.sort rat_Ring) with rat in *;
+  change (GRing.Zmodule.sort (GRing.Ring.zmodType rat_Ring)) with rat in *;
+  change (Equality.sort (GRing.Zmodule.eqType (GRing.Ring.zmodType rat_Ring))) with
+        rat in *;
+  change (Equality.sort (GRing.Ring.eqType rat_Ring)) with rat in *.
 
 (* The prefield tactic operates on a goal which is an equality between *)
 (* two terms in rat. It reduces the type of the equality to 'rat, *)
