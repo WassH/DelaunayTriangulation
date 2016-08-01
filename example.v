@@ -1039,6 +1039,7 @@ set i2 := 1.
 simpl in i2.
 apply/eqP.
 rewrite /i /i2.
+
 prefield.
 field.
 rewrite/not.
@@ -1110,6 +1111,19 @@ prefield.
 field.
 Qed.
 
+
+Lemma mul1l (n :rat_Ring) : 1*n = n.
+Proof.
+prefield.
+field.
+Qed.
+
+Lemma mul1r (n :rat_Ring) : n*1 = n.
+Proof.
+prefield.
+field.
+Qed.
+
 Lemma plus0l (n :rat_Ring) : 0+n = n.
 Proof.
 prefield.
@@ -1123,6 +1137,13 @@ prefield.
 field.
 Qed.
 
+Lemma fois_div (n1 n2: rat_Ring) : n2 <>0 -> n1 *n2/n2 = n1.
+Proof.
+move=> hypn2.
+prefield.
+by field.
+Qed.
+
 
 Definition convex_strict_fun (f : rat*rat -> rat) :=
  forall (k:rat), forall (x:rat*rat), forall (y:rat*rat), (0<k) -> (k<1) 
@@ -1130,14 +1151,198 @@ Definition convex_strict_fun (f : rat*rat -> rat) :=
          f (k*x.1 + (1-k)*y.1, k*x.2 + (1-k)*y.2) 
                   < k*(f x) + (1-k)* (f y).
 
-Lemma Jensen_inequality_3 (f : rat*rat -> rat) (f_is_convex : convex_strict_fun f)
-          (k1 k2 k3 :rat) (somme_egal_1 : k1+k2+k3 = 1) (x1 x2 x3 :rat*rat) :
-  f (k1*x1.1 + k2*x2.1 + k3*x3.1, k1*x1.2 + k2*x2.2 + k3*x3.2)
-            < k1*(f x1) + k2*(f x2) + k3*(f x3).
+
+Lemma sum_eq0 :forall (n:nat) (k:seq rat),
+[forall (i:'I_(S n)|true), (Num.le 0 k`_((nat_of_ord) i))] ->
+  (\sum_(i < S n) (k`_((nat_of_ord) i))==0)%Q = [forall (i:'I_(S n)|true), k`_i == 0%Q].
 Proof.
+move=> n k hypk.
+(* set Pred_true : 'I_(S n) -> bool := fun x  => true.
+set E : 'I_ (S n) -> rat := fun x => k`_x.
+About leqif_sum.
+rewrite eq_sym.
+rewrite -(@leqif_sum 'I_(S n) Pred_true _ (fun _ => 0%Q) E). ?big1_eq. *)
+
+(* split; last first.
+  move=> hypki.
+  rewrite -big_andE.
+  
+
+rewrite -!big_andE. *)
+
+
+Check Num.Theory.psumr_eq0.
+
+
+
 Admitted.
 
+
+(* Ajouter comme hypothèse que les x_i sont deux à deux distincts *)
+Lemma Jensen_inequality (n:nat) (f : rat*rat -> rat) 
+              (f_is_convex : convex_strict_fun f)
+          (k : seq rat) (x :seq (rat*rat))
+            (somme_egal_1 : \sum_(i<n) (k`_((nat_of_ord) i)) = 1)  :
+  (n>2)%nat -> [forall (i:'I_n|true), (Num.le 0 k`_((nat_of_ord) i))] ->
+  f (\sum_(i<n) (k`_((nat_of_ord) i))*(x`_((nat_of_ord) i)).1, 
+          \sum_(i<n) (k`_((nat_of_ord) i))*(x`_((nat_of_ord) i)).2)
+            < \sum_(i<n) (k`_((nat_of_ord) i))*(f (x`_((nat_of_ord) i))).
+Proof.
+move=> nsup2 hypok.
+induction n.
+  move:nsup2.
+  by rewrite !//=.
+set lambda := \sum_(i<n) (k`_((nat_of_ord) i)).
+case info: (lambda==0); last first.
+  set x1 := (\sum_(i<n) (k`_((nat_of_ord) i))*(x`_((nat_of_ord) i)).1)/lambda.
+  set x2 := (\sum_(i<n) (k`_((nat_of_ord) i))*(x`_((nat_of_ord) i)).2)/lambda.
+  rewrite big_ord_recr !//=.
+  rewrite big_ord_recr !//=.
+  rewrite  (_: \sum_(i<n) (k`_((nat_of_ord) i))*(x`_((nat_of_ord) i)).1
+                   = x1 * lambda);last first.
+    rewrite /x1.
+    rewrite {2}(_ : lambda = lambda/1); last first.
+      by rewrite divr1.
+    rewrite mulf_div.
+    rewrite mul1r.
+    rewrite [RHS]fois_div.
+      reflexivity.
+    move/eqP: info.
+    by [].
+  rewrite  (_: \sum_(i<n) (k`_((nat_of_ord) i))*(x`_((nat_of_ord) i)).2
+                   = x2 * lambda);last first.
+    rewrite /x2.
+    rewrite {2}(_ : lambda = lambda/1); last first.
+      by rewrite divr1.
+    rewrite mulf_div.
+    rewrite mul1r.
+    rewrite [RHS]fois_div.
+      reflexivity.
+    move/eqP: info.
+    by [].
+  rewrite big_ord_recr !//=.
+  have : (Num.lt (f (x1 * lambda + k`_n * (x`_n).1, x2 * lambda + k`_n * (x`_n).2))
+                  (lambda*(f (x1, x2)) + k`_n* (f ((x`_n).1, (x`_n).2)))).
+    move:f_is_convex.
+    rewrite /convex_strict_fun.
+    move=> hypconvex.
+      have : k`_n = 1 - lambda.
+      rewrite /lambda.
+      Search _ (_ = _  -> _+_ =_+_).
+      rewrite -somme_egal_1.
+      rewrite big_ord_recr !//=.
+      set sum_n := \sum_(i < n) k`_i.
+      simpl in sum_n.
+      prefield. ring.
+    move=> info2.
+    rewrite info2.
+    set x_f := (x1, x2).
+    set y_f := ((x`_n).1, (x`_n).2).
+    have egalx1 : (x_f.1 = x1).
+      by [].
+    have egalx2 : (x_f.2 = x2).
+      by [].
+    have egaly1 : (y_f.1 = (x`_n).1).
+      by [].
+    have egaly2 : (y_f.2 = (x`_n).2).
+      by [].
+    rewrite -egalx1.
+    rewrite -egalx2.
+    rewrite -egaly1.
+    rewrite -egaly2.
+    simpl in x_f.
+    simpl in y_f.
+    have info3 : Num.lt 0 lambda.
+      rewrite /lambda.
+      (* 
+    apply: hypconvex.
+    
+
+
+
+    apply : hypconvex lambda (x1, x2) ((x`_n).1, (x`_n).2))
+
+
+
+move/eqP:info.
+rewrite /lambda.
+move=> info.
+move: somme_egal_1.
+rewrite big_ord_recr.
+rewrite !//=.
+rewrite info plus0l.
+move=>somme_egal_1.
+rewrite !big_ord_recr !//=.
+move: hypok.
+rewrite (sum_eq0 info).
+rewrite -big_andE.
+(* utilier big1_seq pour remplacer les k_i par 0 *)
+
+
+
+Qed.
+
+ *)
+Admitted.
+
+
 Definition fJensen:= fun x:rat*rat => x.1 ^+2 + x.2 ^+2.
+
+
+Lemma sum_gt01 : forall (r1 r2:rat), 
+                  Num.lt 0 r1 -> Num.le 0 r2 -> Num.lt 0 (r1+r2).
+Proof.
+move=> r1 r2 hypr1 hypr2.
+Search _ (Num.lt _ (_+_)).
+rewrite (_: r1+r2 = r1 - (-r2)); last first.
+  prefield. field.
+rewrite subr_gt0.
+Search _ (Num.le 0 _ = _ || _).
+move: hypr2.
+rewrite le0r.
+case info : (r2 == 0).
+  rewrite !//=.
+  move/eqP:info. move=>info.
+  rewrite info.
+  by [].
+rewrite !//=.
+move=> hypr2.
+Search _ (Num.lt (-_) 0).
+move: hypr2.
+rewrite -oppr_lt0.
+move=> hypr2.
+apply (ltr_trans hypr2 hypr1).
+Qed.
+
+
+
+Lemma sum_gt02 : forall (r1 r2:rat), 
+                  Num.le 0 r1 -> Num.lt 0 r2 -> Num.lt 0 (r1+r2).
+Proof.
+move=> r1 r2 hypr1 hypr2.
+Search _ (Num.lt _ (_+_)).
+rewrite (_: r1+r2 = r2 - (-r1)); last first.
+  prefield. field.
+rewrite subr_gt0.
+Search _ (Num.le 0 _ = _ || _).
+move: hypr1.
+rewrite le0r.
+case info : (r1 == 0).
+  rewrite !//=.
+  move/eqP:info. move=>info.
+  rewrite info.
+  by [].
+rewrite !//=.
+move=> hypr1.
+Search _ (Num.lt (-_) 0).
+move: hypr1.
+rewrite -oppr_lt0.
+move=> hypr1.
+apply (ltr_trans hypr1 hypr2).
+Qed.
+
+
+
 
 Lemma fJensen_convex : (convex_strict_fun fJensen).
 Proof.
@@ -1164,26 +1369,74 @@ Search _ (Num.lt 0 (_-_)).
 rewrite subr_gt0.
 exact:Hk1.
 exact H0k.
-Search _ (Num.lt 0 (_+_)).
-apply: addr_gt0.
+apply: sum_gt01.
 set a := (x.1 -y.1).
 rewrite expr2.
 rewrite ltr_def.
 apply/andP.
 split; last first.
-  
+  rewrite -expr2.
+  apply: sqr_ge0.
+rewrite /a.
+rewrite GRing.mulf_neq0.
+  by [].
+move: Hxdify1.
+Search _ (_-_==0).
+by rewrite subr_eq0.
+move: Hxdify1.
+Search _ (_-_==0).
+by rewrite subr_eq0.
 
 
-
-
-set b := (x.2 - y.2).
+set b := (x.2 -y.2).
 rewrite expr2.
+rewrite -expr2.
+apply: sqr_ge0.
 
 
+(* Cas 2 ou on a ~~ (x.2 == y.2) *)
 
+rewrite /fJensen.
+rewrite !expr2 !//=.
+Search _ ( Num.lt 0 (_-_)).
+rewrite -subr_gt0.
+have info_egalite: (k * (x.1 * x.1 + x.2 * x.2) + (1 - k) * (y.1 * y.1 + y.2 * y.2) -
+   ((k * x.1 + (1 - k) * y.1) * (k * x.1 + (1 - k) * y.1) +
+    (k * x.2 + (1 - k) * y.2) * (k * x.2 + (1 - k) * y.2)))
+  = k*(1-k)*((x.1 - y.1)^+2 + (x.2 - y.2)^+2).
+  rewrite !expr2 !//=.
+  prefield; ring.
+rewrite info_egalite.
+Search _ (Num.lt 0 (_*_)).
+rewrite pmulr_rgt0; last first.
+rewrite pmulr_rgt0.
+Search _ (Num.lt 0 (_-_)).
+rewrite subr_gt0.
+exact:Hk1.
+exact H0k.
+apply: sum_gt02.
+set a := (x.1 -y.1).
+rewrite expr2.
+rewrite -expr2.
+apply: sqr_ge0.
 
-
-Admitted.
+set b := (x.2 -y.2).
+rewrite expr2.
+rewrite ltr_def.
+apply/andP.
+split; last first.
+  rewrite -expr2.
+  apply: sqr_ge0.
+rewrite /b.
+rewrite GRing.mulf_neq0.
+  by [].
+move: Hxdify2.
+Search _ (_-_==0).
+by rewrite subr_eq0.
+move: Hxdify2.
+Search _ (_-_==0).
+by rewrite subr_eq0.
+Qed.
 
 
 Lemma oriented_triangles_after_flip (p:point) (t :T) (tm: trianglemap)  
