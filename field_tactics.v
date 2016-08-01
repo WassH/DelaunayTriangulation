@@ -1,6 +1,7 @@
 Require Import ZArith.
 Require Import Field.
-Require Import ssreflect ssrbool ssrfun eqtype ssrnat ssralg ssrint rat.
+From mathcomp Require Import ssreflect ssrbool ssrfun eqtype ssrnat 
+                                ssralg ssrint rat.
 
 Require Import rat_of_Z.
 Export rat_of_Z.
