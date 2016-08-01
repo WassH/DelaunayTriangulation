@@ -1170,7 +1170,7 @@ rewrite -(@leqif_sum 'I_(S n) Pred_true _ (fun _ => 0%Q) E). ?big1_eq. *)
 
 rewrite -!big_andE. *)
 
-
+(* Regarder psumr_eq0 qui peut être utile pour prouver ce lemme *)
 Check Num.Theory.psumr_eq0.
 
 
