@@ -1154,28 +1154,92 @@ Definition convex_strict_fun (f : rat*rat -> rat) :=
 
 Lemma sum_eq0 :forall (n:nat) (k:seq rat),
 [forall (i:'I_(S n)|true), (Num.le 0 k`_((nat_of_ord) i))] ->
-  (\sum_(i < S n) (k`_((nat_of_ord) i))==0)%Q = [forall (i:'I_(S n)|true), k`_i == 0%Q].
+  ((\sum_(i < S n) (k`_((nat_of_ord) i)))==0) = [forall (i:'I_(S n)|true), k`_i == 0%Q].
 Proof.
-move=> n k hypk.
-(* set Pred_true : 'I_(S n) -> bool := fun x  => true.
-set E : 'I_ (S n) -> rat := fun x => k`_x.
-About leqif_sum.
-rewrite eq_sym.
-rewrite -(@leqif_sum 'I_(S n) Pred_true _ (fun _ => 0%Q) E). ?big1_eq. *)
-
-(* split; last first.
-  move=> hypki.
+move => n k hyp.
+have utile: forall m, ([forall (i:'I_(S m)|true), (Num.le 0 k`_((nat_of_ord) i))] ->
+Num.le 0 (\sum_(i < m.+1) k`_i)).
+  induction m.
+    rewrite big_ord_recr !//=.
+    rewrite big_ord0 !//=.
+    rewrite -big_andE.
+    rewrite big_ord_recr !//=.
+    rewrite big_ord0 !//=.
+    rewrite plus0l.
+    by [].
   rewrite -big_andE.
-  
+  rewrite big_ord_recr !//=.
+  move/andP=> hypSm.
+  move:hypSm.
+  move=> [hypSm H].
+  rewrite big_ord_recr !//=.
+  Search _ (Num.le 0 (_+_)).
+  apply: addr_ge0.
+  move:hypSm.
+  rewrite big_andE.
+  move=>hypSm.
+  apply (IHm hypSm).
+by [].
 
-rewrite -!big_andE. *)
 
-(* Regarder psumr_eq0 qui peut être utile pour prouver ce lemme *)
-Check Num.Theory.psumr_eq0.
+induction n.
+  rewrite big_ord_recl !//=.
+  rewrite big_ord0 !//=.
+  rewrite -big_andE.
+  rewrite !big_ord_recr !//=.
+  rewrite big_ord0 !//=.
+  rewrite plus0r.
+  by [].
 
 
+move :hyp.
+rewrite -big_andE.
+rewrite big_ord_recr !//=.
+move/andP=> hyp1.
+move: hyp1.
+move=> [hyp1 hyp2].
+move: hyp1.
+rewrite big_andE.
+move=> hyp1.
 
-Admitted.
+rewrite big_ord_recr !//=.
+rewrite -big_andE. rewrite [RHS]big_ord_recr. rewrite //=.
+rewrite big_andE.
+have utileSn : ([forall (i:'I_(S n)|true), (Num.le 0 k`_((nat_of_ord) i))] ->
+ Num.le 0 (\sum_(i < n.+1) k`_i)).
+  exact: (utile n).
+
+
+(* rewrite -big_andE. rewrite big_ord_recr. rewrite !//=. *)
+rewrite -(IHn hyp1).
+Search _ ((_ + _) ==0 = (_ == 0) && (_ == 0)).
+rewrite paddr_eq0; last first.
+    by [].
+  exact : (utile n hyp1).
+by [].
+Qed.
+
+Lemma pos_elt_pos_sum (k : seq rat) :
+forall m, ([forall (i:'I_m|true), (Num.le 0 k`_((nat_of_ord) i))] ->
+Num.le 0 (\sum_(i < m) k`_i)).
+Proof.
+induction m.
+    by rewrite big_ord0 !//=.
+  rewrite -big_andE.
+  rewrite big_ord_recr !//=.
+  move/andP=> hypSm.
+  move:hypSm.
+  move=> [hypSm H].
+  rewrite big_ord_recr !//=.
+  Search _ (Num.le 0 (_+_)).
+  apply: addr_ge0.
+  move:hypSm.
+  rewrite big_andE.
+  move=>hypSm.
+  apply (IHm hypSm).
+by [].
+Qed.
+
 
 
 (* Ajouter comme hypothèse que les x_i sont deux à deux distincts *)
@@ -1183,7 +1247,7 @@ Lemma Jensen_inequality (n:nat) (f : rat*rat -> rat)
               (f_is_convex : convex_strict_fun f)
           (k : seq rat) (x :seq (rat*rat))
             (somme_egal_1 : \sum_(i<n) (k`_((nat_of_ord) i)) = 1)  :
-  (n>2)%nat -> [forall (i:'I_n|true), (Num.le 0 k`_((nat_of_ord) i))] ->
+  (n>2)%nat -> [forall (i:'I_n|true), (Num.lt 0 k`_((nat_of_ord) i))] ->
   f (\sum_(i<n) (k`_((nat_of_ord) i))*(x`_((nat_of_ord) i)).1, 
           \sum_(i<n) (k`_((nat_of_ord) i))*(x`_((nat_of_ord) i)).2)
             < \sum_(i<n) (k`_((nat_of_ord) i))*(f (x`_((nat_of_ord) i))).
@@ -1254,7 +1318,43 @@ case info: (lambda==0); last first.
     simpl in y_f.
     have info3 : Num.lt 0 lambda.
       rewrite /lambda.
-      (* 
+      Search _ (Num.lt 0 _ = ~~(_) && _).
+      rewrite lt0r.
+      apply/andP.
+      split.
+        rewrite -/lambda.
+        by rewrite info !//=.
+      About pos_elt_pos_sum.
+      have hypokle : forall m, (m<n)%N -> 
+            [forall (i :'I_m| true), Num.le 0 (k`_((nat_of_ord) i))].
+        induction m.
+          rewrite -big_andE.
+          by rewrite big_ord0.
+        rewrite -big_andE.
+        rewrite big_ord_recr !//=.
+        move=>inf.
+        rewrite big_andE.
+        apply/andP.
+        split.
+          case info_utile: (m<n)%N.
+            apply (IHm info_utile).
+          Search _ ((_<_) = false).
+          move: info_utile.
+          move/negbT => info_utile.
+          rewrite -leqNgt in info_utile.
+          auto.
+        have ineg: (m<n.+1)%N.
+          exact: ltn_trans (ltn_trans (ltnSn m) (inf)) (ltnSn n).
+        have t: Num.lt 0 k`_m; last first.
+          rewrite le0r.
+          apply/orP.
+          by right.
+        
+        
+
+
+      (* apply (pos_elt_pos_sum hypokle). *)
+    (*
     apply: hypconvex.
     
 
@@ -1438,6 +1538,14 @@ Search _ (_-_==0).
 by rewrite subr_eq0.
 Qed.
 
+Lemma lt_implies_le (r:rat) : Num.lt 0 r -> Num.le 0 r.
+Proof.
+rewrite lt0r.
+move/andP=> H.
+move: H.
+move=> [H H2].
+by [].
+Qed.
 
 Lemma oriented_triangles_after_flip (p:point) (t :T) (tm: trianglemap)  
  (toriented  : (leftpoint ((tm t) (Ordinal(zero<3))) ((tm t) (Ordinal(un<3))) 
@@ -2152,7 +2260,7 @@ rewrite !mulN1r !addr0 !//=.
 rewrite !expr2 !//=.
 rewrite !exprD !expr1 !expr0 !//= !mulr1 !//= .
 rewrite !mulN1r !//=.
-rewrite !mul1r.
+rewrite ?mul1r.
 rewrite !mul0l !plus0l !plus0r.
 
 
@@ -2396,7 +2504,8 @@ rewrite !mulN1r !addr0 !//=.
 rewrite !expr2 !//=.
 rewrite !exprD !expr1 !expr0 !//= !mulr1 !//= .
 rewrite !mulN1r !//=.
-rewrite !mul1r.
+About mul1l.
+rewrite !mul1l.
 
 have : k1 = 1 - k2 - k3.
   rewrite -(eqP H3).  simpl in k1. prefield; ring.
@@ -2691,7 +2800,54 @@ rewrite hypo2Jensen.
 move/eqP:H3.
 move=> H3.
 
-apply: (Jensen_inequality_3 fJensen_convex H3 x1 x2 x3).
+About Jensen_inequality.
+(* Transformer les k1+k2+k3 en \sum *)
+set x:= [::(x1.1, x1.2) ; (x2.1, x2.2) ; (x3.1, x3.2)].
+move:H3.
+set k := [::k1;k2;k3].
+rewrite (_ : (k1 + k2 + k3 = 1) = (\sum_(i<3) k`_i = 1)); last first.
+  rewrite !big_ord_recr !//=.
+  rewrite big_ord0.
+  rewrite plus0l.
+  by [].
+move=> H3.
+rewrite (_ : k1 * x1.1 + k2 * x2.1 + k3 * x3.1 = \sum_(i<3) k`_i *(x`_i).1)
+              ; last first.
+  rewrite !big_ord_recr !//=.
+  rewrite big_ord0.
+  rewrite !mul0r !plus0l.
+  by reflexivity.
+rewrite (_ : k1 * x1.2 + k2 * x2.2 + k3 * x3.2 = \sum_(i<3) k`_i *(x`_i).2)
+              ; last first.
+  rewrite !big_ord_recr !//=.
+  rewrite big_ord0.
+  rewrite !mul0r !plus0l.
+  by reflexivity.
+rewrite (_ : k1 * fJensen x1 + k2 * fJensen x2 + k3 * fJensen x3
+               = \sum_(i<3) k`_i *fJensen (x`_i))
+              ; last first.
+  rewrite !big_ord_recr !//=.
+  rewrite big_ord0.
+  rewrite !mul0r !plus0l.
+  by reflexivity.
+About Jensen_inequality.
+
+
+have test:  (Num.lt 0 k1 && Num.lt 0 k2 && Num.lt 0 k3) 
+                = [forall (i:'I_3|true), (Num.lt 0 k`_((nat_of_ord) i))].
+  rewrite -big_andE.
+  rewrite !big_ord_recr !//=.
+  rewrite big_ord0.
+  rewrite !//=.
+
+have : Num.lt 0 k1 && Num.lt 0 k2 && Num.lt 0 k3.
+  by rewrite H4 H5 H6.
+rewrite test.
+
+(* Si besoin est de prouver que x1 x2 et x3 sont distincts le rajouter en 
+  Hypothesis *)
+move=> HH.
+apply (@Jensen_inequality 3 _ fJensen_convex _ x H3 (ltnSn 2) HH).
 Qed.
 
 
