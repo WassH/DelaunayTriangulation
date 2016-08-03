@@ -1241,23 +1241,116 @@ by [].
 Qed.
 
 
+Lemma strict_pos_elt_strict_pos_sum (k : seq rat) :
+forall m, ([forall (i:'I_(S m)|true), (Num.lt 0 k`_((nat_of_ord) i))] ->
+Num.lt 0 (\sum_(i < m.+1) k`_i)).
+Proof.
+induction m.
+    rewrite big_ord_recr !//=.
+    rewrite -big_andE.
+    rewrite big_ord_recr !//= big_ord0 !//=.
+    rewrite big_ord0 !//=.
+    rewrite plus0l.
+    by [].
+  rewrite -big_andE.
+  rewrite big_ord_recr !//=.
+  move/andP=> hypSm.
+  move:hypSm.
+  move=> [hypSm H].
+  rewrite big_ord_recr !//=.
+  Search _ (Num.lt 0 (_+_)).
+  apply: addr_gt0.
+  move:hypSm.
+  rewrite big_andE.
+  move=>hypSm.
+  apply (IHm hypSm).
+by [].
+Qed.
 
-(* Ajouter comme hypothèse que les x_i sont deux à deux distincts *)
+
+
 Lemma Jensen_inequality (n:nat) (f : rat*rat -> rat) 
               (f_is_convex : convex_strict_fun f)
           (k : seq rat) (x :seq (rat*rat))
             (somme_egal_1 : \sum_(i<n) (k`_((nat_of_ord) i)) = 1)  :
-  (n>2)%nat -> [forall (i:'I_n|true), (Num.lt 0 k`_((nat_of_ord) i))] ->
-  f (\sum_(i<n) (k`_((nat_of_ord) i))*(x`_((nat_of_ord) i)).1, 
+  (n>2)%nat -> [forall (i:'I_n|true), (Num.lt 0 k`_((nat_of_ord) i))] 
+    -> [exists (i:'I_n|true), [exists (j:'I_n|true),
+                      ((x`_i).1 != (x`_j).1) || ((x`_i).2 != (x`_j).2) ]]
+  -> f (\sum_(i<n) (k`_((nat_of_ord) i))*(x`_((nat_of_ord) i)).1, 
           \sum_(i<n) (k`_((nat_of_ord) i))*(x`_((nat_of_ord) i)).2)
             < \sum_(i<n) (k`_((nat_of_ord) i))*(f (x`_((nat_of_ord) i))).
 Proof.
-move=> nsup2 hypok.
+move=> nsup2 hypok ex.
 induction n.
   move:nsup2.
   by rewrite !//=.
 set lambda := \sum_(i<n) (k`_((nat_of_ord) i)).
-case info: (lambda==0); last first.
+case info: (lambda==0).
+
+  rewrite !big_ord_recr !//=.
+  have hypokle : forall m, (m<(S n))%N -> 
+            [forall (i :'I_m| true), Num.le 0 (k`_((nat_of_ord) i))].
+        induction m.
+          rewrite -big_andE.
+          by rewrite big_ord0.
+        rewrite -big_andE.
+        rewrite big_ord_recr !//=.
+        move=>inf.
+        rewrite big_andE.
+        apply/andP.
+        split.
+          case info_utile: (m<(S n))%N.
+            apply (IHm info_utile).
+          Search _ ((_<_) = false).
+          move: info_utile.
+          move/negbT => info_utile.
+          rewrite -leqNgt in info_utile.
+          auto.
+        have ineg: (m<n.+1)%N.
+          exact: (ltn_trans (ltnSn m) (inf)).
+        have t: Num.lt 0 k`_m; last first.
+          rewrite le0r.
+          apply/orP.
+          by right.
+        About forallP.
+        move/forallP :  hypok.
+        move=> hypok.
+        set m_ord := Ordinal ineg.
+        change (true ==>Num.lt 0 k`_(m_ord) ).
+        About nat_of_ord.
+        apply: hypok.
+  have contra: (Num.lt 0 (\sum_(i<n) (k`_((nat_of_ord) i)))).
+    move: hypok.
+    rewrite -big_andE !//=.
+    rewrite big_ord_recr !//=.
+    move/andP=> hypok.
+    move :hypok.
+    move=> [hypok1 hypok2].
+    move: hypok1.
+    rewrite big_andE.
+    move=> hypok1.
+  move: somme_egal_1 nsup2 IHn ex lambda info hypokle hypok2 hypok1.
+  case : n.
+    move=> h1 h2.
+    by [].
+  move=> n somme_egal_1 nsup2 IHn ex lambda info hypokle hypok2 hypok1.
+  apply (strict_pos_elt_strict_pos_sum hypok1).
+  move:contra.
+  rewrite -/lambda.
+  move=> contra.
+  Search _ (Num.lt 0 _) in ssrnum.
+  rewrite lt0r in contra.
+  move/andP:contra.
+  move=> [contra1 contra2].
+  move/negP:contra1.
+  move=> contra1.
+  by [].
+
+
+
+
+(* Cas où lambda est différent de 0 *)
+
   set x1 := (\sum_(i<n) (k`_((nat_of_ord) i))*(x`_((nat_of_ord) i)).1)/lambda.
   set x2 := (\sum_(i<n) (k`_((nat_of_ord) i))*(x`_((nat_of_ord) i)).2)/lambda.
   rewrite big_ord_recr !//=.
@@ -1325,7 +1418,7 @@ case info: (lambda==0); last first.
         rewrite -/lambda.
         by rewrite info !//=.
       About pos_elt_pos_sum.
-      have hypokle : forall m, (m<n)%N -> 
+      have hypokle : forall m, (m<(S n))%N -> 
             [forall (i :'I_m| true), Num.le 0 (k`_((nat_of_ord) i))].
         induction m.
           rewrite -big_andE.
@@ -1336,7 +1429,7 @@ case info: (lambda==0); last first.
         rewrite big_andE.
         apply/andP.
         split.
-          case info_utile: (m<n)%N.
+          case info_utile: (m<(S n))%N.
             apply (IHm info_utile).
           Search _ ((_<_) = false).
           move: info_utile.
@@ -1344,45 +1437,301 @@ case info: (lambda==0); last first.
           rewrite -leqNgt in info_utile.
           auto.
         have ineg: (m<n.+1)%N.
-          exact: ltn_trans (ltn_trans (ltnSn m) (inf)) (ltnSn n).
+          exact: (ltn_trans (ltnSn m) (inf)).
         have t: Num.lt 0 k`_m; last first.
           rewrite le0r.
           apply/orP.
           by right.
-        
-        
+        About forallP.
+        move/forallP :  hypok.
+        move=> hypok.
+        set m_ord := Ordinal ineg.
+        change (true ==>Num.lt 0 k`_(m_ord) ).
+        About nat_of_ord.
+        apply: hypok.
+      apply: pos_elt_pos_sum.
+      by apply: hypokle.
+    have info4: (Num.lt lambda 1).
+      have info5 : lambda = 1 - k`_n.
+        rewrite info2.
+        simpl in lambda.
+        prefield. ring.
+      rewrite info5.
+      Search _ (Num.lt (_+_) (_+_)).
+      About ltr_add2r.
+      rewrite -(ltr_add2r (k`_n -1) (1 - k`_n) 1).
+      have w: (1 - k`_n + (k`_n - 1)) = 0.
+        prefield; ring.
+      rewrite w.
+      have ww : (1 + (k`_n - 1)) = k`_n.
+        prefield; ring.
+      rewrite ww {ww}.
+      rewrite {w}.
+      move/forallP : hypok.
+      move=> hypok.
+      set n_ord := Ordinal (ltnSn n).
+      change (true ==>Num.lt 0 k`_(n_ord) ).
+      apply: hypok.
+    case info_dif: (~~ (x_f.1 == y_f.1) || ~~ (x_f.2 == y_f.2)).
+      rewrite (_ : x_f.1 * lambda =  lambda* x_f.1 ); last first.
+        prefield; ring.
+      rewrite (_ : x_f.2 * lambda =  lambda* x_f.2 ); last first.
+        prefield; ring.
+      apply (@hypconvex lambda x_f y_f info3 info4 info_dif).
+    case tous_meme: ([forall (i:'I_(n)|true), (x`_i).1 == (x`_0).1] 
+                      && [forall (i:'I_(n)|true), (x`_i).2 == (x`_0).2]).
+      have xn_meme: (((x`_n).1 == (x`_0).1) && ((x`_n).2 == (x`_0).2)).
+        move:info_dif.
+        Search _ (_ || _ = false).
+        rewrite orb_false_iff.
+        Search _ (~~_ = false).
+        rewrite !negb_false_iff.
+        move=> [h1 h2].
+        rewrite egalx1 in h1.
+        rewrite egalx2 in h2.
+        rewrite egaly1 in h1.
+        rewrite egaly2 in h2.
 
 
-      (* apply (pos_elt_pos_sum hypokle). *)
-    (*
-    apply: hypconvex.
-    
+(* Dans le bout de code qui suits on prouve (x1 = (x`_0).1) *)
+        have hh1: (x1 = (x`_0).1).
+          rewrite /x1.
+          move/andP:tous_meme.
+          move=> [tous_meme1 tous_meme2].
+          (* rewrite tous_meme1. *)
+  Search _ (bigop (_*_)) in ssralg.
+  set F1 : 'I_n-> rat := fun i => k`_i * (x`_i).1.
+  set F2 : 'I_n-> rat := fun i => k`_i * (x`_0).1.
+  About eq_bigr.
+  have F1eqF2 : (forall i : 'I_n, true -> F1 i = F2 i).
+    move=> i true.
+    rewrite /F1 /F2.
+Print Scopes.
+    move/forallP : tous_meme1.
+    move=>tous_meme1.
+
+    About congr1.
+    move: (tous_meme1 i).
+    change (((x`_i).1 == (x`_0).1) ->
+k`_i * (x`_i).1 = k`_i * (x`_0).1).
+    About congr1.
+    set ff := fun x => k`_i * x.
+    move/eqP=> hyp1.
+    by apply: (congr1 ff).
 
 
-
-    apply : hypconvex lambda (x1, x2) ((x`_n).1, (x`_n).2))
-
-
-
-move/eqP:info.
+About eq_bigr.
+rewrite (eq_bigr F2 F1eqF2).
+rewrite /F2.
+rewrite -mulr_suml.
 rewrite /lambda.
-move=> info.
-move: somme_egal_1.
-rewrite big_ord_recr.
+Search _ (_*_/_).
+Search _ ((_*_)/_).
+rewrite -/lambda.
+prefield ; field.
+Search _ (Num.lt 0 _) (_==0).
+move:info3.
+rewrite lt0r.
+move/andP=> info3.
+move:info3.
+move=> [info31 info32].
+by move/eqP : info31.
+
+(* Dans le bout de code qui suits on prouve (x2 = (x`_0).2) *)
+        have hh2: (x2 = (x`_0).2).
+          rewrite /x1.
+          move/andP:tous_meme.
+          move=> [tous_meme1 tous_meme2].
+          (* rewrite tous_meme1. *)
+  Search _ (bigop (_*_)) in ssralg.
+  set F1 : 'I_n-> rat := fun i => k`_i * (x`_i).2.
+  set F2 : 'I_n-> rat := fun i => k`_i * (x`_0).2.
+  About eq_bigr.
+  have F1eqF2 : (forall i : 'I_n, true -> F1 i = F2 i).
+    move=> i true.
+    rewrite /F1 /F2.
+Print Scopes.
+    move/forallP : tous_meme2.
+    move=>tous_meme2.
+
+    About congr1.
+    move: (tous_meme2 i).
+    change (((x`_i).2 == (x`_0).2) ->
+k`_i * (x`_i).2 = k`_i * (x`_0).2).
+    About congr1.
+    set ff := fun x => k`_i * x.
+    move/eqP=> hyp1.
+    by apply: (congr1 ff).
+
+rewrite /x2.
+About eq_bigr.
+rewrite (eq_bigr F2 F1eqF2).
+rewrite /F2.
+rewrite -mulr_suml.
+rewrite /lambda.
+Search _ (_*_/_).
+Search _ ((_*_)/_).
+rewrite -/lambda.
+prefield ; field.
+Search _ (Num.lt 0 _) (_==0).
+move:info3.
+rewrite lt0r.
+move/andP=> info3.
+move:info3.
+move=> [info31 info32].
+by move/eqP : info31.
+
+(* Preuve de x`_n == x`_0 *)
+move/eqP : h1 h2.
+move=> h1 h2.
+apply/andP; split.
+by rewrite -h1 -hh1.
+move/eqP : h2.
+move=> h2.
+by rewrite -h2 -hh2.
+
+
+
+(* Dans le bout de code qui suit on montre que ex et xn_meme donne false en 
+   hypothèse et donc le but courant est démontré *)
+move/existsP:ex.
 rewrite !//=.
-rewrite info plus0l.
-move=>somme_egal_1.
-rewrite !big_ord_recr !//=.
-move: hypok.
-rewrite (sum_eq0 info).
-rewrite -big_andE.
-(* utilier big1_seq pour remplacer les k_i par 0 *)
+move=> [x0  ex1].
+
+move/existsP:ex1.
+rewrite !//=.
+move=> [x3 ex2].
+
+move/andP:tous_meme.
+move=> [tous_meme1 tous_meme2].
+
+move/andP:xn_meme.
+move=> [xn_meme1 xn_meme2].
+
+have tous_meme1_Sn: [forall (i:'I_(n.+1) | true), (x`_i).1 == (x`_0).1].
+  rewrite -big_andE.
+  rewrite big_ord_recr.
+  apply/andP.
+  split.
+    rewrite big_andE.
+    exact tous_meme1.
+  exact: xn_meme1.
+have tous_meme2_Sn: [forall (i:'I_(n.+1) | true), (x`_i).2 == (x`_0).2].
+  rewrite -big_andE.
+  rewrite big_ord_recr.
+  apply/andP.
+  split.
+    rewrite big_andE.
+    exact tous_meme2.
+  exact: xn_meme2.
+
+move/forallP : tous_meme1_Sn.
+move=> tous_meme1_Sn.
+
+move/forallP : tous_meme2_Sn.
+move=> tous_meme2_Sn.
+
+move : (tous_meme1_Sn x0).
+move : (tous_meme2_Sn x0).
+change (((x`_x0).2 == (x`_0).2) -> ((x`_x0).1 == (x`_0).1) ->
+Num.lt
+  (f
+     (x1 * lambda + (1 - lambda) * (x`_n).1,
+     x2 * lambda + (1 - lambda) * (x`_n).2))
+  (lambda * f x_f + (1 - lambda) * f y_f)).
+move=>cont1x0 cont2x0.
+
+
+move : (tous_meme1_Sn x3).
+move : (tous_meme2_Sn x3).
+change (((x`_x3).2 == (x`_0).2) -> ((x`_x3).1 == (x`_0).1) ->
+Num.lt
+  (f
+     (x1 * lambda + (1 - lambda) * (x`_n).1,
+     x2 * lambda + (1 - lambda) * (x`_n).2))
+  (lambda * f x_f + (1 - lambda) * f y_f)).
+move=>cont1x3 cont2x3.
+
+move/eqP :cont1x0.
+move=>cont1x0.
+
+move/eqP :cont2x0.
+move=>cont2x0.
+
+move/eqP :cont1x3.
+move=>cont1x3.
+
+move/eqP :cont2x3.
+move=>cont2x3.
+
+have contra1: ((x`_x0).1 == (x`_x3).1).
+  by rewrite cont2x0 cont2x3.
+
+have contra2: ((x`_x0).2 == (x`_x3).2).
+  by rewrite cont1x0 cont1x3.
+
+move: ex2.
+Search _ (~~_||~~_).
+set a1 := (x`_x0).1.
+set b1 := (x`_x3).1.
+set a2 := (x`_x0).2.
+set b2 := (x`_x3).2.
+simpl in a1, b1, a2, b2.
+set bool1 := (a1 == b1).
+set bool2 := (a2 == b2).
+
+move : contra1 contra2.
+rewrite -/bool1.
+rewrite -/bool2.
+move=> contra1.
+move=> contra2.
+have contra: (bool1 && bool2).
+  apply/andP.
+  split.
+    rewrite /bool1.
+    by exact contra1.
+  rewrite /bool2.
+  by exact: contra2.
+Search _ (~~_||~~_).
+rewrite -[~~ bool1 || ~~ bool2]negb_andb.
+move:contra.
+set bbool := bool1 && bool2.
+Search _ (_ && ~~_).
+move=> hyp1 hyp2.
+have neg : (bbool && ~~bbool).
+  apply/andP.
+  split.
+    rewrite /bbool.
+    rewrite contra1.
+    rewrite contra2.
+    by [].
+  by [].
+move: neg.
+rewrite andb_negb_r.
+by [].
+
+
+(* Dans le bout de code qui suit on va appliquer l'hypothèse de récurrence car
+  il existe i j <= n-2 tel que xi différent de xj *)
 
 
 
-Qed.
 
- *)
+
+
+
+(* Dans le bout de code qui suit on va appliquer l'hypothese de recurrence et 
+   finir la preuve *)
+
+
+
+
+
+
+
+
+
+
 Admitted.
 
 
@@ -1546,6 +1895,28 @@ move: H.
 move=> [H H2].
 by [].
 Qed.
+
+
+Hypothesis triangle_non_degenere :
+forall t:T, forall tm:trianglemap, 
+let c := point2R1 (tm t (Ordinal un<3)) -
+     point2R1 (tm t (Ordinal zero<3)) in
+let d := point2R2 (tm t (Ordinal un<3)) -
+     point2R2 (tm t (Ordinal zero<3)) in
+let e := point2R1 (tm t (Ordinal deux<3)) -
+     point2R1 (tm t (Ordinal zero<3)) in
+let f := point2R2 (tm t (Ordinal deux<3)) -
+     point2R2 (tm t (Ordinal zero<3)) in
+let x1 := (0,0) in 
+let x2 := (c,d) in
+let x3 := (e,f) in 
+let x := [:: x1;x2;x3] in
+  [exists (i:'I_3|true), [exists (j:'I_3|true),
+             ((x`_i).1 != (x`_j).1) 
+                    || ((x`_i).2 != (x`_j).2) ]]. 
+
+
+
 
 Lemma oriented_triangles_after_flip (p:point) (t :T) (tm: trianglemap)  
  (toriented  : (leftpoint ((tm t) (Ordinal(zero<3))) ((tm t) (Ordinal(un<3))) 
@@ -2844,10 +3215,10 @@ have : Num.lt 0 k1 && Num.lt 0 k2 && Num.lt 0 k3.
   by rewrite H4 H5 H6.
 rewrite test.
 
-(* Si besoin est de prouver que x1 x2 et x3 sont distincts le rajouter en 
-  Hypothesis *)
+
 move=> HH.
-apply (@Jensen_inequality 3 _ fJensen_convex _ x H3 (ltnSn 2) HH).
+apply : (@Jensen_inequality 3 _ fJensen_convex _ x H3 (ltnSn 2) HH).
+apply (triangle_non_degenere t tm).
 Qed.
 
 
