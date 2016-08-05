@@ -1145,6 +1145,86 @@ by field.
 Qed.
 
 
+Definition ing0 : (0<2)%N.
+Proof.
+by apply: ltn_trans (ltnSn 0) (ltnSn 1).
+Qed.
+
+Definition ing1 : (1<2)%N.
+Proof.
+by apply: (ltnSn 1).
+Qed.
+
+
+Lemma eq_ordinal2 (x0 :'I_2):
+  (x0 == Ordinal ing0) = false -> x0 = Ordinal ing1.
+Proof.
+move: x0.
+move=> [a b] h.
+apply: val_inj.
+rewrite //=.
+apply/eqP.
+move/negbT:h.
+Search "contr".
+apply contraR.
+move=> hyp.
+apply/eqP.
+apply val_inj.
+rewrite !//=.
+Search _ (_<_)%N in ssrnat.
+rewrite ltnS in b.
+have hyp2 : (a<1)%N.
+  Search _ (_<=_)%N  (~~ (_ == _)) in ssrnat.
+  rewrite ltn_neqAle.
+  apply/andP; split.
+    by [].
+  by [].
+Search _ (_<_)%N in ssrnat.
+rewrite ltnS in hyp2.
+Search _ (_<=0)%N in ssrnat.
+rewrite leqn0 in hyp2.
+move/eqP :hyp2.
+by [].
+Qed.
+
+
+Lemma eq_ordinal (x1 :'I_2):
+  (x1 == Ordinal ing1) = false -> x1 = Ordinal ing0.
+Proof.
+move: x1.
+move=> [a b] h.
+apply: val_inj.
+rewrite //=.
+apply/eqP.
+move/negbT:h.
+Search "contr".
+apply contraR.
+move=> hyp.
+apply/eqP.
+apply val_inj.
+rewrite !//=.
+Search _ (~~(_==_)) in ssrnat.
+rewrite neq_ltn in hyp.
+case tmp : (a < 0)%N.
+  by [].
+rewrite tmp in hyp.
+Search _ (false || _).
+rewrite orb_false_l in hyp.
+apply: anti_leq.
+Search _ (_<_)%N in ssrnat.
+move:b.
+change ((a < 1+1)%N -> (a <= 1 <= a)%N).
+Search _ (_<_)%N in ssrnat.
+rewrite ltnS.
+rewrite !//=.
+move=> hyp2.
+Search _ (_<_)%N in ssrnat.
+rewrite hyp.
+rewrite hyp2.
+by [].
+Qed.
+
+
 Definition convex_fun (f : rat*rat -> rat) :=
  forall (k:rat), forall (x:rat*rat), forall (y:rat*rat), (0<=k) -> (k<=1) 
           -> 
@@ -1160,7 +1240,156 @@ Definition convex_strict_fun (f : rat*rat -> rat) :=
 Lemma convex_strict_implies_convex (f : rat*rat -> rat) :
   convex_strict_fun f -> convex_fun f.
 Proof.
-Admitted.
+rewrite /convex_strict_fun /convex_fun.
+move=> H k x y hypok0 hypok1.
+case hypok0lt: (k>0).
+  case hypok1lt : (k<1).
+    case ex : (~~ (x.1 == y.1) || ~~ (x.2 == y.2)).
+      move: (H k x y hypok0lt hypok1lt ex).
+      Search _ (Num.lt _ _) (Num.le _ _) in ssrnum.
+      rewrite ltr_def.
+      move/andP=> hypo.
+      move:hypo.
+      move=> [hypo1 hypo2].
+      by apply: hypo2.
+    move/negbT : ex.
+    Search _ (~~ (_ || _)).
+    rewrite negb_orb.
+    move/andP=> ex1.
+    move:ex1.
+    move=> [ex1 ex2].
+    move/negPn : ex1.
+    move/negPn : ex2.
+    move/eqP=> ex1.
+    move/eqP=> ex2.
+    have info1 : x = (x.1, x.2).
+      Search _ (_ = (_,_)).
+      apply: surjective_pairing.
+    have info2 : y = (y.1, y.2).
+      Search _ (_ = (_,_)).
+      apply: surjective_pairing.
+    rewrite [X in Num.le _ (k * f X + (1 - k) * f y)]info1 .
+    rewrite [X in Num.le _ (k * f (x.1, x.2) + (1 - k) * f X)]info2 .
+    rewrite -[X in Num.le (f (k * x.1 + (1 - k) * X, k * x.2 + (1 - k) * y.2))
+        (k * f (x.1, x.2) + (1 - k) * f (y.1, y.2))]ex2.
+    rewrite -[X in Num.le (f (k * x.1 + (1 - k) * x.1, k * x.2 + (1 - k) * X))
+        (k * f (x.1, x.2) + (1 - k) * f (y.1, y.2))]ex1.
+    rewrite -[X in Num.le (f (k * x.1 + (1 - k) * x.1, k * x.2 + (1 - k) * x.2))
+        (k * f (x.1, x.2) + (1 - k) * f (X, y.2))]ex2.
+    rewrite -[X in Num.le (f (k * x.1 + (1 - k) * x.1, k * x.2 + (1 - k) * x.2))
+        (k * f (x.1, x.2) + (1 - k) * f (x.1,X))]ex1.
+    have info3 : (k * x.1 + (1 - k) * x.1 = x.1).
+      prefield; ring.
+    have info4 : (k * x.2 + (1 - k) * x.2 = x.2).
+      prefield; ring.
+    have info5 : ((k * f (x.1, x.2) + (1 - k) * f (x.1, x.2) = f (x.1,x.2))).
+      prefield; ring.
+    rewrite info3 info4 info5.
+    by [].
+
+  have info : (k = 1).
+    Search _ (Num.le _ _) (Num.lt _ _) in ssrnum.
+    move : hypok1lt.
+    rewrite ltr_def.
+    Search _ (~~ (_ && _)).
+    set b1 := (1 == k).
+    set b2 := Num.le k 1.
+    move/negbT => bool1.
+    move: bool1.
+    rewrite negb_andb.
+    move/orP=> h.
+    move:h.
+    case hypo : (~~ ~~ b1).
+      move=>h.
+      move/negPn : hypo.
+      rewrite /b1.
+      move/eqP=> hypo.
+      by [].
+    move/orP => H2.
+    move: H2.
+    Search _ (false || _).
+    rewrite orb_false_l.
+    rewrite /b2.
+    move: hypok1.
+    rewrite -/b2.
+    move=> contra1 contra2.
+    have contra : b2 && ~~ b2.
+      apply/andP.
+      split.
+        by [].
+      by [].
+    Search _ (_ && ~~_).
+    move : contra.
+    rewrite andb_negb_r.
+    by [].
+  rewrite info.
+  have tmp1 : (1 * x.1 + (1 - 1) * y.1 = x.1).
+    prefield. ring.
+  have tmp2 : (1 * x.2 + (1 - 1) * y.2 = x.2).
+    prefield; ring.
+  have tmp3 : (1 * f x + (1 - 1) * f y = f x).
+    prefield; ring.
+  rewrite tmp1 tmp2 tmp3.
+  have info1 : x = (x.1, x.2).
+    Search _ (_ = (_,_)).
+    apply: surjective_pairing.
+  have info2 : y = (y.1, y.2).
+    Search _ (_ = (_,_)).
+    apply: surjective_pairing.
+  rewrite -info1.
+  by [].
+
+
+have info : (k = 0).
+  Search _ (Num.le _ _) (Num.lt _ _) in ssrnum.
+  move : hypok0lt.
+  rewrite ltr_def.
+  Search _ (~~ (_ && _)).
+  set b1 := (k==0).
+  set b2 := Num.le 0 k.
+  move/negbT => bool1.
+  move: bool1.
+  rewrite negb_andb.
+  move/orP=> h.
+  move:h.
+  case hypo : (~~ ~~ b1).
+    move=>h.
+    move/negPn : hypo.
+    rewrite /b1.
+    move/eqP=> hypo.
+    by [].
+  move/orP => H2.
+  move: H2.
+  Search _ (false || _).
+  rewrite orb_false_l.
+  rewrite /b2.
+  move: hypok1.
+  rewrite -/b2.
+  move=> contra1 contra2.
+  have contra : b2 && ~~ b2.
+    apply/andP.
+    split.
+      by [].
+    by [].
+  Search _ (_ && ~~_).
+  move : contra.
+  rewrite andb_negb_r.
+  by [].
+rewrite info.
+have tmp1 : (0 * x.1 + (1 - 0) * y.1 = y.1).
+  prefield. ring.
+have tmp2 : (0 * x.2 + (1 - 0) * y.2 = y.2).
+  prefield; ring.
+have tmp3 : (0 * f x + (1 - 0) * f y = f y).
+  prefield; ring.
+rewrite tmp1 tmp2 tmp3.
+have info2 : y = (y.1, y.2).
+  Search _ (_ = (_,_)).
+  apply: surjective_pairing.
+rewrite -info2.
+by [].
+Qed.
+
 
 
 Lemma sum_eq0 :forall (n:nat) (k:seq rat),
@@ -1288,7 +1517,673 @@ Lemma Jensen_inequality (n:nat)(f : rat*rat -> rat)
             <= \sum_(i<n) (k`_((nat_of_ord) i))
                     *(f ((x`_((nat_of_ord) i)).1, (x`_((nat_of_ord) i)).2 )).
 Proof.
-Admitted.
+induction n.
+  move:nsup1.
+  by rewrite !//=.
+move=> k somme_egal_1 hypok.
+set lambda := \sum_(i<n) (k`_((nat_of_ord) i)).
+case ns1 : (1 < n)%N.
+  case info: (lambda==0).
+
+  rewrite !big_ord_recr !//=.
+  have contra: (Num.le 0 (\sum_(i<n) (k`_((nat_of_ord) i)))).
+    move: hypok.
+    rewrite -big_andE !//=.
+    rewrite big_ord_recr !//=.
+    move/andP=> hypok.
+    move :hypok.
+    move=> [hypok1 hypok2].
+    move: hypok1.
+    rewrite big_andE.
+    move=> hypok1.
+    move:  info.
+    rewrite /lambda.
+    move=> info.
+  move: somme_egal_1 nsup1 IHn ex lambda info  hypok2 hypok1 ns1.
+  case : n.
+    move=> h1 h2.
+    by [].
+  move=> n somme_egal_1 nsup1 IHn ex lambda info hypok2 hypok1 ns1.
+  apply (pos_elt_pos_sum hypok1).
+  move:contra.
+  rewrite -/lambda.
+  move=> hypo.
+
+(* Il faut montrer que tous les ki sont nuls avec sum_eq0 *)
+  rewrite /lambda in hypo info.
+  move: somme_egal_1 nsup1 IHn ex info  hypo ns1 hypok lambda.
+  case : n.
+    move=> h1 h2.
+    by [].
+  move=> n somme_egal_1 nsup1 IHn ex info  hypo ns1 hypok lambda.
+
+  move : hypok.
+  rewrite -big_andE big_ord_recr.
+  change (\big[andb_monoid/true]_(i :'I_(S n)) Num.le 0 k`_ i && Num.le 0 k`_(S n) 
+          -> Num.le
+  (f
+     (\sum_(i < n.+1) k`_i * (x`_i).1 + k`_n.+1 * (x`_n.+1).1,
+     \sum_(i < n.+1) k`_i * (x`_i).2 + k`_n.+1 * (x`_n.+1).2))
+  (\sum_(i < n.+1) k`_i * f ((x`_i).1, (x`_i).2) +
+   k`_n.+1 * f ((x`_n.+1).1, (x`_n.+1).2))).
+  move/andP => hypok.
+  move:hypok.
+  move=> [hypok dernier].
+  move:hypok.
+  rewrite big_andE => hypok.
+  move: (sum_eq0 hypok).
+  move=> sum_eq0.
+  rewrite sum_eq0 in info.
+  have sum_egal_0 :  (\sum_(i < n.+1) k`_i == 0).
+    rewrite sum_eq0.
+    by [].
+  move: somme_egal_1.
+  rewrite big_ord_recr.
+  change (\sum_(i < n.+1) k`_i + k`_(S n) = 1 -> Num.le
+  (f
+     (\sum_(i < n.+1) k`_i * (x`_i).1 + k`_n.+1 * (x`_n.+1).1,
+     \sum_(i < n.+1) k`_i * (x`_i).2 + k`_n.+1 * (x`_n.+1).2))
+  (\sum_(i < n.+1) k`_i * f ((x`_i).1, (x`_i).2) +
+   k`_n.+1 * f ((x`_n.+1).1, (x`_n.+1).2))).
+  move/eqP: sum_egal_0.
+  move=> sum_egal_0.
+  rewrite sum_egal_0.
+  rewrite plus0l.
+  move=> dernier_egal_1.
+  rewrite dernier_egal_1.
+  rewrite !mul1l.
+  have intel : (\sum_(i < n.+1) k`_i * (x`_i).1 
+                          = \sum_(i < n.+1) 0 * (x`_i).1).
+    apply: eq_bigr.
+    move=> i tmp.
+    move/forallP : info.
+    move=> info.
+    move: (info i).
+    change ((k`_i == 0%Q) -> k`_i * (x`_i).1 = 0 * (x`_i).1).
+    move/eqP => intel_tmp.
+    rewrite intel_tmp.
+    prefield. ring.
+  rewrite intel.
+  have intel2 : (\sum_(i < n.+1) 0 * (x`_i).1 
+                          = \sum_(i < n.+1) 0).
+    apply: eq_bigr.
+    move=> i tmp.
+    move/forallP : info.
+    move=> info.
+    move: (info i).
+    change ((k`_i == 0%Q) -> 0 * (x`_i).1 = 0 ).
+    move/eqP => intel2_tmp.
+    prefield. ring.
+  rewrite intel2.
+  rewrite sumr_const.
+  
+  have intel3 : (\sum_(i < n.+1) k`_i * (x`_i).2 
+                          = \sum_(i < n.+1) 0 * (x`_i).2).
+    apply: eq_bigr.
+    move=> i tmp.
+    move/forallP : info.
+    move=> info.
+    move: (info i).
+    change ((k`_i == 0%Q) -> k`_i * (x`_i).2 = 0 * (x`_i).2).
+    move/eqP => intel_tmp.
+    rewrite intel_tmp.
+    prefield. ring.
+  rewrite intel3.
+  have intel4 : (\sum_(i < n.+1) 0 * (x`_i).2 
+                          = \sum_(i < n.+1) 0).
+    apply: eq_bigr.
+    move=> i tmp.
+    move/forallP : info.
+    move=> info.
+    move: (info i).
+    change ((k`_i == 0%Q) -> 0 * (x`_i).2 = 0 ).
+    move/eqP => intel2_tmp.
+    prefield. ring.
+  rewrite intel4.
+  rewrite sumr_const.
+  
+  have intel5 : (\sum_(i < n.+1) k`_i * f ((x`_i).1, (x`_i).2)
+                          = \sum_(i < n.+1) 0 * f ((x`_i).1, (x`_i).2)).
+    apply: eq_bigr.
+    move=> i tmp.
+    move/forallP : info.
+    move=> info.
+    move: (info i).
+    change ((k`_i == 0%Q) -> k`_i * f ((x`_i).1, (x`_i).2) 
+                          = 0 * f ((x`_i).1, (x`_i).2)).
+    move/eqP => intel_tmp.
+    rewrite intel_tmp.
+    prefield. ring.
+  rewrite intel5.
+  have intel6 : (\sum_(i < n.+1) 0 * f ((x`_i).1, (x`_i).2)
+                          = \sum_(i < n.+1) 0).
+    apply: eq_bigr.
+    move=> i tmp.
+    move/forallP : info.
+    move=> info.
+    move: (info i).
+    change ((k`_i == 0%Q) -> 0 * f ((x`_i).1, (x`_i).2) = 0 ).
+    move/eqP => intel2_tmp.
+    prefield. ring.
+  rewrite intel6.
+  rewrite sumr_const.
+  rewrite -mulr_natr.
+  rewrite !mul0l.
+  rewrite !plus0l.
+  by [].
+
+(* Ici on est toujours dans le premier cas où ns1 : n>1 est vrai *)
+
+(* Cas où lambda est différent de 0 *)
+
+set x1 := (\sum_(i<n) (k`_((nat_of_ord) i))*(x`_((nat_of_ord) i)).1)/lambda.
+  set x2 := (\sum_(i<n) (k`_((nat_of_ord) i))*(x`_((nat_of_ord) i)).2)/lambda.
+  rewrite big_ord_recr !//=.
+  rewrite big_ord_recr !//=.
+  rewrite  (_: \sum_(i<n) (k`_((nat_of_ord) i))*(x`_((nat_of_ord) i)).1
+                   = x1 * lambda);last first.
+    rewrite /x1.
+    rewrite {2}(_ : lambda = lambda/1); last first.
+      by rewrite divr1.
+    rewrite mulf_div.
+    rewrite mul1r.
+    rewrite [RHS]fois_div.
+      reflexivity.
+    move/eqP: info.
+    by [].
+  rewrite  (_: \sum_(i<n) (k`_((nat_of_ord) i))*(x`_((nat_of_ord) i)).2
+                   = x2 * lambda);last first.
+    rewrite /x2.
+    rewrite {2}(_ : lambda = lambda/1); last first.
+      by rewrite divr1.
+    rewrite mulf_div.
+    rewrite mul1r.
+    rewrite [RHS]fois_div.
+      reflexivity.
+    move/eqP: info.
+    by [].
+  rewrite big_ord_recr !//=.
+
+  (* ....................................... *)
+
+(* Cas où lambda est différent de 0, on applique donc l'inégalité de convexité 
+   large et l'hypothèse de récurrence *)
+have convex_large : (Num.le (f (x1 * lambda + k`_n * (x`_n).1,
+                                        x2 * lambda + k`_n * (x`_n).2))
+                              (lambda* f(x1,x2) + k`_n * f ((x`_n).1, (x`_n).2))).
+      have lambda_pos: lambda>=0.
+        rewrite /lambda.
+        move: hypok.
+        rewrite -big_andE.
+        rewrite big_ord_recr.
+        change (\big[andb_monoid/true]_(i < n) Num.le 0
+                                    k`_i &&
+              (Num.le 0 k`_n) -> Num.le 0 (\sum_(i < n) k`_i)).
+        rewrite big_andE.
+        move/andP=> hypok.
+        move: hypok.
+        move => [hypok dernier].
+        by apply : (pos_elt_pos_sum hypok).
+      
+
+
+          have toto: k`_n = 1 - lambda.
+          rewrite /lambda.
+          Search _ (_ = _  -> _+_ =_+_).
+          rewrite -somme_egal_1.
+          rewrite big_ord_recr !//=.
+          set sum_n := \sum_(i < n) k`_i.
+          simpl in sum_n.
+          prefield. ring.
+        set x_f := (x1, x2).
+        set y_f := ((x`_n).1, (x`_n).2).
+        have egalx1 : (x_f.1 = x1).
+          by [].
+        have egalx2 : (x_f.2 = x2).
+          by [].
+        have egaly1 : (y_f.1 = (x`_n).1).
+          by [].
+        have egaly2 : (y_f.2 = (x`_n).2).
+          by [].
+        rewrite -egalx1.
+        rewrite -egalx2.
+        rewrite -egaly1.
+        rewrite -egaly2.
+        simpl in x_f.
+        simpl in y_f.
+
+        rewrite (_: x_f.1 * lambda = lambda * x_f.1); last first.
+          prefield. ring.
+        rewrite (_: x_f.2 * lambda = lambda * x_f.2); last first.
+          prefield. ring.
+
+        move: lambda_pos.
+        rewrite toto.
+        have intel: (Num.le lambda 1).
+          rewrite (_ : lambda = 1 - k`_n).
+            change (Num.le (1 - k`_n) (1-0)).
+            Search _ (Num.le (_-_) _).
+            rewrite ler_sub.
+                by [].
+              by [].
+            move/forallP: hypok.
+            move=> hypok.
+            About ord_max.
+            set ord_n := (@ord_max n).
+            move: (hypok ord_n).
+            rewrite /=.
+            by [].
+          rewrite toto.
+          simpl in lambda.
+          prefield; ring.
+        move: intel.
+        move=> intel intel2.
+        apply : (f_is_convex).
+          by [].
+        by [].
+
+
+      have autre_ing : f (x1, x2)
+            <= \sum_(i<n) (k`_((nat_of_ord) i))/lambda
+                    *(f ((x`_((nat_of_ord) i)).1, (x`_((nat_of_ord) i)).2 )).
+       
+
+        have info1: (\sum_(i < n) k`_i/lambda = 1).
+          rewrite (_ : \sum_(i < n) k`_i/lambda = (\sum_(i < n) k`_i)/lambda).
+            rewrite /lambda.
+            Search _ (_/_= 1).
+            rewrite divff.
+            reflexivity.
+            rewrite -/lambda.
+            move/negPf : info.
+            case tmp2 : (lambda == 0).
+              by [].
+            by [].
+
+          rewrite (_ : (\sum_(i < n) k`_i) / lambda = (\sum_(i < n) k`_i)* (1 / lambda));
+          last first.
+          prefield. ring.
+        rewrite mulr_suml.
+
+        set F1 := fun i:'I_n => k`_i / lambda.
+        set F2 := fun i:'I_n => k`_i * (1 / lambda).
+
+        apply (eq_bigr F2).
+        move=> i tmp.
+        rewrite /F2.
+        prefield; ring.
+
+        rewrite /x1 /x2.
+        rewrite (_ : f
+     ((\sum_(i < n) k`_i * (x`_i).1) / lambda,
+     (\sum_(i < n) k`_i * (x`_i).2) / lambda) = f
+                                     ((\sum_(i < n) k`_i * (x`_i).1)* (1 / lambda),
+                                     (\sum_(i < n) k`_i * (x`_i).2)* (1 / lambda)));
+last first.
+  Search _ (_*_/_).
+  Search _ (_/1).
+  rewrite -[X in _ = f
+  (X * (1 / lambda),
+  (\sum_(i < n) k`_i * (x`_i).2) * (1 / lambda))]divr1.
+  rewrite -[X in _ = f
+  (_ * (1 / lambda),
+  (X * (1 / lambda)))]divr1.
+  rewrite mulf_div.
+  rewrite !mul1r !mul1l.
+  reflexivity.
+rewrite !mulr_suml.
+
+have info11: (\sum_(i < n) k`_i/lambda = 1).
+  rewrite (_ : \sum_(i < n) k`_i/lambda = (\sum_(i < n) k`_i)/lambda).
+    rewrite /lambda.
+    Search _ (_/_= 1).
+    rewrite divff.
+    reflexivity.
+    rewrite -/lambda.
+    move/negPf : info.
+    case tmp2 : (lambda == 0).
+      by [].
+    by [].
+
+  rewrite (_ : (\sum_(i < n) k`_i) / lambda = (\sum_(i < n) k`_i)* (1 / lambda));
+  last first.
+  prefield. ring.
+rewrite mulr_suml.
+
+set F1 := fun i:'I_n => k`_i / lambda.
+set F2 := fun i:'I_n => k`_i * (1 / lambda).
+
+apply (eq_bigr F2).
+move=> i tmp.
+rewrite /F2.
+prefield; ring.
+
+        rewrite (_ : (\sum_(i < n) k`_i * (x`_i).1 *(1 / lambda)
+                        = (\sum_(i < n) (k`_i/lambda) *  (x`_i).1))); last first.
+          apply: eq_bigr.
+          move=> i inutile.
+          prefield. ring.
+
+        rewrite (_ : (\sum_(i < n) k`_i * (x`_i).2 *(1 / lambda)
+                        = (\sum_(i < n) (k`_i/lambda) *  (x`_i).2))); last first.
+          apply: eq_bigr.
+          move=> i inutile.
+          prefield. ring.
+
+        set F1 := fun i => k`_i / lambda.
+            set k_sur_lam := mkseq F1 n.
+            move:info11.
+            rewrite (_ : \sum_(i < n) k`_i / lambda = \sum_(i < n) k_sur_lam`_i); last first.
+              apply eq_bigr.
+              move=> i tmp.
+              rewrite /k_sur_lam.
+              simpl in F1.
+              About nth_mkseq.
+              rewrite (nth_mkseq ).
+              rewrite /F1.
+              reflexivity.
+              by [].
+
+            rewrite (_ : \sum_(i < n) k`_i / lambda * (x`_i).1
+                         = \sum_(i < n) k_sur_lam`_i * (x`_i).1); last first.
+              apply eq_bigr.
+              move=> i tmp.
+              rewrite /k_sur_lam.
+              simpl in F1.
+              About nth_mkseq.
+              rewrite (nth_mkseq ).
+              rewrite /F1.
+              reflexivity.
+              by [].
+
+            rewrite (_ : \sum_(i < n) k`_i / lambda * (x`_i).2
+                         = \sum_(i < n) k_sur_lam`_i * (x`_i).2); last first.
+              apply eq_bigr.
+              move=> i tmp.
+              rewrite /k_sur_lam.
+              simpl in F1.
+              About nth_mkseq.
+              rewrite (nth_mkseq ).
+              rewrite /F1.
+              reflexivity.
+              by [].
+
+            rewrite (_ : (\sum_(i < n) k`_i / lambda * f ((x`_i).1, (x`_i).2)
+                    = (\sum_(i < n) k_sur_lam`_i * f ((x`_i).1, (x`_i).2)))); last first.
+              apply eq_bigr.
+              move=> i tmp.
+              rewrite /k_sur_lam.
+              simpl in F1.
+              About nth_mkseq.
+              rewrite (nth_mkseq ).
+              rewrite /F1.
+              reflexivity.
+              by [].
+
+
+
+move=> sum_k_sur_lam.
+apply :IHn.
+by [].
+by [].
+have hypokN_lam : ([forall (i:'I_n | true), Num.le 0 k`_i]
+                   = [forall (i:'I_n | true), Num.le 0 k_sur_lam`_i]).
+    rewrite -!big_andE.
+    apply: eq_bigr.
+    move => i tmp.
+    rewrite /k_sur_lam.
+    simpl in F1.
+    About nth_mkseq.
+    rewrite (nth_mkseq ).
+    rewrite /F1.
+    Search _ (Num.lt 0 (_/_)).
+      (* preuve que lambda >= 0 *)
+      have lambda_pos : lambda>=0.
+        rewrite /lambda.
+        move : hypok.
+  rewrite -big_andE big_ord_recr.
+  change (\big[andb_monoid/true]_(i :'I_n) Num.le 0 k`_ i && Num.le 0 k`_n 
+          -> Num.le 0 (\sum_(i0 < n) k`_i0)).
+  move/andP => hypok.
+  move:hypok.
+  move=> [hypok dernier].
+  move:hypok.
+  rewrite big_andE => hypok.
+  apply: pos_elt_pos_sum.
+  by [].
+        Search _ (Num.le 0 (_/_)).
+        Search _ (_=_ <-> _=_).
+        apply eq_iff_eq_true.
+        split.
+          move => hyp1.
+          apply: divr_ge0.
+          by [].
+        by [].
+        move=> hyp2.
+        rewrite (_ : k`_i =( k`_i/lambda) *lambda); last first.
+          simpl in lambda, k.
+          set tmp1 := k`_i.
+          set tmp2 := lambda.
+          simpl in tmp1.
+          prefield. field.
+          rewrite /tmp2.
+          move/eqP:info.
+          by [].
+        Search _ (Num.lt 0 (_*_)).
+        apply mulr_ge0.
+          by [].
+        by [].
+        by [].
+    move: hypok.
+    rewrite -big_andE big_ord_recr !//=.
+    rewrite big_andE.
+    move/andP => hypokN.
+    move:hypokN.
+    move=> [hypokN hypodernier].
+    move: hypokN.
+    rewrite hypokN_lam.
+    move=> hypokN.
+
+
+
+by [].
+
+
+
+(* On va combiner convex_large et autre_ing pour prouver le but *)
+have autre_ing2 :  (Num.le (lambda * f (x1, x2) + k`_n * f ((x`_n).1, (x`_n).2))
+                (lambda * (\sum_(i < n) k`_i / lambda * f ((x`_i).1, (x`_i).2))
+                      + k`_n * f ((x`_n).1, (x`_n).2))).
+  Search _ (Num.lt (_+_) (_+_)) (Num.lt _ _).
+  set term1 := lambda * f (x1, x2).
+  set term2 := (lambda * (\sum_(i < n) k`_i / lambda * f ((x`_i).1, (x`_i).2))).
+  set term3 := (k`_n * f ((x`_n).1, (x`_n).2)).
+  simpl in term1, term2, term3.
+  About ler_add2r.
+  rewrite ler_add2r.
+  rewrite /term1 /term2.
+  Search _ (Num.le (_*_) (_*_)).
+  Search _ (Num.le 0 (_-_)).
+  rewrite -subr_ge0.
+  Search _ ((_*_) - (_ *_)).
+  rewrite -mulrBr.
+  apply: mulr_ge0.
+
+have lambda_pos: lambda>=0.
+        rewrite /lambda.
+        move: hypok.
+        rewrite -big_andE.
+        rewrite big_ord_recr.
+        change (\big[andb_monoid/true]_(i < n) Num.le 0
+                                    k`_i &&
+              (Num.le 0 k`_n) -> Num.le 0 (\sum_(i < n) k`_i)).
+        rewrite big_andE.
+        move/andP=> hypok.
+        move: hypok.
+        move => [hypok dernier].
+        by apply : (pos_elt_pos_sum hypok).
+      by [].
+Search _ (Num.le 0 (_-_)).
+rewrite subr_ge0.
+by [].
+
+
+move: autre_ing2.
+
+rewrite (_ : lambda * (\sum_(i < n) k`_i / lambda * f ((x`_i).1, (x`_i).2))
+                = (\sum_(i < n) k`_i * f ((x`_i).1, (x`_i).2))).
+  move=> autre_ing2.
+Search _ (Num.le _ _) (Num.lt _ _) in ssrnum.
+Search _ (_<= _)  in ssrnum.
+About ler_trans.
+apply (ler_trans convex_large autre_ing2).
+
+
+rewrite mulr_sumr.
+  set F1 := fun i:'I_n => lambda * (k`_i / lambda * f ((x`_i).1, (x`_i).2)) .
+  set F2 := fun i:'I_n => k`_i * f ((x`_i).1, (x`_i).2).
+  apply: eq_bigr.
+  move=> i tmp.
+  set tmp1 := f ((x`_i).1, (x`_i).2).
+  set tmp2 :=lambda.
+  set tmp3 := k`_i.
+  simpl in tmp2, tmp3.
+  prefield. field.
+  rewrite /tmp2.
+  move/eqP: info.
+  by [].
+
+(* Le dernier but à prouver correspond est le suivant et correspond au cas où
+   ns1 : (1 < n)%N = false ce qui revient à dire que n = 1 grâce à 
+   l'hypothèse nsup1 : (1 < n.+1)%N *)
+have n_egal_1 : (1 = n)%N.
+  Search _ (Num.lt _ _ = false) in ssrnum.
+  move: nsup1.
+  Search _ (_ < _)%N in ssrnat.
+  About ltnS.
+  rewrite ltnS.
+  move=> nsup1.
+  Search _ (_ < _)%N  in ssrnat.
+  move: ns1.
+  rewrite ltnNge.
+  move/negP => ninf1.
+  move:ninf1.
+  Search _ (((_<=_)%N)) in ssrnat.
+  move/negP => ninf1.
+  Search _ ((_<_)%N) ((_ <= _)%N) (_=_) in ssrnat.
+  move: nsup1.
+  rewrite leq_eqVlt.
+  move=> nsup1.
+  Search _ (_<_)%N in ssrnat.
+  Search "anti" in ssrnat.
+  apply: anti_leq.
+  rewrite ninf1.
+  Search _ (_&&true).
+  rewrite andb_true_r.
+  Search _ (_ <=_)%N (_==_) in ssrnat.
+  rewrite leq_eqVlt.
+  by [].
+
+
+have Sn_egal2 : 2 = n.+1.
+  rewrite n_egal_1.
+  reflexivity.
+
+move: ex somme_egal_1 hypok.
+rewrite -!Sn_egal2.
+move=> ex somme_egal_1 hypok.
+
+
+have info1 : k`_1 = 1 - k`_0.
+  move: somme_egal_1.
+  rewrite big_ord_recr.
+  change ((\sum_(i :'I_1) (k`_i)) + k`_1 = 1 -> k`_1 = 1 - k`_0).
+  rewrite big_ord_recr.
+  rewrite big_ord0.
+  change (0 + k`_0 + k`_1 = 1 -> k`_1 = 1 - k`_0).
+  rewrite plus0l.
+  move=> tmp.
+  rewrite -tmp.
+  set a := k`_0.
+  set b := k`_1.
+  simpl in a, b.
+  prefield. ring.
+
+
+rewrite big_ord_recr.
+change (Num.le
+  (f
+     (\sum_(i:'I_1) (k`_i* (x`_i).1) + (k`_1 * (x`_1).1),
+     \sum_(i < 2) k`_i * (x`_i).2)   )
+  (\sum_(i < 2) k`_i * f ((x`_i).1, (x`_i).2))).
+rewrite !big_ord_recr !big_ord0.
+change (Num.le
+  (f
+     (0 + (k`_0 * (x`_0).1) + (k`_1 * (x`_1).1),
+     0 + (k`_0 * (x`_0).2) + (k`_1 * (x`_1).2)  )   )
+  (0 + k`_0 * f ((x`_0).1, (x`_0).2) + k`_1 * f ((x`_1).1, (x`_1).2))).
+
+rewrite !plus0l.
+rewrite info1.
+
+have tmp1 : x`_0 = ((x`_0).1, (x`_0).2).
+  Search _ (_ = (_,_)).
+  apply: surjective_pairing.
+have tmp2 : x`_1 = ((x`_1).1, (x`_1).2).
+  Search _ (_ = (_,_)).
+  apply: surjective_pairing.
+
+rewrite -tmp1 -tmp2.
+
+move: hypok.
+rewrite -big_andE.
+rewrite !big_ord_recr !big_ord0.
+change (Num.le 0 k`_0 && Num.le 0 k`_1 -> Num.le
+  (f
+     (k`_0 * (x`_0).1 + (1 - k`_0) * (x`_1).1,
+     k`_0 * (x`_0).2 + (1 - k`_0) * (x`_1).2))
+  (k`_0 * f x`_0 + (1 - k`_0) * f x`_1)
+).
+move/andP=> hypok.
+move:hypok.
+move=> [hypok0 hypok1].
+
+
+have info2 : k`_0 = 1 - k`_1.
+  move: somme_egal_1.
+  rewrite big_ord_recr.
+  change ((\sum_(i :'I_1) (k`_i)) + k`_1 = 1 -> k`_0 = 1 - k`_1).
+  rewrite big_ord_recr.
+  rewrite big_ord0.
+  change (0 + k`_0 + k`_1 = 1 -> k`_0 = 1 - k`_1).
+  rewrite plus0l.
+  move=> tmp.
+  rewrite -tmp.
+  set a := k`_0.
+  set b := k`_1.
+  simpl in a, b.
+  prefield. ring.
+
+have info3 : Num.le k`_0 1.
+  rewrite info2.
+  change (Num.le (1 - k`_1) (1-0)).
+  Search _ (Num.le (_-_) (_-_)).
+  apply: ler_sub.
+    by [].
+  by [].
+
+
+have ineg0 : (0<2)%N.
+  by apply: ltn_trans (ltnSn 0) (ltnSn 1).
+
+have ineg1 : (1<2)%N.
+  by apply: (ltnSn 1).
+apply: f_is_convex.
+  by [].
+by [].
+Qed.
+
+
 
 Lemma lt_implies_le (n:nat) (k: seq rat) :
   [forall (i:'I_n|true), (Num.lt 0 k`_((nat_of_ord) i))]
@@ -2382,20 +3277,17 @@ have lambda_pos: lambda>0.
     move: lambda_pos.
     move=> [lambda_pos1 lambda_pos2].
     apply/eqP.
-    by [].
+    by [].  
 
 (* Preuve de x`_n == x`_0 *)
-move/eqP : h1 h2.
-move=> h1 h2.
-apply/andP; split.
-by rewrite -h1 -hh1.
-move/eqP : h2.
-move=> h2.
-by rewrite -h2 -hh2.
-
-have xneqx01 : x`_n.1 = x`_0.1.
-have xneqx02 : x`_n.2 = x`_0.2.
-
+move/andP: x1_xn_egal.
+move=> [info1 info2].
+move/eqP : info1; move/eqP: info2.
+move=> info1 info2.
+have infoa : (x`_n).1 = (x`_0).1.
+  by rewrite -info2.
+have infob : (x`_n).2 = (x`_0).2.
+  by rewrite -info1.
 
 
 (* Dans le bout de code qui suit on montre que ex et xn_meme donne false en 
@@ -2411,8 +3303,8 @@ move=> [x3 ex2].
 move/andP:tous_meme.
 move=> [tous_meme1 tous_meme2].
 
-move/andP:xn_meme.
-move=> [xn_meme1 xn_meme2].
+move/eqP: infoa; move/eqP : infob.
+move=> infoa infob.
 
 have tous_meme1_Sn: [forall (i:'I_(n.+1) | true), (x`_i).1 == (x`_0).1].
   rewrite -big_andE.
@@ -2421,7 +3313,8 @@ have tous_meme1_Sn: [forall (i:'I_(n.+1) | true), (x`_i).1 == (x`_0).1].
   split.
     rewrite big_andE.
     exact tous_meme1.
-  exact: xn_meme1.
+  change ((x`_n).1 == (x`_0).1).
+  exact: infob.
 have tous_meme2_Sn: [forall (i:'I_(n.+1) | true), (x`_i).2 == (x`_0).2].
   rewrite -big_andE.
   rewrite big_ord_recr.
@@ -2429,7 +3322,8 @@ have tous_meme2_Sn: [forall (i:'I_(n.+1) | true), (x`_i).2 == (x`_0).2].
   split.
     rewrite big_andE.
     exact tous_meme2.
-  exact: xn_meme2.
+  change ((x`_n).2 == (x`_0).2).
+  exact: infoa.
 
 move/forallP : tous_meme1_Sn.
 move=> tous_meme1_Sn.
@@ -2442,9 +3336,10 @@ move : (tous_meme2_Sn x0).
 change (((x`_x0).2 == (x`_0).2) -> ((x`_x0).1 == (x`_0).1) ->
 Num.lt
   (f
-     (x1 * lambda + (1 - lambda) * (x`_n).1,
-     x2 * lambda + (1 - lambda) * (x`_n).2))
-  (lambda * f x_f + (1 - lambda) * f y_f)).
+     (x1 * lambda + k`_n * (x`_n).1,
+     x2 * lambda + k`_n * (x`_n).2))
+  (\sum_(i < n) k`_i * f ((x`_i).1, (x`_i).2) +
+   k`_n * f ((x`_n).1, (x`_n).2))).
 move=>cont1x0 cont2x0.
 
 
@@ -2453,9 +3348,10 @@ move : (tous_meme2_Sn x3).
 change (((x`_x3).2 == (x`_0).2) -> ((x`_x3).1 == (x`_0).1) ->
 Num.lt
   (f
-     (x1 * lambda + (1 - lambda) * (x`_n).1,
-     x2 * lambda + (1 - lambda) * (x`_n).2))
-  (lambda * f x_f + (1 - lambda) * f y_f)).
+     (x1 * lambda + k`_n * (x`_n).1,
+     x2 * lambda + k`_n * (x`_n).2))
+  (\sum_(i < n) k`_i * f ((x`_i).1, (x`_i).2) +
+   k`_n * f ((x`_n).1, (x`_n).2))).
 move=>cont1x3 cont2x3.
 
 move/eqP :cont1x0.
@@ -2517,653 +3413,275 @@ rewrite andb_negb_r.
 by [].
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-have autre_ineg : (Num.lt (f (x1, x2)) 
-                          ((\sum_(i < n) k`_i * f((x`_i).1, (x`_i).2)/lambda))).
-rewrite /x1 /x2.
-rewrite (_ : f
-     ((\sum_(i < n) k`_i * (x`_i).1) / lambda,
-     (\sum_(i < n) k`_i * (x`_i).2) / lambda) = f
-                                     ((\sum_(i < n) k`_i * (x`_i).1)* (1 / lambda),
-                                     (\sum_(i < n) k`_i * (x`_i).2)* (1 / lambda)));
-last first.
-  Search _ (_*_/_).
-  Search _ (_/1).
-  rewrite -[X in _ = f
-  (X * (1 / lambda),
-  (\sum_(i < n) k`_i * (x`_i).2) * (1 / lambda))]divr1.
-  rewrite -[X in _ = f
-  (_ * (1 / lambda),
-  (X * (1 / lambda)))]divr1.
-  rewrite mulf_div.
-  rewrite !mul1r !mul1l.
-  reflexivity.
-rewrite mulr_suml.
-
-rewrite (_ : (\sum_(i < n) k`_i * f ((x`_i).1, (x`_i).2) / lambda)
-                = (\sum_(i < n) k`_i * f ((x`_i).1, (x`_i).2))*(1 / lambda)); last first.
-  rewrite -[X in _ = X * (1 / lambda)]divr1.
-  rewrite mulf_div.
-  rewrite !mul1r !mul1l.
-  rewrite mulr_suml.
+(* Reste à démontrer le have tous_meme *)
+apply/andP.
+split.
+  move/forallP : toto.
+  move=> toto.
+  have zero_inf_n : (0 < n)%N.
+    by apply : ltn_trans (ltnSn 0)  (ns1).
+  move: (toto (Ordinal zero_inf_n)).
+  change ([forall (j : 'I_n|true),
+   ((x`_0).1 == (x`_j).1) &&
+   ((x`_0).2 == (x`_j).2)] ->
+      [forall (i : 'I_n | true), (x`_i).1 == (x`_0).1]).
+  move=> toto1.
+  Search _ ([forall _, _]).
+  apply/forallP.
+  move=> x0.
+  change (((x`_x0).1 == (x`_0).1)).
+  move/forallP : toto1.
+  move=> toto1.
+  move: (toto1 x0).
+  change (((x`_0).1 == (x`_x0).1) && ((x`_0).2 == (x`_x0).2) ->
+      (x`_x0).1 == (x`_0).1).
+  move/andP=> toto1x0.
+  move:toto1x0.
+  move=> [toto1x0_1 toto1x0_2].
+  move/eqP:toto1x0_1.
+  move=> toto1x0_1.
+  apply/eqP.
+  rewrite toto1x0_1.
   reflexivity.
 
-rewrite !mulr_suml.
-rewrite (_ :(\sum_(i<n)  k`_(nat_of_ord i) * (x`_(nat_of_ord i)).1 * (1 / lambda)) = 
-                  (\sum_(i<n) (k`_(nat_of_ord i)/lambda) * (x`_(nat_of_ord i)).1));
-  last first.
-  apply: eq_bigr.
-  move=> i inutile.
+
+move/forallP : toto.
+move=> toto.
+have zero_inf_n : (0 < n)%N.
+  by apply : ltn_trans (ltnSn 0) (ns1).
+move: (toto (Ordinal zero_inf_n)).
+change ([forall (j : 'I_n|true),
+   ((x`_0).1 == (x`_j).1) &&
+   ((x`_0).2 == (x`_j).2)] ->
+      [forall (i : 'I_n | true), (x`_i).2 == (x`_0).2]).
+move=> toto2.
+apply/forallP.
+move=> x0.
+change (((x`_x0).2 == (x`_0).2)).
+move/forallP : toto2.
+move=> toto1.
+move: (toto1 x0).
+change (((x`_0).1 == (x`_x0).1) && ((x`_0).2 == (x`_x0).2) ->
+      (x`_x0).2 == (x`_0).2).
+move/andP=> toto2x0.
+move:toto2x0.
+move=> [toto2x0_1 toto2x0_2].
+move/eqP:toto2x0_2.
+move=> toto2x0_2.
+apply/eqP.
+rewrite toto2x0_2.
+reflexivity.
+
+
+
+(* Le dernier but à prouver correspond est le suivant et correspond au cas où
+   ns1 : (1 < n)%N = false ce qui revient à dire que n = 1 grâce à 
+   l'hypothèse nsup1 : (1 < n.+1)%N *)
+have n_egal_1 : (1 = n)%N.
+  Search _ (Num.lt _ _ = false) in ssrnum.
+  move: nsup1.
+  Search _ (_ < _)%N in ssrnat.
+  About ltnS.
+  rewrite ltnS.
+  move=> nsup1.
+  Search _ (_ < _)%N  in ssrnat.
+  move: ns1.
+  rewrite ltnNge.
+  move/negP => ninf1.
+  move:ninf1.
+  Search _ (((_<=_)%N)) in ssrnat.
+  move/negP => ninf1.
+  Search _ ((_<_)%N) ((_ <= _)%N) (_=_) in ssrnat.
+  move: nsup1.
+  rewrite leq_eqVlt.
+  move=> nsup1.
+  Search _ (_<_)%N in ssrnat.
+  Search "anti" in ssrnat.
+  apply: anti_leq.
+  rewrite ninf1.
+  Search _ (_&&true).
+  rewrite andb_true_r.
+  Search _ (_ <=_)%N (_==_) in ssrnat.
+  rewrite leq_eqVlt.
+  by [].
+
+
+have Sn_egal2 : 2 = n.+1.
+  rewrite n_egal_1.
+  reflexivity.
+
+move: ex somme_egal_1 hypok.
+rewrite -!Sn_egal2.
+move=> ex somme_egal_1 hypok.
+
+
+have info1 : k`_1 = 1 - k`_0.
+  move: somme_egal_1.
+  rewrite big_ord_recr.
+  change ((\sum_(i :'I_1) (k`_i)) + k`_1 = 1 -> k`_1 = 1 - k`_0).
+  rewrite big_ord_recr.
+  rewrite big_ord0.
+  change (0 + k`_0 + k`_1 = 1 -> k`_1 = 1 - k`_0).
+  rewrite plus0l.
+  move=> tmp.
+  rewrite -tmp.
+  set a := k`_0.
+  set b := k`_1.
+  simpl in a, b.
   prefield. ring.
 
-rewrite (_ :(\sum_(i<n)  k`_(nat_of_ord i) * (x`_(nat_of_ord i)).2 * (1 / lambda)) = 
-                  (\sum_(i<n) (k`_(nat_of_ord i)/lambda) * (x`_(nat_of_ord i)).2));
-  last first.
-  apply: eq_bigr.
-  move=> i inutile.
-  prefield. ring.
 
+rewrite big_ord_recr.
+change (Num.lt
+  (f
+     (\sum_(i:'I_1) (k`_i* (x`_i).1) + (k`_1 * (x`_1).1),
+     \sum_(i < 2) k`_i * (x`_i).2)   )
+  (\sum_(i < 2) k`_i * f ((x`_i).1, (x`_i).2))).
+rewrite !big_ord_recr !big_ord0.
+change (Num.lt
+  (f
+     (0 + (k`_0 * (x`_0).1) + (k`_1 * (x`_1).1),
+     0 + (k`_0 * (x`_0).2) + (k`_1 * (x`_1).2)  )   )
+  (0 + k`_0 * f ((x`_0).1, (x`_0).2) + k`_1 * f ((x`_1).1, (x`_1).2))).
 
-rewrite [X in Num.lt _ X](_ :(\sum_(i<n)  k`_(nat_of_ord i) * 
-          f ((x`_(nat_of_ord i)).1, (x`_(nat_of_ord i)).2) * (1 / lambda) =
-             \sum_(i<n) (k`_(nat_of_ord i)/lambda) * 
-                (f ((x`_(nat_of_ord i)).1, (x`_(nat_of_ord i)).2))));
-  last first.
-  apply: eq_bigr.
-  move=> i inutile.
-  prefield. ring.
+rewrite !plus0l.
+rewrite info1.
 
-have info1: (\sum_(i < n) k`_i/lambda = 1).
-  rewrite (_ : \sum_(i < n) k`_i/lambda = (\sum_(i < n) k`_i)/lambda).
-    rewrite /lambda.
-    Search _ (_/_= 1).
-    rewrite divff.
-    reflexivity.
-    rewrite -/lambda.
-    move/negPf : info.
-    case tmp2 : (lambda == 0).
-      by [].
-    by [].
+have tmp1 : x`_0 = ((x`_0).1, (x`_0).2).
+  Search _ (_ = (_,_)).
+  apply: surjective_pairing.
+have tmp2 : x`_1 = ((x`_1).1, (x`_1).2).
+  Search _ (_ = (_,_)).
+  apply: surjective_pairing.
 
-  rewrite (_ : (\sum_(i < n) k`_i) / lambda = (\sum_(i < n) k`_i)* (1 / lambda));
-  last first.
-  prefield. ring.
-rewrite mulr_suml.
+rewrite -tmp1 -tmp2.
 
-set F1 := fun i:'I_n => k`_i / lambda.
-set F2 := fun i:'I_n => k`_i * (1 / lambda).
-
-apply (eq_bigr F2).
-move=> i tmp.
-rewrite /F2.
-prefield; ring.
-
-(* Les 6 lignes qui suivent servent à passer de hypok à hypokN hypodernier *)
-(* move: hypok.
-rewrite -big_andE big_ord_recr !//=.
-rewrite big_andE.
-move/andP => hypokN.
-move:hypokN.
-move=> [hypokN hypodernier]. *)
-
-
-(* case sur 2<n *)
-case ns1 : (1 < n)%N.
-set F1 := fun i => k`_i / lambda.
-    set k_sur_lam := mkseq F1 n.
-    move:info1.
-    rewrite (_ : \sum_(i < n) k`_i / lambda = \sum_(i < n) k_sur_lam`_i); last first.
-      apply eq_bigr.
-      move=> i tmp.
-      rewrite /k_sur_lam.
-      simpl in F1.
-      About nth_mkseq.
-      rewrite (nth_mkseq ).
-      rewrite /F1.
-      reflexivity.
-      by [].
-
-    rewrite (_ : \sum_(i < n) k`_i / lambda * (x`_i).1
-                 = \sum_(i < n) k_sur_lam`_i * (x`_i).1); last first.
-      apply eq_bigr.
-      move=> i tmp.
-      rewrite /k_sur_lam.
-      simpl in F1.
-      About nth_mkseq.
-      rewrite (nth_mkseq ).
-      rewrite /F1.
-      reflexivity.
-      by [].
-
-    rewrite (_ : \sum_(i < n) k`_i / lambda * (x`_i).2
-                 = \sum_(i < n) k_sur_lam`_i * (x`_i).2); last first.
-      apply eq_bigr.
-      move=> i tmp.
-      rewrite /k_sur_lam.
-      simpl in F1.
-      About nth_mkseq.
-      rewrite (nth_mkseq ).
-      rewrite /F1.
-      reflexivity.
-      by [].
-
-    rewrite (_ : (\sum_(i < n) k`_i / lambda * f ((x`_i).1, (x`_i).2)
-            = (\sum_(i < n) k_sur_lam`_i * f ((x`_i).1, (x`_i).2)))); last first.
-      apply eq_bigr.
-      move=> i tmp.
-      rewrite /k_sur_lam.
-      simpl in F1.
-      About nth_mkseq.
-      rewrite (nth_mkseq ).
-      rewrite /F1.
-      reflexivity.
-      by [].
-
-
-  case xi_dif_xj_n : [exists (i:'I_n | true),
-        [exists (j:'I_n | true),
-        ~~ ((x`_i).1 == (x`_j).1) || ~~ ((x`_i).2 == (x`_j).2)]].
-    
-
-    move=> info1.
-    have hypokN_lam : ([forall (i:'I_n | true), Num.lt 0 k`_i]
-                   = [forall (i:'I_n | true), Num.lt 0 k_sur_lam`_i]).
-    rewrite -!big_andE.
-    apply: eq_bigr.
-    move => i tmp.
-    rewrite /k_sur_lam.
-    simpl in F1.
-    About nth_mkseq.
-    rewrite (nth_mkseq ).
-    rewrite /F1.
-    Search _ (Num.lt 0 (_/_)).
-      (* preuve que lambda > 0 *)
-      have lambda_pos : lambda>0.
-        rewrite /lambda.
-move: somme_egal_1 nsup1 IHn ex lambda info x1 x2 x1_xn_egal 
-      info_strict_conv F1 k_sur_lam info1 hypok ns1 xi_dif_xj_n i
-     .
-        case : n.
-          by [].
-move=> n somme_egal_1 nsup1 IHn ex lambda info x1 x2 x1_xn_egal 
-      info_strict_conv F1 k_sur_lam info1 hypok ns1 xi_dif_xj_n i
-      .
 move: hypok.
-rewrite -big_andE big_ord_recr !//=.
-rewrite big_andE.
-move/andP => hypokSN.
-move:hypokSN.
-move=> [hypokSN hypodernier].
-        apply (strict_pos_elt_strict_pos_sum hypokSN).
-        Search _ (Num.lt 0 (_/_)).
-        Search _ (_=_ <-> _=_).
-        apply eq_iff_eq_true.
-        split.
-          move => hyp1.
-          apply: divr_gt0.
-          by [].
-        by [].
-        move=> hyp2.
-        rewrite (_ : k`_i =( k`_i/lambda) *lambda); last first.
-          simpl in lambda, k.
-          set tmp1 := k`_i.
-          set tmp2 := lambda.
-          simpl in tmp1.
-          prefield. field.
-          move:lambda_pos.
-          rewrite lt0r.
-          move/andP=> lambda_pos.
-          move: lambda_pos.
-          move=> [lambda_nonul lambda_pos].
-          move/eqP: lambda_nonul.
-          by [].
-        Search _ (Num.lt 0 (_*_)).
-        apply mulr_gt0.
-          by [].
-        by [].
-        by [].
-    move: hypok.
-    rewrite -big_andE big_ord_recr !//=.
-    rewrite big_andE.
-    move/andP => hypokN.
-    move:hypokN.
-    move=> [hypokN hypodernier].
-    move: hypokN.
-    rewrite hypokN_lam.
-    move=> hypokN.
-    apply (IHn ns1 k_sur_lam info1 hypokN xi_dif_xj_n).
-
-
-
-(* Cas où  [exists (i<n | true),
-                 exists (j<n | true),
-                 ~~ ((x`_i).1 == (x`_j).1)
-                 || ~~ ((x`_i).2 == (x`_j).2)] = false *)
-Search _ ([forall _, _]) ([exists _, _]).
-move=> sum_egal_1.
-move/negbT: xi_dif_xj_n.
-
-rewrite negb_exists /= => /forallP => fne.
-
-have toto : [forall i: 'I_n, [forall j : 'I_n,
-    ((x`_i).1 == (x`_j).1) && ((x`_i).2 == (x`_j).2)]].
-apply/forallP => i; move:(fne i); rewrite negb_exists /= => /forallP fnei.
-by apply/forallP => j; move:(fnei j); rewrite negb_orb !negb_involutive.
-
-
-
-
-
-
-
-(* Cas où 1<n = false *)
-
-
-
-(* Cas où xn = x1 *)
-
-
-
-
-
-
-
-
-    (* ............................................*) 
-    case tous_meme: ([forall (i:'I_(n)|true), (x`_i).1 == (x`_0).1] 
-                      && [forall (i:'I_(n)|true), (x`_i).2 == (x`_0).2]).
-
-      have xn_meme: (((x`_n).1 == (x`_0).1) && ((x`_n).2 == (x`_0).2)).
-        move:info_dif.
-        Search _ (_ || _ = false).
-        rewrite orb_false_iff.
-        Search _ (~~_ = false).
-        rewrite !negb_false_iff.
-        move=> [h1 h2].
-        rewrite egalx1 in h1.
-        rewrite egalx2 in h2.
-        rewrite egaly1 in h1.
-        rewrite egaly2 in h2.
-
-
-(* Dans le bout de code qui suits on prouve (x1 = (x`_0).1) *)
-        have hh1: (x1 = (x`_0).1).
-          rewrite /x1.
-          move/andP:tous_meme.
-          move=> [tous_meme1 tous_meme2].
-          (* rewrite tous_meme1. *)
-  Search _ (bigop (_*_)) in ssralg.
-  set F1 : 'I_n-> rat := fun i => k`_i * (x`_i).1.
-  set F2 : 'I_n-> rat := fun i => k`_i * (x`_0).1.
-  About eq_bigr.
-  have F1eqF2 : (forall i : 'I_n, true -> F1 i = F2 i).
-    move=> i true.
-    rewrite /F1 /F2.
-Print Scopes.
-    move/forallP : tous_meme1.
-    move=>tous_meme1.
-
-    About congr1.
-    move: (tous_meme1 i).
-    change (((x`_i).1 == (x`_0).1) ->
-k`_i * (x`_i).1 = k`_i * (x`_0).1).
-    About congr1.
-    set ff := fun x => k`_i * x.
-    move/eqP=> hyp1.
-    by apply: (congr1 ff).
-
-
-About eq_bigr.
-rewrite (eq_bigr F2 F1eqF2).
-rewrite /F2.
-rewrite -mulr_suml.
-rewrite /lambda.
-Search _ (_*_/_).
-Search _ ((_*_)/_).
-rewrite -/lambda.
-prefield ; field.
-Search _ (Num.lt 0 _) (_==0).
-move:info3.
-rewrite lt0r.
-move/andP=> info3.
-move:info3.
-move=> [info31 info32].
-by move/eqP : info31.
-
-(* Dans le bout de code qui suits on prouve (x2 = (x`_0).2) *)
-        have hh2: (x2 = (x`_0).2).
-          rewrite /x1.
-          move/andP:tous_meme.
-          move=> [tous_meme1 tous_meme2].
-          (* rewrite tous_meme1. *)
-  Search _ (bigop (_*_)) in ssralg.
-  set F1 : 'I_n-> rat := fun i => k`_i * (x`_i).2.
-  set F2 : 'I_n-> rat := fun i => k`_i * (x`_0).2.
-  About eq_bigr.
-  have F1eqF2 : (forall i : 'I_n, true -> F1 i = F2 i).
-    move=> i true.
-    rewrite /F1 /F2.
-Print Scopes.
-    move/forallP : tous_meme2.
-    move=>tous_meme2.
-
-    About congr1.
-    move: (tous_meme2 i).
-    change (((x`_i).2 == (x`_0).2) ->
-k`_i * (x`_i).2 = k`_i * (x`_0).2).
-    About congr1.
-    set ff := fun x => k`_i * x.
-    move/eqP=> hyp1.
-    by apply: (congr1 ff).
-
-rewrite /x2.
-About eq_bigr.
-rewrite (eq_bigr F2 F1eqF2).
-rewrite /F2.
-rewrite -mulr_suml.
-rewrite /lambda.
-Search _ (_*_/_).
-Search _ ((_*_)/_).
-rewrite -/lambda.
-prefield ; field.
-Search _ (Num.lt 0 _) (_==0).
-move:info3.
-rewrite lt0r.
-move/andP=> info3.
-move:info3.
-move=> [info31 info32].
-by move/eqP : info31.
-
-(* Preuve de x`_n == x`_0 *)
-move/eqP : h1 h2.
-move=> h1 h2.
-apply/andP; split.
-by rewrite -h1 -hh1.
-move/eqP : h2.
-move=> h2.
-by rewrite -h2 -hh2.
-
-
-
-(* Dans le bout de code qui suit on montre que ex et xn_meme donne false en 
-   hypothèse et donc le but courant est démontré *)
-move/existsP:ex.
-rewrite !//=.
-move=> [x0  ex1].
-
-move/existsP:ex1.
-rewrite !//=.
-move=> [x3 ex2].
-
-move/andP:tous_meme.
-move=> [tous_meme1 tous_meme2].
-
-move/andP:xn_meme.
-move=> [xn_meme1 xn_meme2].
-
-have tous_meme1_Sn: [forall (i:'I_(n.+1) | true), (x`_i).1 == (x`_0).1].
-  rewrite -big_andE.
-  rewrite big_ord_recr.
-  apply/andP.
-  split.
-    rewrite big_andE.
-    exact tous_meme1.
-  exact: xn_meme1.
-have tous_meme2_Sn: [forall (i:'I_(n.+1) | true), (x`_i).2 == (x`_0).2].
-  rewrite -big_andE.
-  rewrite big_ord_recr.
-  apply/andP.
-  split.
-    rewrite big_andE.
-    exact tous_meme2.
-  exact: xn_meme2.
-
-move/forallP : tous_meme1_Sn.
-move=> tous_meme1_Sn.
-
-move/forallP : tous_meme2_Sn.
-move=> tous_meme2_Sn.
-
-move : (tous_meme1_Sn x0).
-move : (tous_meme2_Sn x0).
-change (((x`_x0).2 == (x`_0).2) -> ((x`_x0).1 == (x`_0).1) ->
-Num.lt
+rewrite -big_andE.
+rewrite !big_ord_recr !big_ord0.
+change (Num.lt 0 k`_0 && Num.lt 0 k`_1 -> Num.lt
   (f
-     (x1 * lambda + (1 - lambda) * (x`_n).1,
-     x2 * lambda + (1 - lambda) * (x`_n).2))
-  (lambda * f x_f + (1 - lambda) * f y_f)).
-move=>cont1x0 cont2x0.
+     (k`_0 * (x`_0).1 + (1 - k`_0) * (x`_1).1,
+     k`_0 * (x`_0).2 + (1 - k`_0) * (x`_1).2))
+  (k`_0 * f x`_0 + (1 - k`_0) * f x`_1)).
+move/andP=> hypok.
+move:hypok.
+move=> [hypok0 hypok1].
 
 
-move : (tous_meme1_Sn x3).
-move : (tous_meme2_Sn x3).
-change (((x`_x3).2 == (x`_0).2) -> ((x`_x3).1 == (x`_0).1) ->
-Num.lt
-  (f
-     (x1 * lambda + (1 - lambda) * (x`_n).1,
-     x2 * lambda + (1 - lambda) * (x`_n).2))
-  (lambda * f x_f + (1 - lambda) * f y_f)).
-move=>cont1x3 cont2x3.
+have info2 : k`_0 = 1 - k`_1.
+  move: somme_egal_1.
+  rewrite big_ord_recr.
+  change ((\sum_(i :'I_1) (k`_i)) + k`_1 = 1 -> k`_0 = 1 - k`_1).
+  rewrite big_ord_recr.
+  rewrite big_ord0.
+  change (0 + k`_0 + k`_1 = 1 -> k`_0 = 1 - k`_1).
+  rewrite plus0l.
+  move=> tmp.
+  rewrite -tmp.
+  set a := k`_0.
+  set b := k`_1.
+  simpl in a, b.
+  prefield. ring.
 
-move/eqP :cont1x0.
-move=>cont1x0.
-
-move/eqP :cont2x0.
-move=>cont2x0.
-
-move/eqP :cont1x3.
-move=>cont1x3.
-
-move/eqP :cont2x3.
-move=>cont2x3.
-
-have contra1: ((x`_x0).1 == (x`_x3).1).
-  by rewrite cont2x0 cont2x3.
-
-have contra2: ((x`_x0).2 == (x`_x3).2).
-  by rewrite cont1x0 cont1x3.
-
-move: ex2.
-Search _ (~~_||~~_).
-set a1 := (x`_x0).1.
-set b1 := (x`_x3).1.
-set a2 := (x`_x0).2.
-set b2 := (x`_x3).2.
-simpl in a1, b1, a2, b2.
-set bool1 := (a1 == b1).
-set bool2 := (a2 == b2).
-
-move : contra1 contra2.
-rewrite -/bool1.
-rewrite -/bool2.
-move=> contra1.
-move=> contra2.
-have contra: (bool1 && bool2).
-  apply/andP.
-  split.
-    rewrite /bool1.
-    by exact contra1.
-  rewrite /bool2.
-  by exact: contra2.
-Search _ (~~_||~~_).
-rewrite -[~~ bool1 || ~~ bool2]negb_andb.
-move:contra.
-set bbool := bool1 && bool2.
-Search _ (_ && ~~_).
-move=> hyp1 hyp2.
-have neg : (bbool && ~~bbool).
-  apply/andP.
-  split.
-    rewrite /bbool.
-    rewrite contra1.
-    rewrite contra2.
+have info3 : Num.lt k`_0 1.
+  rewrite info2.
+  change (Num.lt (1 - k`_1) (1-0)).
+  Search _ (Num.lt (_-_) (_-_)).
+  apply: ler_lt_sub.
     by [].
   by [].
-move: neg.
-rewrite andb_negb_r.
-by [].
 
-
-
-  (* ....................................... *)
-  have : (Num.lt (f (x1 * lambda + k`_n * (x`_n).1, x2 * lambda + k`_n * (x`_n).2))
-                  (lambda*(f (x1, x2)) + k`_n* (f ((x`_n).1, (x`_n).2)))).
-    move:f_is_convex.
-    rewrite /convex_strict_fun.
-    move=> hypconvex.
-      have : k`_n = 1 - lambda.
-      rewrite /lambda.
-      Search _ (_ = _  -> _+_ =_+_).
-      rewrite -somme_egal_1.
-      rewrite big_ord_recr !//=.
-      set sum_n := \sum_(i < n) k`_i.
-      simpl in sum_n.
-      prefield. ring.
-    move=> info2.
-    rewrite info2.
-    set x_f := (x1, x2).
-    set y_f := ((x`_n).1, (x`_n).2).
-    have egalx1 : (x_f.1 = x1).
+have ex_utile : ((x`_0).1 != (x`_1).1) || ((x`_0).2 != (x`_1).2); last first.
+  apply : f_is_convex.
       by [].
-    have egalx2 : (x_f.2 = x2).
-      by [].
-    have egaly1 : (y_f.1 = (x`_n).1).
-      by [].
-    have egaly2 : (y_f.2 = (x`_n).2).
-      by [].
-    rewrite -egalx1.
-    rewrite -egalx2.
-    rewrite -egaly1.
-    rewrite -egaly2.
-    simpl in x_f.
-    simpl in y_f.
-    have info3 : Num.lt 0 lambda.
-      rewrite /lambda.
-      Search _ (Num.lt 0 _ = ~~(_) && _).
-      rewrite lt0r.
-      apply/andP.
-      split.
-        rewrite -/lambda.
-        by rewrite info !//=.
-      About pos_elt_pos_sum.
-      have hypokle : forall m, (m<(S n))%N -> 
-            [forall (i :'I_m| true), Num.le 0 (k`_((nat_of_ord) i))].
-        induction m.
-          rewrite -big_andE.
-          by rewrite big_ord0.
-        rewrite -big_andE.
-        rewrite big_ord_recr !//=.
-        move=>inf.
-        rewrite big_andE.
-        apply/andP.
-        split.
-          case info_utile: (m<(S n))%N.
-            apply (IHm info_utile).
-          Search _ ((_<_) = false).
-          move: info_utile.
-          move/negbT => info_utile.
-          rewrite -leqNgt in info_utile.
-          auto.
-        have ineg: (m<n.+1)%N.
-          exact: (ltn_trans (ltnSn m) (inf)).
-        have t: Num.lt 0 k`_m; last first.
-          rewrite le0r.
-          apply/orP.
-          by right.
-        About forallP.
-        move/forallP :  hypok.
-        move=> hypok.
-        set m_ord := Ordinal ineg.
-        change (true ==>Num.lt 0 k`_(m_ord) ).
-        About nat_of_ord.
-        apply: hypok.
-      apply: pos_elt_pos_sum.
-      by apply: hypokle.
-    have info4: (Num.lt lambda 1).
-      have info5 : lambda = 1 - k`_n.
-        rewrite info2.
-        simpl in lambda.
-        prefield. ring.
-      rewrite info5.
-      Search _ (Num.lt (_+_) (_+_)).
-      About ltr_add2r.
-      rewrite -(ltr_add2r (k`_n -1) (1 - k`_n) 1).
-      have w: (1 - k`_n + (k`_n - 1)) = 0.
-        prefield; ring.
-      rewrite w.
-      have ww : (1 + (k`_n - 1)) = k`_n.
-        prefield; ring.
-      rewrite ww {ww}.
-      rewrite {w}.
-      move/forallP : hypok.
-      move=> hypok.
-      set n_ord := Ordinal (ltnSn n).
-      change (true ==>Num.lt 0 k`_(n_ord) ).
-      apply: hypok.
-    case info_dif: (~~ (x_f.1 == y_f.1) || ~~ (x_f.2 == y_f.2)).
-      rewrite (_ : x_f.1 * lambda =  lambda* x_f.1 ); last first.
-        prefield; ring.
-      rewrite (_ : x_f.2 * lambda =  lambda* x_f.2 ); last first.
-        prefield; ring.
-      apply (@hypconvex lambda x_f y_f info3 info4 info_dif).
-    
+    by [].
+  by [].
+move/existsP : ex.
+move=> [x0 ex].
+Search _ (true &&_).
+move :ex.
+rewrite andb_true_l.
+move=> ex.
+move/existsP : ex.
+move=> [x1 ex].
+move: ex.
+rewrite andb_true_l.
+move=> ex.
 
+have ineg0 : (0<2)%N.
+  by apply: ltn_trans (ltnSn 0) (ltnSn 1).
 
+have ineg1 : (1<2)%N.
+  by apply: (ltnSn 1).
 
-(* Dans lebout de code qui suit on va appliquer hypconvex *)
+case x0x1_dif : (x0 ==x1).
+  move/eqP : x0x1_dif.
+  move=> x0x1_dif.
+  rewrite x0x1_dif in ex.
+  move: ex.
+  rewrite (_ : (x`_x1).1 == (x`_x1).1 = true); last first.
+    apply/eqP.
+    by reflexivity.
+  rewrite (_ : (x`_x1).2 == (x`_x1).2 = true); last first.
+    apply/eqP.
+    by reflexivity.
+rewrite !//=.
 
-rewrite (_ : x_f.1 * lambda = lambda * x_f.1); last first.
-  prefield. ring.
-rewrite (_ : x_f.2 * lambda = lambda * x_f.2); last first.
-  prefield. ring.
-
-apply: hypconvex.
+case x0_is0 : (x0 == Ordinal ing0).
+  case x1_is1 : (x1 == Ordinal ing1).
+    move/eqP : x0_is0.
+    move=> x0_is0.
+    move/eqP : x1_is1.
+    move=> x1_is1.
+    change (~~ ((x`_(Ordinal ing0)).1 == (x`_(Ordinal ing1)).1) 
+              || ~~ ((x`_(Ordinal ing0)).2 == (x`_(Ordinal ing1)).2)).
+    rewrite -x0_is0 -x1_is1.
+    by [].
+  have contra : (x1 == Ordinal ing0).
+    Search _ (_==_) in fintype.
+    apply/eqP.
+    apply (eq_ordinal x1_is1).
+  move/eqP : x0_is0.
+  move/eqP : contra.
+  move=> contra x0_is0.
+  rewrite -contra in x0_is0.
+  rewrite x0_is0 in ex.
+  move: ex.
+  rewrite (_ :(x`_x1).1 == (x`_x1).1 = true); last first.
+    apply/eqP.
+    by reflexivity.
+  rewrite (_ :(x`_x1).2 == (x`_x1).2 = true); last first.
+    apply/eqP.
+    by reflexivity.
+  rewrite (_ : ~~ true = false) ;last first.
+    by [].
+  Search _ (false || _).
+  rewrite orb_false_l.
+  by [].
+have infoa : x0 == Ordinal ing1.
+  apply/eqP.
+  apply: (eq_ordinal2 x0_is0).
+move/eqP: infoa.
+move=> infoa.
+rewrite infoa in x0x1_dif.
+have infob : (x1 = Ordinal ing0).
+  move: x0x1_dif.
+  Search _ (_ == _).
+  rewrite (_ : (Ordinal ing1 == x1) = (x1 ==Ordinal ing1)).
+    apply : (eq_ordinal ).
+  by [].
+rewrite infoa infob in ex.
+move : ex.
+change (~~ ((x`_(1)).1 == (x`_(0)).1)
+|| ~~ ((x`_(1)).2 == (x`_(0)).2) ->
+~~ ((x`_0).1 == (x`_1).1) || ~~ ((x`_0).2 == (x`_1).2)).
+rewrite (_ : ((x`_1).1 == (x`_0).1) = ((x`_0).1 == (x`_1).1)); last first.
+  by [].
+rewrite (_ : ((x`_1).2 == (x`_0).2) = ((x`_0).2 == (x`_1).2)); last first.
   by [].
 by [].
-rewrite /x_f !//=.
-
-
-
-
-
-(* Dans le bout de code qui suit on va appliquer l'hypothèse de récurrence
-   (sur f (x1, x2))  car il existe i j <= n-2 tel que xi différent de xj *)
-
-
-
-
-
-
-
-
-
-
-
-Admitted.
+Qed.
 
 
 Definition fJensen:= fun x:rat*rat => x.1 ^+2 + x.2 ^+2.
@@ -3318,7 +3836,7 @@ Search _ (_-_==0).
 by rewrite subr_eq0.
 Qed.
 
-Lemma lt_implies_le (r:rat) : Num.lt 0 r -> Num.le 0 r.
+Lemma lt_implies_le2 (r:rat) : Num.lt 0 r -> Num.le 0 r.
 Proof.
 rewrite lt0r.
 move/andP=> H.
@@ -4648,7 +5166,9 @@ rewrite test.
 
 
 move=> HH.
-apply : (@Jensen_inequality_strict 3 _ fJensen_convex _ x H3 (ltnSn 2) HH).
+About Jensen_inequality_strict.
+apply : (@Jensen_inequality_strict 3 _ fJensen_convex _
+                (ltn_trans (ltnSn 1) (ltnSn 2)) k  H3  HH).
 apply (triangle_non_degenere t tm).
 Qed.
 
