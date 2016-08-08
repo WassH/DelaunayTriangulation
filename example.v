@@ -5463,7 +5463,38 @@ case info3 : temp => [vtemp | ]; last by [].
 set temp2 := attachT _ _ _.
 case info4 : temp2 => [vtemp2 | ]; last by [].
 move => [_ vtemp2istmap'] tt.
-set new_tr := (fun x : 'I_3 =>
+set new_tr1 := (fun x : 'I_3 =>
+           if x == 0
+           then
+            if
+             (ptext1 == tm t1 (Ordinal zero<3))
+             || (ptext1 == tm t1 (Ordinal un<3))
+             || (ptext1 == tm t1 (Ordinal deux<3))
+            then tm t1 (point2indext1t2 ptext1 t1 t2 tm)
+            else tm t2 (point2indext1t2 ptext1 t1 t2 tm)
+           else
+            if x == 1
+            then
+             if
+              (ptext2 == tm t1 (Ordinal zero<3))
+              || (ptext2 == tm t1 (Ordinal un<3))
+              || (ptext2 == tm t1 (Ordinal deux<3))
+             then tm t1 (point2indext1t2 ptext2 t1 t2 tm)
+             else tm t2 (point2indext1t2 ptext2 t1 t2 tm)
+            else
+             if
+              (ptext1 == tm t1 (Ordinal zero<3))
+              || (ptext1 == tm t1 (Ordinal un<3))
+              || (ptext1 == tm t1 (Ordinal deux<3))
+             then
+              tm t1
+                (addOrd3 (point2indext1t2 ptext1 t1 t2 tm)
+                   (Ordinal deux<3))
+             else
+              tm t2
+                (addOrd3 (point2indext1t2 ptext1 t1 t2 tm)
+                   (Ordinal deux<3))).
+set new_tr2 := (fun x : 'I_3 =>
               if x == 0
               then
                if
@@ -5496,17 +5527,83 @@ set new_tr := (fun x : 'I_3 =>
                  tm t1
                    (addOrd3 (point2indext1t2 ptext2 t1 t2 tm)
                       (Ordinal (ltnSn 2)))).
-have otr : leftpoint (new_tr (inZp 0))(new_tr (inZp 1))(new_tr (inZp 2)) > 0.
-  rewrite /new_tr /=.
-  case h : ((ptext2 == tm t2 (Ordinal (ltn0Sn 2)))
-          || (ptext2 == tm t2 (Ordinal (ltn_trans (ltnSn 1) (ltnSn 2))))
-          || (ptext2 == tm t2 (Ordinal (ltnSn 2)))).
-(* Trouver un bon moyen d'exprimer ceci dans un lemme. *)
-    have -> :  (ptext1 == tm t2 (Ordinal (ltn0Sn 2)))
-          || (ptext1 == tm t2 (Ordinal (ltn_trans (ltnSn 1) (ltnSn 2))))
-          || (ptext1 == tm t2 (Ordinal (ltnSn 2))) = false; last first.
-      move => {new_tr info4 vtemp2istmap' temp2 tt vtemp2}.
-     rewrite !point2indext1t2_correct ?eqxx ?orbT //.
+
+have oriented_tm2 : forall t : T, oriented t tm2.
+  About orientedunhookT.
+  move: (orientedunhookT g t1 univ_o).
+  rewrite info1.
+  by [].
+
+have oriented_tm3 : forall t : T, oriented t tm3.
+  move: (orientedunhookT g2 t2 oriented_tm2).
+  rewrite info2.
+  by [].
+
+have otr1 : leftpoint (new_tr1 (inZp 0))(new_tr1 (inZp 1))(new_tr1 (inZp 2)) > 0
+    ; last first.
+  have oriented_vtemp : forall t : T, oriented t vtemp.
+    About orientedattachT.
+    move: (orientedattachT pm oriented_tm3 otr1).
+    case intel1 : (attachT new_tr1 tm3 pm) => [a | ].
+      move : intel1.
+      move: info3.
+      rewrite /temp.
+      rewrite -/new_tr1.
+      move=> tempo1.
+      rewrite tempo1.
+      move=> tempo2.
+      have some_eq : vtemp = a.
+        move: tempo2.
+        by case.
+      by rewrite some_eq.
+    move: intel1 info3.
+    rewrite /temp.
+    rewrite -/new_tr1.
+    move=> tempo1.
+    rewrite tempo1.
+    by discriminate.
+
+have otr2 : leftpoint (new_tr2 (inZp 0))(new_tr2 (inZp 1))(new_tr2 (inZp 2)) > 0
+    ; last first.
+  have oriented_vtemp2 : forall t : T, oriented t vtemp2.
+    About orientedattachT.
+    move: (orientedattachT pm oriented_vtemp otr2).
+    case intel1 : (attachT new_tr2 vtemp pm) => [a | ].
+      move : intel1.
+      move: info4.
+      rewrite /temp2.
+      rewrite -/new_tr2.
+      move=> tempo1.
+      rewrite tempo1.
+      move=> tempo2.
+      have some_eq : vtemp2 = a.
+        move: tempo2.
+        by case.
+      by rewrite some_eq.
+    move: intel1 info4.
+    rewrite /temp2.
+    rewrite -/new_tr2.
+    move=> tempo1.
+    rewrite tempo1.
+    by discriminate.
+
+by rewrite -vtemp2istmap'.
+
+
+(* Reste encore à prouver que les 2 triangles créés new_tr1 et new_tr2 sont 
+   bien orientés *)
+rewrite /new_tr2 /=.
+case h : ((ptext2 == tm t2 (Ordinal (ltn0Sn 2)))
+        || (ptext2 == tm t2 (Ordinal (ltn_trans (ltnSn 1) (ltnSn 2))))
+        || (ptext2 == tm t2 (Ordinal (ltnSn 2)))).
+  have h2 :  (ptext1 == tm t2 (Ordinal (ltn0Sn 2)))
+        || (ptext1 == tm t2 (Ordinal (ltn_trans (ltnSn 1) (ltnSn 2))))
+        || (ptext1 == tm t2 (Ordinal (ltnSn 2))) = false; last first.
+    move => {new_tr2 info4 vtemp2istmap' temp2 tt vtemp2}.
+   rewrite h2.
+   rewrite !point2indext1t2_correct ?eqxx ?orbT //.
+      rewrite point2indext2t1_correct.
+          
 
 
 
