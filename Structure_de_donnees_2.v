@@ -1,3 +1,11 @@
+(*=====================================================
+=======================================================
+JUNE 2016 - AUGUST 2016
+
+AUTHOR : Wassim Haffaf.
+=======================================================
+=======================================================*)
+
 Require Import Arith.
 Require Import EqNat.
 Require Import Ring.
@@ -361,7 +369,7 @@ Defined.
 
 (* Fonction qui va supprimer le triangle extérieur et qui va rajouter les 3 triangles 
   intérieurs et les 3 edges intérieurs *)
-Definition add_point_triangle (tm : trianglemap) (em : edgemap) (t:T) (preuve1 : t \in tm) 
+(* Definition add_point_triangle (tm : trianglemap) (em : edgemap) (t:T) (preuve1 : t \in tm) 
            (etm : edgetmap) (p:point) (preuvetmap : tmap_prop1 em tm) := 
     unhookT t; attachE p (tr2pt em tm preuvetmap preuve (Ordinal(zero<3))) em;
                attachE p (tr2pt em tm preuvetmap preuve (Ordinal(un<3))) em;
@@ -438,34 +446,34 @@ let edgeT3m :=[ffun x:'I_2 => if x==1 then tr2pt preuvetmap preuve1 (Ordinal(un<
                                else if x==1 then  (\max_(i : domf em) val i, false)
                                else (((\max_(i : domf em) val i) - 1) %%#|{:domf em}|, true) in
                attachT triangle3 tm.
-
+ *)
 
 (* La fonction add_point_out va rajouter les edges et supprimer les edges qu'il faut *)
 (* Cette fonction (comme add_point_triangle) sera appliquée dans add_point qui déterminera 
 à laquelle de ces deux fonctions il faut faire appel *)
-Definition add_point_out (em:edgemap) (tm: trianglemap) (etm:edgetmap) (hu:hull)
+(* Definition add_point_out (em:edgemap) (tm: trianglemap) (etm:edgetmap) (hu:hull)
                            (preuvetmap : tmap_prop1 em tm) (p:point) := 
   let S := [fset eH \in hu | true] in
   let 
-  let S2 := [fset eh \in hu | \det M <0]
+  let S2 := [fset eh \in hu | \det M <0] *)
 
 (* Cette fonction add_point_out sera récursive pour sortir la liste des edges de hull qui sont rouges
 ainsi que les deux points extremaux *)
 (* Ensuite il faudra créer pour chaque head (ou tail) de ces edges un edge et en plus un edge 
-pour la queue du premier. Ensuite il faut créer les triangles *)
+pour la queue du premier *)
 
 
 
 
 
 (* Fonction add_point globale, qui va faire appel selon les cas à add_point_triangle ou add_point_out *)
-Definition add_point (em:edgemap) (tm: trianglemap) (etm:edgetmap) (hu:hull)
+(* Definition add_point (em:edgemap) (tm: trianglemap) (etm:edgetmap) (hu:hull)
                            (preuvetmap : tmap_prop1 em tm) (p:point) := 
-  if (@inHull tmap em p preuvetmap) then 
+  if (@inHull tm em p preuvetmap) then 
                     let t1 :=findtriangle p preuvetmap true in
                     add_point_triangle t1 etm p preuvetmap
   else add_point_out etm hu preuvetmap p.
-
+ *)
 
 
 
@@ -634,7 +642,7 @@ et je réutiliserai ces preuves dans flip *)
 Definition flip (em : edgemap) (tm: trianglemap) (eAdj:E) (ptext1 : point) (ptext2 : point) 
                        (t1:T)  (preuve1 : t1 \in tm) (t2 :T) (preuve2: t2 \in tm) 
                                 (preuvetmap : tmap_prop1 em tm):=
-unhookE eAdj em; unhookEetm eAdj etm; unhookT t tm1; unhookT t2 tm;  attachE ptext1 ptext2 em; 
+unhookE eAdj em; unhookEetm eAdj etm; unhookT t tm1; unhookT t2 tm;  attachE ptext1 ptext2 em;  
 let triangle1 := fun x:'I_3 => if x==0 then (fst(tm.[preuve1]%fmap (addOrd3 (@edge2index eAdj t1 em tm preuvetmap preuve1) 1))
                                                     ,snd(tm.[preuve1]%fmap (addOrd3 (@edge2index eAdj t1 em tm preuvetmap preuve1) 1)))  
                                else if x==1 then  (\max_(i : domf em) val i, true)
@@ -646,7 +654,7 @@ in let triangle2 := fun x:'I_3 => if x==0 then (fst(tm.[preuve1]%fmap (addOrd3 (
                                                     ,snd(tm.[preuve2]%fmap (addOrd3 (@edge2index eAdj t2 em tm preuvetmap preuve2) (Ordinal(un<3)))))
                                else (\max_(i : domf em) val i, false) 
 
-in attachT triangle1 tm ; attachT triangle2 tm.
+in attachT triangle1 tm ; attachT triangle2 tm. 
 
 
 
