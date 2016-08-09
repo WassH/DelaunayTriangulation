@@ -214,11 +214,10 @@ Definition inCircle (p1 : point) (t1: T) (tm : trianglemap) : bool :=
 (* La fonction isDelaunayLocal va prendre 2 triangles et va renvoyer un bool
    qui vaudra true si la construction des 2 triangles est de Delauney *)
 Definition isDelaunayLocal (t1: T) (t2: T)  (tm : trianglemap) : bool :=
-  if (inCircle (triangle2points t1 tm (Ordinal (zero<3))) t2 tm == false
-      && inCircle (triangle2points t1 tm (Ordinal (un<3))) t2 tm== false
-      && inCircle (triangle2points t1 tm (Ordinal (deux<3))) t2 tm== false)
-              then true
-              else false.
+  ~~(inCircle (triangle2points t1 tm (Ordinal (zero<3))) t2 tm
+      && ~~inCircle (triangle2points t1 tm (Ordinal (un<3))) t2 tm
+      && ~~inCircle (triangle2points t1 tm (Ordinal (deux<3))) t2 tm).
+
 
 
 (* La fonction remove retire d'une sequence de T, un T donné en argument *)
