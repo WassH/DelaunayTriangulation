@@ -171,34 +171,16 @@ split; last first.
   move=> [H4 H5].
   move:H5.
   move=> [H5 H6].
-  rewrite /leftpoint.
-  rewrite H1 H2.
+  rewrite /leftpoint H1 H2.
   set u1 := \det _.
   have u1q : u1 = k3 * bd.
-  rewrite /u1.
-  rewrite (expand_det_row _ (Ordinal (deux<3))).
-  rewrite big_ord_recl.
-  rewrite mxE. rewrite //=.
-  rewrite big_ord_recl.
-  rewrite big_ord_recl.
-  rewrite big_ord0.
-  rewrite mxE. rewrite //=.
-  rewrite mxE. rewrite //=.
+  rewrite /u1 (expand_det_row _ (Ordinal (deux<3))) big_ord_recl.
+  rewrite mxE. rewrite //= big_ord_recl big_ord_recl big_ord0 mxE //=.
+  rewrite mxE //=.
   
-  rewrite /cofactor.
-  rewrite !//=.
-  
-  rewrite (expand_det_row _ (Ordinal (un<2))).
-  rewrite big_ord_recl.
-  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
-  rewrite /cofactor.
-  rewrite !//=.
-
-  rewrite big_ord_recl.
-  rewrite big_ord0.
-  rewrite !mxE !//=.
+  rewrite /cofactor !//= (expand_det_row _ (Ordinal (un<2))) big_ord_recl.
+  rewrite mxE //= mxE //= mxE //= /cofactor !//= big_ord_recl big_ord0 !mxE !//=.
 rewrite /row' /col'.
-Locate "\matrix_".
 set F := (X in matrix_of_fun _ X).
 rewrite (_ : \matrix_(i, j) F i j = (F ord0 ord0)%:M);[
 rewrite det_scalar1 |]; last first.
@@ -222,11 +204,9 @@ rewrite eqxx /= mulr1n.
 by have-> : (Ordinal pm = ord0) by apply val_inj.
 
 
-  rewrite (expand_det_row _ (Ordinal (un<2))).
-  rewrite big_ord_recl.
+  rewrite (expand_det_row _ (Ordinal (un<2))) big_ord_recl.
   rewrite mxE. rewrite //=. rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
-  rewrite /cofactor.
-  rewrite !//=.
+  rewrite /cofactor !//=.
 
 rewrite /row' /col'.
 
@@ -241,13 +221,9 @@ have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
 rewrite eqxx /= mulr1n.
 by have-> : (Ordinal pm = ord0) by apply val_inj.
 
-  rewrite big_ord_recl.
-  rewrite big_ord0.
-  rewrite (expand_det_row _ (Ordinal (un<2))).
-  rewrite big_ord_recl.
+  rewrite big_ord_recl big_ord0 (expand_det_row _ (Ordinal (un<2))) big_ord_recl.
   rewrite mxE. rewrite //=. rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
-  rewrite /cofactor.
-  rewrite !//=.
+  rewrite /cofactor !//=.
 
 set F4 := (X in matrix_of_fun _ X).
 rewrite (_ : \matrix_(i, j) F4 i j = (F4 ord0 ord0)%:M);[
@@ -260,9 +236,7 @@ have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
 rewrite eqxx /= mulr1n.
 by have-> : (Ordinal pm = ord0) by apply val_inj.
 
-  rewrite big_ord_recl.
-  rewrite big_ord0.
-  rewrite !mxE !//=.
+  rewrite big_ord_recl big_ord0 !mxE !//=.
 
 rewrite /col' /row'.
 set F5 := (X in matrix_of_fun _ X).
@@ -289,17 +263,9 @@ by have-> : (Ordinal pm = ord0) by apply val_inj.
 
 (* Expansion de bd *)
 
-rewrite /bd /leftpoint.
-rewrite (expand_det_row _ (Ordinal (deux<3))).
-rewrite big_ord_recl.
-rewrite !mxE !//=.
-rewrite /cofactor.
-rewrite (expand_det_row _ (Ordinal (un<2))).
-rewrite big_ord_recl.
-rewrite !mxE !//=.
-rewrite /cofactor.
-
-rewrite /row' /col'.
+rewrite /bd /leftpoint (expand_det_row _ (Ordinal (deux<3))).
+rewrite big_ord_recl !mxE !//= /cofactor (expand_det_row _ (Ordinal (un<2))).
+rewrite big_ord_recl !mxE !//= /cofactor /row' /col'.
 set F7 := (X in matrix_of_fun _ X).
 rewrite (_ : \matrix_(i, j) F7 i j = (F7 ord0 ord0)%:M);[
 rewrite det_scalar1 |]; last first.
@@ -324,14 +290,10 @@ have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
 rewrite eqxx /= mulr1n.
 by have-> : (Ordinal pm = ord0) by apply val_inj.
 
-rewrite big_ord_recl.
-  rewrite (expand_det_row _ (Ordinal (un<2))).
-  rewrite big_ord_recl.
-  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
-  rewrite /cofactor.
-  rewrite !//=.
-rewrite big_ord0 big_ord_recl.
-rewrite !mxE !//=.
+rewrite big_ord_recl (expand_det_row _ (Ordinal (un<2))) big_ord_recl.
+  rewrite mxE //= mxE //=.
+  rewrite /cofactor !//=.
+rewrite big_ord0 big_ord_recl !mxE !//=.
 
 rewrite /col' /row'.
 set F9 := (X in matrix_of_fun _ X).
@@ -359,14 +321,9 @@ have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
 rewrite eqxx /= mulr1n.
 by have-> : (Ordinal pm = ord0) by apply val_inj.
 
-  rewrite (expand_det_row _ (Ordinal (un<2))).
-  rewrite big_ord_recl.
-  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
-  rewrite /cofactor.
-  rewrite !//=.
-rewrite !mxE !//=.
-
-rewrite /col' /row'.
+  rewrite (expand_det_row _ (Ordinal (un<2))) big_ord_recl.
+  rewrite mxE //= mxE //= /cofactor !//=.
+rewrite !mxE !//= /col' /row'.
 set F11 := (X in matrix_of_fun _ X).
 rewrite (_ : \matrix_(i, j) F11 i j = (F11 ord0 ord0)%:M);[
 rewrite det_scalar1 |]; last first.
@@ -391,27 +348,13 @@ have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
 rewrite eqxx /= mulr1n.
 by have-> : (Ordinal pm = ord0) by apply val_inj.
 
-rewrite !//=.
-rewrite /bump !//=.
-rewrite /F6. rewrite 4!mxE /=.
-rewrite /F. rewrite 4!mxE /=.
-rewrite /F2. rewrite 4!mxE /=.
-rewrite /F4. rewrite 4!mxE /=.
-rewrite /F5. rewrite 4!mxE /=.
-rewrite /F7. rewrite 4!mxE /=.
-rewrite /F8. rewrite 4!mxE /=.
-rewrite /F9. rewrite 4!mxE /=.
-rewrite /F12. rewrite 4!mxE /=.
-rewrite /F11. rewrite 4!mxE /=.
-rewrite /F3. rewrite 4!mxE /=.
-rewrite /F10. rewrite 4!mxE /=.
+rewrite !//= /bump !//= /F6 4!mxE /=.
+rewrite /F  4!mxE /= /F2 4!mxE /= /F4 4!mxE /=.
+rewrite /F5. rewrite 4!mxE /= /F7. rewrite 4!mxE /= /F8 4!mxE /=.
+rewrite /F9 4!mxE /= /F12 4!mxE /= /F11 4!mxE /= /F3 4!mxE /= /F10 4!mxE /=.
 
-rewrite !mulN1r !addr0 !//=.
-rewrite !expr2 !//=.
-rewrite !exprD !expr1 !expr0 !//= !mulr1 !//= .
-rewrite !mulN1r !//=.
-rewrite !mul1r.
-rewrite !mulrN1.
+rewrite !mulN1r !addr0 !//= !expr2 !//= !exprD !expr1 !expr0 !//= !mulr1 !//=.
+rewrite !mulN1r !//= !mul1r !mulrN1.
 
 set a := point2R1 (tm t (Ordinal zero<3)).
 set b := point2R2 (tm t (Ordinal zero<3)).
@@ -428,7 +371,6 @@ rewrite -(eqP H3). simpl in k1. prefield; ring.
 
 
 rewrite u1q.
-Search _ (Num.lt _ (_*_)).
 rewrite pmulr_rgt0; last first.
 exact: H6.
 rewrite toriented !//=.
@@ -437,30 +379,15 @@ rewrite toriented !//=.
 (* On refait de même avec les points un<3 et deux<3 *)
 set u2 := \det _.
   have u2q : u2 = k1 * bd.
-  rewrite /u2.
-  rewrite (expand_det_row _ (Ordinal (deux<3))).
-  rewrite big_ord_recl.
-  rewrite mxE. rewrite //=.
-  rewrite big_ord_recl.
-  rewrite big_ord_recl.
-  rewrite big_ord0.
-  rewrite mxE. rewrite //=.
-  rewrite mxE. rewrite //=.
+  rewrite /u2 (expand_det_row _ (Ordinal (deux<3))) big_ord_recl.
+  rewrite mxE. rewrite //= big_ord_recl big_ord_recl big_ord0 mxE //=.
+  rewrite mxE //=.
   
-  rewrite /cofactor.
-  rewrite !//=.
+  rewrite /cofactor !//=.
   
-  rewrite (expand_det_row _ (Ordinal (un<2))).
-  rewrite big_ord_recl.
+  rewrite (expand_det_row _ (Ordinal (un<2))) big_ord_recl.
   rewrite mxE. rewrite //=. rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
-  rewrite /cofactor.
-  rewrite !//=.
-
-  rewrite big_ord_recl.
-  rewrite big_ord0.
-  rewrite !mxE !//=.
-rewrite /row' /col'.
-Locate "\matrix_".
+  rewrite /cofactor !//= big_ord_recl big_ord0 !mxE !//= /row' /col'.
 set F := (X in matrix_of_fun _ X).
 rewrite (_ : \matrix_(i, j) F i j = (F ord0 ord0)%:M);[
 rewrite det_scalar1 |]; last first.
@@ -484,13 +411,8 @@ rewrite eqxx /= mulr1n.
 by have-> : (Ordinal pm = ord0) by apply val_inj.
 
 
-  rewrite (expand_det_row _ (Ordinal (un<2))).
-  rewrite big_ord_recl.
-  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
-  rewrite /cofactor.
-  rewrite !//=.
-
-rewrite /row' /col'.
+  rewrite (expand_det_row _ (Ordinal (un<2))) big_ord_recl.
+  rewrite mxE //= mxE //= mxE //= /cofactor !//= /row' /col'.
 
 set F3 := (X in matrix_of_fun _ X).
 rewrite (_ : \matrix_(i, j) F3 i j = (F3 ord0 ord0)%:M);[
@@ -503,13 +425,9 @@ have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
 rewrite eqxx /= mulr1n.
 by have-> : (Ordinal pm = ord0) by apply val_inj.
 
-  rewrite big_ord_recl.
-  rewrite big_ord0.
-  rewrite (expand_det_row _ (Ordinal (un<2))).
-  rewrite big_ord_recl.
-  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
-  rewrite /cofactor.
-  rewrite !//=.
+  rewrite big_ord_recl big_ord0 (expand_det_row _ (Ordinal (un<2))) big_ord_recl.
+  rewrite mxE //= mxE //= mxE //=.
+  rewrite /cofactor !//=.
 
 set F4 := (X in matrix_of_fun _ X).
 rewrite (_ : \matrix_(i, j) F4 i j = (F4 ord0 ord0)%:M);[
@@ -522,9 +440,7 @@ have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
 rewrite eqxx /= mulr1n.
 by have-> : (Ordinal pm = ord0) by apply val_inj.
 
-  rewrite big_ord_recl.
-  rewrite big_ord0.
-  rewrite !mxE !//=.
+  rewrite big_ord_recl big_ord0 !mxE !//=.
 
 rewrite /col' /row'.
 set F5 := (X in matrix_of_fun _ X).
@@ -551,17 +467,9 @@ by have-> : (Ordinal pm = ord0) by apply val_inj.
 
 (* Expansion de bd *)
 
-rewrite /bd /leftpoint.
-rewrite (expand_det_row _ (Ordinal (deux<3))).
-rewrite big_ord_recl.
-rewrite !mxE !//=.
-rewrite /cofactor.
-rewrite (expand_det_row _ (Ordinal (un<2))).
-rewrite big_ord_recl.
-rewrite !mxE !//=.
-rewrite /cofactor.
-
-rewrite /row' /col'.
+rewrite /bd /leftpoint (expand_det_row _ (Ordinal (deux<3))).
+rewrite big_ord_recl !mxE !//= /cofactor (expand_det_row _ (Ordinal (un<2))).
+rewrite big_ord_recl !mxE !//= /cofactor /row' /col'.
 set F7 := (X in matrix_of_fun _ X).
 rewrite (_ : \matrix_(i, j) F7 i j = (F7 ord0 ord0)%:M);[
 rewrite det_scalar1 |]; last first.
@@ -573,8 +481,7 @@ have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
 rewrite eqxx /= mulr1n.
 by have-> : (Ordinal pm = ord0) by apply val_inj.
 
-rewrite big_ord_recl big_ord0.
-rewrite !mxE !//=.
+rewrite big_ord_recl big_ord0 !mxE !//=.
 set F8 := (X in matrix_of_fun _ X).
 rewrite (_ : \matrix_(i, j) F8 i j = (F8 ord0 ord0)%:M);[
 rewrite det_scalar1 |]; last first.
@@ -587,13 +494,9 @@ rewrite eqxx /= mulr1n.
 by have-> : (Ordinal pm = ord0) by apply val_inj.
 
 rewrite big_ord_recl.
-  rewrite (expand_det_row _ (Ordinal (un<2))).
-  rewrite big_ord_recl.
-  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
-  rewrite /cofactor.
-  rewrite !//=.
-rewrite big_ord0 big_ord_recl.
-rewrite !mxE !//=.
+  rewrite (expand_det_row _ (Ordinal (un<2))) big_ord_recl mxE //= mxE //=.
+  rewrite /cofactor !//=.
+rewrite big_ord0 big_ord_recl !mxE !//=.
 
 rewrite /col' /row'.
 set F9 := (X in matrix_of_fun _ X).
@@ -607,8 +510,7 @@ have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
 rewrite eqxx /= mulr1n.
 by have-> : (Ordinal pm = ord0) by apply val_inj.
 
-rewrite big_ord_recl big_ord0.
-rewrite !mxE !//=.
+rewrite big_ord_recl big_ord0 !mxE !//=.
 
 set F10 := (X in matrix_of_fun _ X).
 rewrite (_ : \matrix_(i, j) F10 i j = (F10 ord0 ord0)%:M);[
@@ -621,14 +523,9 @@ have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
 rewrite eqxx /= mulr1n.
 by have-> : (Ordinal pm = ord0) by apply val_inj.
 
-  rewrite (expand_det_row _ (Ordinal (un<2))).
-  rewrite big_ord_recl.
-  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
-  rewrite /cofactor.
-  rewrite !//=.
-rewrite !mxE !//=.
-
-rewrite /col' /row'.
+  rewrite (expand_det_row _ (Ordinal (un<2))) big_ord_recl.
+  rewrite mxE  //= mxE //= /cofactor !//=.
+rewrite !mxE !//= /col' /row'.
 set F11 := (X in matrix_of_fun _ X).
 rewrite (_ : \matrix_(i, j) F11 i j = (F11 ord0 ord0)%:M);[
 rewrite det_scalar1 |]; last first.
@@ -640,8 +537,7 @@ have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
 rewrite eqxx /= mulr1n.
 by have-> : (Ordinal pm = ord0) by apply val_inj.
 
-rewrite big_ord_recl big_ord0.
-rewrite !mxE !//=.
+rewrite big_ord_recl big_ord0 !mxE !//=.
 set F12 := (X in matrix_of_fun _ X).
 rewrite (_ : \matrix_(i, j) F12 i j = (F12 ord0 ord0)%:M);[
 rewrite det_scalar1 |]; last first.
@@ -653,27 +549,16 @@ have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
 rewrite eqxx /= mulr1n.
 by have-> : (Ordinal pm = ord0) by apply val_inj.
 
-rewrite !//=.
-rewrite /bump !//=.
-rewrite /F6. rewrite 4!mxE /=.
-rewrite /F. rewrite 4!mxE /=.
-rewrite /F2. rewrite 4!mxE /=.
-rewrite /F4. rewrite 4!mxE /=.
-rewrite /F5. rewrite 4!mxE /=.
-rewrite /F7. rewrite 4!mxE /=.
-rewrite /F8. rewrite 4!mxE /=.
-rewrite /F9. rewrite 4!mxE /=.
-rewrite /F12. rewrite 4!mxE /=.
-rewrite /F11. rewrite 4!mxE /=.
-rewrite /F3. rewrite 4!mxE /=.
-rewrite /F10. rewrite 4!mxE /=.
+rewrite !//= /bump !//= /F6. rewrite 4!mxE /=.
+rewrite /F 4!mxE /= /F2 4!mxE /=.
+rewrite /F4 4!mxE /= /F5 4!mxE /=.
+rewrite /F7  4!mxE /= /F8  4!mxE /=.
+rewrite /F9  4!mxE /= /F12 4!mxE /=.
+rewrite /F11 4!mxE /= /F3 4!mxE /= /F10 4!mxE /=.
 
-rewrite !mulN1r !addr0 !//=.
-rewrite !expr2 !//=.
-rewrite !exprD !expr1 !expr0 !//= !mulr1 !//= .
-rewrite !mulN1r !//=.
-rewrite !mul1r.
-rewrite !mulrN1.
+rewrite !mulN1r !addr0 !//= !expr2 !//=.
+rewrite !exprD !expr1 !expr0 !//= !mulr1 !//= !mulN1r !//=.
+rewrite !mul1r !mulrN1.
 
 set a := point2R1 (tm t (Ordinal zero<3)).
 set b := point2R2 (tm t (Ordinal zero<3)).
@@ -688,7 +573,6 @@ prefield.
 field.
 
 rewrite u2q.
-Search _ (Num.lt _ (_*_)).
 rewrite pmulr_rgt0; last first.
 exact: H4.
 rewrite toriented !//=.
@@ -697,30 +581,17 @@ rewrite toriented !//=.
 (* On refait de même avec les points deux<3 et zero<3 *)
 set u3 := \det _.
   have u3q : u3 = k2 * bd.
-  rewrite /u3.
-  rewrite (expand_det_row _ (Ordinal (deux<3))).
-  rewrite big_ord_recl.
-  rewrite mxE. rewrite //=.
-  rewrite big_ord_recl.
-  rewrite big_ord_recl.
-  rewrite big_ord0.
-  rewrite mxE. rewrite //=.
-  rewrite mxE. rewrite //=.
+  rewrite /u3 (expand_det_row _ (Ordinal (deux<3))) big_ord_recl.
+  rewrite mxE //= big_ord_recl big_ord_recl big_ord0.
+  rewrite mxE //= mxE //=.
   
-  rewrite /cofactor.
-  rewrite !//=.
+  rewrite /cofactor !//=.
   
-  rewrite (expand_det_row _ (Ordinal (un<2))).
-  rewrite big_ord_recl.
-  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
-  rewrite /cofactor.
-  rewrite !//=.
+  rewrite (expand_det_row _ (Ordinal (un<2))) big_ord_recl.
+  rewrite mxE //= mxE //= mxE //=.
+  rewrite /cofactor !//=.
 
-  rewrite big_ord_recl.
-  rewrite big_ord0.
-  rewrite !mxE !//=.
-rewrite /row' /col'.
-Locate "\matrix_".
+  rewrite big_ord_recl big_ord0 !mxE !//= /row' /col'.
 set F := (X in matrix_of_fun _ X).
 rewrite (_ : \matrix_(i, j) F i j = (F ord0 ord0)%:M);[
 rewrite det_scalar1 |]; last first.
@@ -744,11 +615,9 @@ rewrite eqxx /= mulr1n.
 by have-> : (Ordinal pm = ord0) by apply val_inj.
 
 
-  rewrite (expand_det_row _ (Ordinal (un<2))).
-  rewrite big_ord_recl.
-  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
-  rewrite /cofactor.
-  rewrite !//=.
+  rewrite (expand_det_row _ (Ordinal (un<2))) big_ord_recl.
+  rewrite mxE //= mxE //= mxE //=.
+  rewrite /cofactor !//=.
 
 rewrite /row' /col'.
 
@@ -763,13 +632,9 @@ have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
 rewrite eqxx /= mulr1n.
 by have-> : (Ordinal pm = ord0) by apply val_inj.
 
-  rewrite big_ord_recl.
-  rewrite big_ord0.
-  rewrite (expand_det_row _ (Ordinal (un<2))).
-  rewrite big_ord_recl.
-  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
-  rewrite /cofactor.
-  rewrite !//=.
+  rewrite big_ord_recl big_ord0 (expand_det_row _ (Ordinal (un<2))) big_ord_recl.
+  rewrite mxE //= mxE //= mxE //=.
+  rewrite /cofactor !//=.
 
 set F4 := (X in matrix_of_fun _ X).
 rewrite (_ : \matrix_(i, j) F4 i j = (F4 ord0 ord0)%:M);[
@@ -782,9 +647,7 @@ have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
 rewrite eqxx /= mulr1n.
 by have-> : (Ordinal pm = ord0) by apply val_inj.
 
-  rewrite big_ord_recl.
-  rewrite big_ord0.
-  rewrite !mxE !//=.
+  rewrite big_ord_recl big_ord0 !mxE !//=.
 
 rewrite /col' /row'.
 set F5 := (X in matrix_of_fun _ X).
@@ -811,15 +674,9 @@ by have-> : (Ordinal pm = ord0) by apply val_inj.
 
 (* Expansion de bd *)
 
-rewrite /bd /leftpoint.
-rewrite (expand_det_row _ (Ordinal (deux<3))).
-rewrite big_ord_recl.
-rewrite !mxE !//=.
-rewrite /cofactor.
-rewrite (expand_det_row _ (Ordinal (un<2))).
-rewrite big_ord_recl.
-rewrite !mxE !//=.
-rewrite /cofactor.
+rewrite /bd /leftpoint (expand_det_row _ (Ordinal (deux<3))) big_ord_recl.
+rewrite !mxE !//= /cofactor (expand_det_row _ (Ordinal (un<2))).
+rewrite big_ord_recl !mxE !//= /cofactor.
 
 rewrite /row' /col'.
 set F7 := (X in matrix_of_fun _ X).
@@ -833,8 +690,7 @@ have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
 rewrite eqxx /= mulr1n.
 by have-> : (Ordinal pm = ord0) by apply val_inj.
 
-rewrite big_ord_recl big_ord0.
-rewrite !mxE !//=.
+rewrite big_ord_recl big_ord0 !mxE !//=.
 set F8 := (X in matrix_of_fun _ X).
 rewrite (_ : \matrix_(i, j) F8 i j = (F8 ord0 ord0)%:M);[
 rewrite det_scalar1 |]; last first.
@@ -847,13 +703,9 @@ rewrite eqxx /= mulr1n.
 by have-> : (Ordinal pm = ord0) by apply val_inj.
 
 rewrite big_ord_recl.
-  rewrite (expand_det_row _ (Ordinal (un<2))).
-  rewrite big_ord_recl.
-  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
-  rewrite /cofactor.
-  rewrite !//=.
-rewrite big_ord0 big_ord_recl.
-rewrite !mxE !//=.
+  rewrite (expand_det_row _ (Ordinal (un<2))) big_ord_recl.
+  rewrite mxE //= mxE //= /cofactor !//=.
+rewrite big_ord0 big_ord_recl !mxE !//=.
 
 rewrite /col' /row'.
 set F9 := (X in matrix_of_fun _ X).
@@ -881,14 +733,9 @@ have-> : (Ordinal pn = Ordinal pm) by apply val_inj.
 rewrite eqxx /= mulr1n.
 by have-> : (Ordinal pm = ord0) by apply val_inj.
 
-  rewrite (expand_det_row _ (Ordinal (un<2))).
-  rewrite big_ord_recl.
-  rewrite mxE. rewrite //=. rewrite mxE. rewrite //=.
-  rewrite /cofactor.
-  rewrite !//=.
-rewrite !mxE !//=.
-
-rewrite /col' /row'.
+  rewrite (expand_det_row _ (Ordinal (un<2))) big_ord_recl.
+  rewrite mxE //= mxE //= /cofactor !//=.
+rewrite !mxE !//= /col' /row'.
 set F11 := (X in matrix_of_fun _ X).
 rewrite (_ : \matrix_(i, j) F11 i j = (F11 ord0 ord0)%:M);[
 rewrite det_scalar1 |]; last first.
@@ -915,25 +762,15 @@ by have-> : (Ordinal pm = ord0) by apply val_inj.
 
 rewrite !//=.
 rewrite /bump !//=.
-rewrite /F6. rewrite 4!mxE /=.
-rewrite /F. rewrite 4!mxE /=.
-rewrite /F2. rewrite 4!mxE /=.
-rewrite /F4. rewrite 4!mxE /=.
-rewrite /F5. rewrite 4!mxE /=.
-rewrite /F7. rewrite 4!mxE /=.
-rewrite /F8. rewrite 4!mxE /=.
-rewrite /F9. rewrite 4!mxE /=.
-rewrite /F12. rewrite 4!mxE /=.
-rewrite /F11. rewrite 4!mxE /=.
-rewrite /F3. rewrite 4!mxE /=.
-rewrite /F10. rewrite 4!mxE /=.
+rewrite /F6 4!mxE /= /F 4!mxE /=.
+rewrite /F2  4!mxE /= /F4  4!mxE /=.
+rewrite /F5  4!mxE /= /F7  4!mxE /=.
+rewrite /F8  4!mxE /= /F9  4!mxE /=.
+rewrite /F12  4!mxE /= /F11  4!mxE /=.
+rewrite /F3  4!mxE /= /F10  4!mxE /=.
 
-rewrite !mulN1r !addr0 !//=.
-rewrite !expr2 !//=.
-rewrite !exprD !expr1 !expr0 !//= !mulr1 !//= .
-rewrite !mulN1r !//=.
-rewrite !mul1r.
-rewrite !mulrN1.
+rewrite !mulN1r !addr0 !//= !expr2 !//=.
+rewrite !exprD !expr1 !expr0 !//= !mulr1 !//=  !mulN1r !//= !mul1r !mulrN1.
 
 set a := point2R1 (tm t (Ordinal zero<3)).
 set b := point2R2 (tm t (Ordinal zero<3)).
@@ -948,7 +785,6 @@ prefield.
 field.
 
 rewrite u3q.
-Search _ (Num.lt _ (_*_)).
 rewrite pmulr_rgt0; last first.
 exact: H5.
 rewrite toriented !//=.
@@ -964,13 +800,9 @@ exists ((leftpoint (tm t (Ordinal(deux<3))) (tm t (Ordinal(zero<3))) p)/bd).
 exists ((leftpoint (tm t (Ordinal(zero<3))) (tm t (Ordinal(un<3))) p)/bd).
 split.
 move: toriented.
-rewrite /bd.
-rewrite /leftpoint.
-rewrite expand_det33 !mxE !//=.
-rewrite /leftpoint.
-rewrite expand_det33 !mxE !//=.
-rewrite expand_det33 !mxE !//=.
-rewrite expand_det33 !mxE !//=.
+rewrite /bd /leftpoint.
+rewrite expand_det33 !mxE !//= /leftpoint expand_det33 !mxE !//=.
+rewrite expand_det33 !mxE !//= expand_det33 !mxE !//=.
 set a := point2R1 (tm t (Ordinal zero<3)).
 set b := point2R2 (tm t (Ordinal zero<3)).
 set c := point2R1 (tm t (Ordinal un<3)).
@@ -987,18 +819,13 @@ move=>hyp_contra.
 move:toriented.
 rewrite !mulr1 !mul1r.
 rewrite [X in (Num.lt 0 X-> False)]hyp_contra.
-Search _ (Num.lt _ _ = _).
 auto.
 
 split.
 move: toriented.
-rewrite /bd.
-rewrite /leftpoint.
-rewrite expand_det33 !mxE !//=.
-rewrite /leftpoint.
-rewrite expand_det33 !mxE !//=.
-rewrite expand_det33 !mxE !//=.
-rewrite expand_det33 !mxE !//=.
+rewrite /bd /leftpoint.
+rewrite expand_det33 !mxE !//= /leftpoint expand_det33 !mxE !//=.
+rewrite expand_det33 !mxE !//= expand_det33 !mxE !//=.
 set a := point2R1 (tm t (Ordinal zero<3)).
 set b := point2R2 (tm t (Ordinal zero<3)).
 set c := point2R1 (tm t (Ordinal un<3)).
@@ -1015,18 +842,13 @@ move=>hyp_contra.
 move:toriented.
 rewrite !mulr1 !mul1r.
 rewrite [X in (Num.lt 0 X-> False)]hyp_contra.
-Search _ (Num.lt _ _ = _).
 auto.
 
 split.
 move:toriented.
-rewrite /bd.
-rewrite /leftpoint.
-rewrite expand_det33 !mxE !//=.
-rewrite /leftpoint.
-rewrite expand_det33 !mxE !//=.
-rewrite expand_det33 !mxE !//=.
-rewrite expand_det33 !mxE !//=.
+rewrite /bd /leftpoint.
+rewrite expand_det33 !mxE !//= /leftpoint expand_det33 !mxE !//=.
+rewrite expand_det33 !mxE !//= expand_det33 !mxE !//=.
 set a := point2R1 (tm t (Ordinal zero<3)).
 set b := point2R2 (tm t (Ordinal zero<3)).
 set c := point2R1 (tm t (Ordinal un<3)).
@@ -1055,11 +877,9 @@ rewrite/not.
 move=>hyp_contra.
 move:toriented.
 rewrite [X in (Num.lt 0 X-> False)]hyp_contra.
-Search _ (Num.lt _ _ = _).
 auto.
 
 split.
-Search _ (_/_>0).
 rewrite divr_gt0; last first.
       by [].
     have egal_det12 : leftpoint (tm t (Ordinal un<3)) (tm t (Ordinal deux<3)) p
@@ -1067,10 +887,7 @@ rewrite divr_gt0; last first.
     last first.
       rewrite egal_det12.
       by [].
-    rewrite /leftpoint.
-    rewrite expand_det33 !mxE !//=.
-    rewrite expand_det33 !mxE !//=.
-    rewrite !mulr1 !mul1r.
+    rewrite /leftpoint expand_det33 !mxE !//= expand_det33 !mxE !//= !mulr1 !mul1r.
     prefield.
     field.
   by [].
@@ -1084,10 +901,7 @@ rewrite divr_gt0; last first.
     last first.
       rewrite egal_det20.
       by [].
-    rewrite /leftpoint.
-    rewrite expand_det33 !mxE !//=.
-    rewrite expand_det33 !mxE !//=.
-    rewrite !mulr1 !mul1r.
+    rewrite /leftpoint expand_det33 !mxE !//= expand_det33 !mxE !//= !mulr1 !mul1r.
     prefield.
     field.
   by [].
@@ -1099,10 +913,7 @@ rewrite divr_gt0; last first.
     last first.
       rewrite egal_det01.
       by [].
-    rewrite /leftpoint.
-    rewrite expand_det33 !mxE !//=.
-    rewrite expand_det33 !mxE !//=.
-    rewrite !mulr1 !mul1r.
+    rewrite /leftpoint expand_det33 !mxE !//= expand_det33 !mxE !//= !mulr1 !mul1r.
     prefield.
     field.
   by [].
@@ -1174,23 +985,18 @@ apply: val_inj.
 rewrite //=.
 apply/eqP.
 move/negbT:h.
-Search "contr".
 apply contraR.
 move=> hyp.
 apply/eqP.
 apply val_inj.
 rewrite !//=.
-Search _ (_<_)%N in ssrnat.
 rewrite ltnS in b.
 have hyp2 : (a<1)%N.
-  Search _ (_<=_)%N  (~~ (_ == _)) in ssrnat.
   rewrite ltn_neqAle.
   apply/andP; split.
     by [].
   by [].
-Search _ (_<_)%N in ssrnat.
 rewrite ltnS in hyp2.
-Search _ (_<=0)%N in ssrnat.
 rewrite leqn0 in hyp2.
 move/eqP :hyp2.
 by [].
@@ -1206,30 +1012,23 @@ apply: val_inj.
 rewrite //=.
 apply/eqP.
 move/negbT:h.
-Search "contr".
 apply contraR.
 move=> hyp.
 apply/eqP.
 apply val_inj.
 rewrite !//=.
-Search _ (~~(_==_)) in ssrnat.
 rewrite neq_ltn in hyp.
 case tmp : (a < 0)%N.
   by [].
 rewrite tmp in hyp.
-Search _ (false || _).
 rewrite orb_false_l in hyp.
 apply: anti_leq.
-Search _ (_<_)%N in ssrnat.
 move:b.
 change ((a < 1+1)%N -> (a <= 1 <= a)%N).
-Search _ (_<_)%N in ssrnat.
 rewrite ltnS.
 rewrite !//=.
 move=> hyp2.
-Search _ (_<_)%N in ssrnat.
-rewrite hyp.
-rewrite hyp2.
+rewrite hyp hyp2.
 by [].
 Qed.
 
@@ -1255,14 +1054,12 @@ case hypok0lt: (k>0).
   case hypok1lt : (k<1).
     case ex : (~~ (x.1 == y.1) || ~~ (x.2 == y.2)).
       move: (H k x y hypok0lt hypok1lt ex).
-      Search _ (Num.lt _ _) (Num.le _ _) in ssrnum.
       rewrite ltr_def.
       move/andP=> hypo.
       move:hypo.
       move=> [hypo1 hypo2].
       by apply: hypo2.
     move/negbT : ex.
-    Search _ (~~ (_ || _)).
     rewrite negb_orb.
     move/andP=> ex1.
     move:ex1.
@@ -1272,10 +1069,8 @@ case hypok0lt: (k>0).
     move/eqP=> ex1.
     move/eqP=> ex2.
     have info1 : x = (x.1, x.2).
-      Search _ (_ = (_,_)).
       apply: surjective_pairing.
     have info2 : y = (y.1, y.2).
-      Search _ (_ = (_,_)).
       apply: surjective_pairing.
     rewrite [X in Num.le _ (k * f X + (1 - k) * f y)]info1 .
     rewrite [X in Num.le _ (k * f (x.1, x.2) + (1 - k) * f X)]info2 .
@@ -1297,10 +1092,8 @@ case hypok0lt: (k>0).
     by [].
 
   have info : (k = 1).
-    Search _ (Num.le _ _) (Num.lt _ _) in ssrnum.
     move : hypok1lt.
     rewrite ltr_def.
-    Search _ (~~ (_ && _)).
     set b1 := (1 == k).
     set b2 := Num.le k 1.
     move/negbT => bool1.
@@ -1316,9 +1109,7 @@ case hypok0lt: (k>0).
       by [].
     move/orP => H2.
     move: H2.
-    Search _ (false || _).
-    rewrite orb_false_l.
-    rewrite /b2.
+    rewrite orb_false_l /b2.
     move: hypok1.
     rewrite -/b2.
     move=> contra1 contra2.
@@ -1327,7 +1118,6 @@ case hypok0lt: (k>0).
       split.
         by [].
       by [].
-    Search _ (_ && ~~_).
     move : contra.
     rewrite andb_negb_r.
     by [].
@@ -1340,20 +1130,16 @@ case hypok0lt: (k>0).
     prefield; ring.
   rewrite tmp1 tmp2 tmp3.
   have info1 : x = (x.1, x.2).
-    Search _ (_ = (_,_)).
     apply: surjective_pairing.
   have info2 : y = (y.1, y.2).
-    Search _ (_ = (_,_)).
     apply: surjective_pairing.
   rewrite -info1.
   by [].
 
 
 have info : (k = 0).
-  Search _ (Num.le _ _) (Num.lt _ _) in ssrnum.
   move : hypok0lt.
   rewrite ltr_def.
-  Search _ (~~ (_ && _)).
   set b1 := (k==0).
   set b2 := Num.le 0 k.
   move/negbT => bool1.
@@ -1369,9 +1155,7 @@ have info : (k = 0).
     by [].
   move/orP => H2.
   move: H2.
-  Search _ (false || _).
-  rewrite orb_false_l.
-  rewrite /b2.
+  rewrite orb_false_l /b2.
   move: hypok1.
   rewrite -/b2.
   move=> contra1 contra2.
@@ -1380,7 +1164,6 @@ have info : (k = 0).
     split.
       by [].
     by [].
-  Search _ (_ && ~~_).
   move : contra.
   rewrite andb_negb_r.
   by [].
@@ -1393,7 +1176,6 @@ have tmp3 : (0 * f x + (1 - 0) * f y = f y).
   prefield; ring.
 rewrite tmp1 tmp2 tmp3.
 have info2 : y = (y.1, y.2).
-  Search _ (_ = (_,_)).
   apply: surjective_pairing.
 rewrite -info2.
 by [].
@@ -1409,20 +1191,14 @@ move => n k hyp.
 have utile: forall m, ([forall (i:'I_(S m)|true), (Num.le 0 k`_((nat_of_ord) i))] ->
 Num.le 0 (\sum_(i < m.+1) k`_i)).
   induction m.
-    rewrite big_ord_recr !//=.
-    rewrite big_ord0 !//=.
-    rewrite -big_andE.
-    rewrite big_ord_recr !//=.
-    rewrite big_ord0 !//=.
-    rewrite plus0l.
+    rewrite big_ord_recr !//= big_ord0 !//= -big_andE big_ord_recr !//=.
+    rewrite big_ord0 !//= plus0l.
     by [].
-  rewrite -big_andE.
-  rewrite big_ord_recr !//=.
+  rewrite -big_andE big_ord_recr !//=.
   move/andP=> hypSm.
   move:hypSm.
   move=> [hypSm H].
   rewrite big_ord_recr !//=.
-  Search _ (Num.le 0 (_+_)).
   apply: addr_ge0.
   move:hypSm.
   rewrite big_andE.
@@ -1432,12 +1208,8 @@ by [].
 
 
 induction n.
-  rewrite big_ord_recl !//=.
-  rewrite big_ord0 !//=.
-  rewrite -big_andE.
-  rewrite !big_ord_recr !//=.
-  rewrite big_ord0 !//=.
-  rewrite plus0r.
+  rewrite big_ord_recl !//= big_ord0 !//= -big_andE !big_ord_recr !//=.
+  rewrite big_ord0 !//= plus0r.
   by [].
 
 
@@ -1451,9 +1223,7 @@ move: hyp1.
 rewrite big_andE.
 move=> hyp1.
 
-rewrite big_ord_recr !//=.
-rewrite -big_andE. rewrite [RHS]big_ord_recr. rewrite //=.
-rewrite big_andE.
+rewrite big_ord_recr !//= -big_andE [RHS]big_ord_recr //= big_andE.
 have utileSn : ([forall (i:'I_(S n)|true), (Num.le 0 k`_((nat_of_ord) i))] ->
  Num.le 0 (\sum_(i < n.+1) k`_i)).
   exact: (utile n).
@@ -1461,7 +1231,6 @@ have utileSn : ([forall (i:'I_(S n)|true), (Num.le 0 k`_((nat_of_ord) i))] ->
 
 (* rewrite -big_andE. rewrite big_ord_recr. rewrite !//=. *)
 rewrite -(IHn hyp1).
-Search _ ((_ + _) ==0 = (_ == 0) && (_ == 0)).
 rewrite paddr_eq0; last first.
     by [].
   exact : (utile n hyp1).
@@ -1474,13 +1243,11 @@ Num.le 0 (\sum_(i < m) k`_i)).
 Proof.
 induction m.
     by rewrite big_ord0 !//=.
-  rewrite -big_andE.
-  rewrite big_ord_recr !//=.
+  rewrite -big_andE big_ord_recr !//=.
   move/andP=> hypSm.
   move:hypSm.
   move=> [hypSm H].
   rewrite big_ord_recr !//=.
-  Search _ (Num.le 0 (_+_)).
   apply: addr_ge0.
   move:hypSm.
   rewrite big_andE.
@@ -1495,19 +1262,14 @@ forall m, ([forall (i:'I_(S m)|true), (Num.lt 0 k`_((nat_of_ord) i))] ->
 Num.lt 0 (\sum_(i < m.+1) k`_i)).
 Proof.
 induction m.
-    rewrite big_ord_recr !//=.
-    rewrite -big_andE.
-    rewrite big_ord_recr !//= big_ord0 !//=.
-    rewrite big_ord0 !//=.
-    rewrite plus0l.
+    rewrite big_ord_recr !//= -big_andE big_ord_recr !//= big_ord0 !//=.
+    rewrite big_ord0 !//= plus0l.
     by [].
-  rewrite -big_andE.
-  rewrite big_ord_recr !//=.
+  rewrite -big_andE big_ord_recr !//=.
   move/andP=> hypSm.
   move:hypSm.
   move=> [hypSm H].
   rewrite big_ord_recr !//=.
-  Search _ (Num.lt 0 (_+_)).
   apply: addr_gt0.
   move:hypSm.
   rewrite big_andE.
@@ -1596,11 +1358,9 @@ case ns1 : (1 < n)%N.
    k`_n.+1 * f ((x`_n.+1).1, (x`_n.+1).2))).
   move/eqP: sum_egal_0.
   move=> sum_egal_0.
-  rewrite sum_egal_0.
-  rewrite plus0l.
+  rewrite sum_egal_0 plus0l.
   move=> dernier_egal_1.
-  rewrite dernier_egal_1.
-  rewrite !mul1l.
+  rewrite dernier_egal_1 !mul1l.
   have intel : (\sum_(i < n.+1) k`_i * (x`_i).1 
                           = \sum_(i < n.+1) 0 * (x`_i).1).
     apply: eq_bigr.
@@ -1623,8 +1383,7 @@ case ns1 : (1 < n)%N.
     change ((k`_i == 0%Q) -> 0 * (x`_i).1 = 0 ).
     move/eqP => intel2_tmp.
     prefield. ring.
-  rewrite intel2.
-  rewrite sumr_const.
+  rewrite intel2 sumr_const.
   
   have intel3 : (\sum_(i < n.+1) k`_i * (x`_i).2 
                           = \sum_(i < n.+1) 0 * (x`_i).2).
@@ -1674,11 +1433,7 @@ case ns1 : (1 < n)%N.
     change ((k`_i == 0%Q) -> 0 * f ((x`_i).1, (x`_i).2) = 0 ).
     move/eqP => intel2_tmp.
     prefield. ring.
-  rewrite intel6.
-  rewrite sumr_const.
-  rewrite -mulr_natr.
-  rewrite !mul0l.
-  rewrite !plus0l.
+  rewrite intel6 sumr_const -mulr_natr !mul0l !plus0l.
   by [].
 
 (* Ici on est toujours dans le premier cas où ns1 : n>1 est vrai *)
@@ -1687,16 +1442,13 @@ case ns1 : (1 < n)%N.
 
 set x1 := (\sum_(i<n) (k`_((nat_of_ord) i))*(x`_((nat_of_ord) i)).1)/lambda.
   set x2 := (\sum_(i<n) (k`_((nat_of_ord) i))*(x`_((nat_of_ord) i)).2)/lambda.
-  rewrite big_ord_recr !//=.
-  rewrite big_ord_recr !//=.
+  rewrite big_ord_recr !//= big_ord_recr !//=.
   rewrite  (_: \sum_(i<n) (k`_((nat_of_ord) i))*(x`_((nat_of_ord) i)).1
                    = x1 * lambda);last first.
     rewrite /x1.
     rewrite {2}(_ : lambda = lambda/1); last first.
       by rewrite divr1.
-    rewrite mulf_div.
-    rewrite mul1r.
-    rewrite [RHS]fois_div.
+    rewrite mulf_div mul1r [RHS]fois_div.
       reflexivity.
     move/eqP: info.
     by [].
@@ -1705,9 +1457,7 @@ set x1 := (\sum_(i<n) (k`_((nat_of_ord) i))*(x`_((nat_of_ord) i)).1)/lambda.
     rewrite /x2.
     rewrite {2}(_ : lambda = lambda/1); last first.
       by rewrite divr1.
-    rewrite mulf_div.
-    rewrite mul1r.
-    rewrite [RHS]fois_div.
+    rewrite mulf_div mul1r [RHS]fois_div.
       reflexivity.
     move/eqP: info.
     by [].
@@ -1723,8 +1473,7 @@ have convex_large : (Num.le (f (x1 * lambda + k`_n * (x`_n).1,
       have lambda_pos: lambda>=0.
         rewrite /lambda.
         move: hypok.
-        rewrite -big_andE.
-        rewrite big_ord_recr.
+        rewrite -big_andE big_ord_recr.
         change (\big[andb_monoid/true]_(i < n) Num.le 0
                                     k`_i &&
               (Num.le 0 k`_n) -> Num.le 0 (\sum_(i < n) k`_i)).
@@ -1739,8 +1488,7 @@ have convex_large : (Num.le (f (x1 * lambda + k`_n * (x`_n).1,
           have toto: k`_n = 1 - lambda.
           rewrite /lambda.
           Search _ (_ = _  -> _+_ =_+_).
-          rewrite -somme_egal_1.
-          rewrite big_ord_recr !//=.
+          rewrite -somme_egal_1 big_ord_recr !//=.
           set sum_n := \sum_(i < n) k`_i.
           simpl in sum_n.
           prefield. ring.
@@ -1754,12 +1502,8 @@ have convex_large : (Num.le (f (x1 * lambda + k`_n * (x`_n).1,
           by [].
         have egaly2 : (y_f.2 = (x`_n).2).
           by [].
-        rewrite -egalx1.
-        rewrite -egalx2.
-        rewrite -egaly1.
-        rewrite -egaly2.
-        simpl in x_f.
-        simpl in y_f.
+        rewrite -egalx1 -egalx2 -egaly1 -egaly2.
+        simpl in x_f, y_f.
 
         rewrite (_: x_f.1 * lambda = lambda * x_f.1); last first.
           prefield. ring.
@@ -1837,8 +1581,7 @@ last first.
   rewrite -[X in _ = f
   (_ * (1 / lambda),
   (X * (1 / lambda)))]divr1.
-  rewrite mulf_div.
-  rewrite !mul1r !mul1l.
+  rewrite mulf_div !mul1r !mul1l.
   reflexivity.
 rewrite !mulr_suml.
 
@@ -1888,8 +1631,7 @@ prefield; ring.
               rewrite /k_sur_lam.
               simpl in F1.
               About nth_mkseq.
-              rewrite (nth_mkseq ).
-              rewrite /F1.
+              rewrite (nth_mkseq ) /F1.
               reflexivity.
               by [].
 
@@ -1900,8 +1642,7 @@ prefield; ring.
               rewrite /k_sur_lam.
               simpl in F1.
               About nth_mkseq.
-              rewrite (nth_mkseq ).
-              rewrite /F1.
+              rewrite (nth_mkseq ) /F1.
               reflexivity.
               by [].
 
@@ -1912,8 +1653,7 @@ prefield; ring.
               rewrite /k_sur_lam.
               simpl in F1.
               About nth_mkseq.
-              rewrite (nth_mkseq ).
-              rewrite /F1.
+              rewrite (nth_mkseq ) /F1.
               reflexivity.
               by [].
 
@@ -1924,8 +1664,7 @@ prefield; ring.
               rewrite /k_sur_lam.
               simpl in F1.
               About nth_mkseq.
-              rewrite (nth_mkseq ).
-              rewrite /F1.
+              rewrite (nth_mkseq ) /F1.
               reflexivity.
               by [].
 
@@ -1943,8 +1682,7 @@ have hypokN_lam : ([forall (i:'I_n | true), Num.le 0 k`_i]
     rewrite /k_sur_lam.
     simpl in F1.
     About nth_mkseq.
-    rewrite (nth_mkseq ).
-    rewrite /F1.
+    rewrite (nth_mkseq ) /F1.
     Search _ (Num.lt 0 (_/_)).
       (* preuve que lambda >= 0 *)
       have lambda_pos : lambda>=0.
@@ -1984,8 +1722,7 @@ have hypokN_lam : ([forall (i:'I_n | true), Num.le 0 k`_i]
         by [].
         by [].
     move: hypok.
-    rewrite -big_andE big_ord_recr !//=.
-    rewrite big_andE.
+    rewrite -big_andE big_ord_recr !//= big_andE.
     move/andP => hypokN.
     move:hypokN.
     move=> [hypokN hypodernier].
@@ -2009,8 +1746,7 @@ have autre_ing2 :  (Num.le (lambda * f (x1, x2) + k`_n * f ((x`_n).1, (x`_n).2))
   set term3 := (k`_n * f ((x`_n).1, (x`_n).2)).
   simpl in term1, term2, term3.
   About ler_add2r.
-  rewrite ler_add2r.
-  rewrite /term1 /term2.
+  rewrite ler_add2r /term1 /term2.
   Search _ (Num.le (_*_) (_*_)).
   Search _ (Num.le 0 (_-_)).
   rewrite -subr_ge0.
@@ -2021,8 +1757,7 @@ have autre_ing2 :  (Num.le (lambda * f (x1, x2) + k`_n * f ((x`_n).1, (x`_n).2))
 have lambda_pos: lambda>=0.
         rewrite /lambda.
         move: hypok.
-        rewrite -big_andE.
-        rewrite big_ord_recr.
+        rewrite -big_andE big_ord_recr.
         change (\big[andb_monoid/true]_(i < n) Num.le 0
                                     k`_i &&
               (Num.le 0 k`_n) -> Num.le 0 (\sum_(i < n) k`_i)).
@@ -2032,7 +1767,6 @@ have lambda_pos: lambda>=0.
         move => [hypok dernier].
         by apply : (pos_elt_pos_sum hypok).
       by [].
-Search _ (Num.le 0 (_-_)).
 rewrite subr_ge0.
 by [].
 
@@ -2042,9 +1776,6 @@ move: autre_ing2.
 rewrite (_ : lambda * (\sum_(i < n) k`_i / lambda * f ((x`_i).1, (x`_i).2))
                 = (\sum_(i < n) k`_i * f ((x`_i).1, (x`_i).2))).
   move=> autre_ing2.
-Search _ (Num.le _ _) (Num.lt _ _) in ssrnum.
-Search _ (_<= _)  in ssrnum.
-About ler_trans.
 apply (ler_trans convex_large autre_ing2).
 
 
@@ -2066,31 +1797,19 @@ rewrite mulr_sumr.
    ns1 : (1 < n)%N = false ce qui revient à dire que n = 1 grâce à 
    l'hypothèse nsup1 : (1 < n.+1)%N *)
 have n_egal_1 : (1 = n)%N.
-  Search _ (Num.lt _ _ = false) in ssrnum.
   move: nsup1.
-  Search _ (_ < _)%N in ssrnat.
-  About ltnS.
   rewrite ltnS.
   move=> nsup1.
-  Search _ (_ < _)%N  in ssrnat.
   move: ns1.
   rewrite ltnNge.
   move/negP => ninf1.
   move:ninf1.
-  Search _ (((_<=_)%N)) in ssrnat.
   move/negP => ninf1.
-  Search _ ((_<_)%N) ((_ <= _)%N) (_=_) in ssrnat.
   move: nsup1.
   rewrite leq_eqVlt.
   move=> nsup1.
-  Search _ (_<_)%N in ssrnat.
-  Search "anti" in ssrnat.
   apply: anti_leq.
-  rewrite ninf1.
-  Search _ (_&&true).
-  rewrite andb_true_r.
-  Search _ (_ <=_)%N (_==_) in ssrnat.
-  rewrite leq_eqVlt.
+  rewrite ninf1 andb_true_r leq_eqVlt.
   by [].
 
 
@@ -2107,8 +1826,7 @@ have info1 : k`_1 = 1 - k`_0.
   move: somme_egal_1.
   rewrite big_ord_recr.
   change ((\sum_(i :'I_1) (k`_i)) + k`_1 = 1 -> k`_1 = 1 - k`_0).
-  rewrite big_ord_recr.
-  rewrite big_ord0.
+  rewrite big_ord_recr big_ord0.
   change (0 + k`_0 + k`_1 = 1 -> k`_1 = 1 - k`_0).
   rewrite plus0l.
   move=> tmp.
@@ -2162,8 +1880,7 @@ have info2 : k`_0 = 1 - k`_1.
   move: somme_egal_1.
   rewrite big_ord_recr.
   change ((\sum_(i :'I_1) (k`_i)) + k`_1 = 1 -> k`_0 = 1 - k`_1).
-  rewrite big_ord_recr.
-  rewrite big_ord0.
+  rewrite big_ord_recr big_ord0.
   change (0 + k`_0 + k`_1 = 1 -> k`_0 = 1 - k`_1).
   rewrite plus0l.
   move=> tmp.
@@ -2221,7 +1938,6 @@ move/andP=>hypok.
 move: hypok.
 rewrite !big_andE.
 move=> [hypokN dernier].
-Search _ (Num.lt 0 _) in ssrnum.
 move : dernier.
 rewrite lt0r.
 move/andP=>dernier.
@@ -2258,15 +1974,13 @@ case ns1 : (1 < n)%N.
         induction m.
           rewrite -big_andE.
           by rewrite big_ord0.
-        rewrite -big_andE.
-        rewrite big_ord_recr !//=.
+        rewrite -big_andE big_ord_recr !//=.
         move=>inf.
         rewrite big_andE.
         apply/andP.
         split.
           case info_utile: (m<(S n))%N.
             apply (IHm info_utile).
-          Search _ ((_<_) = false).
           move: info_utile.
           move/negbT => info_utile.
           rewrite -leqNgt in info_utile.
@@ -2277,17 +1991,14 @@ case ns1 : (1 < n)%N.
           rewrite le0r.
           apply/orP.
           by right.
-        About forallP.
         move/forallP :  hypok.
         move=> hypok.
         set m_ord := Ordinal ineg.
         change (true ==>Num.lt 0 k`_(m_ord) ).
-        About nat_of_ord.
         apply: hypok.
   have contra: (Num.lt 0 (\sum_(i<n) (k`_((nat_of_ord) i)))).
     move: hypok.
-    rewrite -big_andE !//=.
-    rewrite big_ord_recr !//=.
+    rewrite -big_andE !//= big_ord_recr !//=.
     move/andP=> hypok.
     move :hypok.
     move=> [hypok1 hypok2].
@@ -2303,7 +2014,6 @@ case ns1 : (1 < n)%N.
   move:contra.
   rewrite -/lambda.
   move=> contra.
-  Search _ (Num.lt 0 _) in ssrnum.
   rewrite lt0r in contra.
   move/andP:contra.
   move=> [contra1 contra2].
@@ -2325,9 +2035,7 @@ case ns1 : (1 < n)%N.
     rewrite /x1.
     rewrite {2}(_ : lambda = lambda/1); last first.
       by rewrite divr1.
-    rewrite mulf_div.
-    rewrite mul1r.
-    rewrite [RHS]fois_div.
+    rewrite mulf_div mul1r [RHS]fois_div.
       reflexivity.
     move/eqP: info.
     by [].
@@ -2336,9 +2044,7 @@ case ns1 : (1 < n)%N.
     rewrite /x2.
     rewrite {2}(_ : lambda = lambda/1); last first.
       by rewrite divr1.
-    rewrite mulf_div.
-    rewrite mul1r.
-    rewrite [RHS]fois_div.
+    rewrite mulf_div mul1r [RHS]fois_div.
       reflexivity.
     move/eqP: info.
     by [].
@@ -2357,9 +2063,7 @@ case ns1 : (1 < n)%N.
     move=> hypconvex.
       have : k`_n = 1 - lambda.
       rewrite /lambda.
-      Search _ (_ = _  -> _+_ =_+_).
-      rewrite -somme_egal_1.
-      rewrite big_ord_recr !//=.
+      rewrite -somme_egal_1 big_ord_recr !//=.
       set sum_n := \sum_(i < n) k`_i.
       simpl in sum_n.
       prefield. ring.
@@ -2375,35 +2079,27 @@ case ns1 : (1 < n)%N.
       by [].
     have egaly2 : (y_f.2 = (x`_n).2).
       by [].
-    rewrite -egalx1.
-    rewrite -egalx2.
-    rewrite -egaly1.
-    rewrite -egaly2.
-    simpl in x_f.
-    simpl in y_f.
+    rewrite -egalx1 -egalx2 -egaly1 -egaly2.
+    simpl in x_f, y_f.
     have info3 : Num.lt 0 lambda.
       rewrite /lambda.
-      Search _ (Num.lt 0 _ = ~~(_) && _).
       rewrite lt0r.
       apply/andP.
       split.
         rewrite -/lambda.
         by rewrite info !//=.
-      About pos_elt_pos_sum.
       have hypokle : forall m, (m<(S n))%N -> 
             [forall (i :'I_m| true), Num.le 0 (k`_((nat_of_ord) i))].
         induction m.
           rewrite -big_andE.
           by rewrite big_ord0.
-        rewrite -big_andE.
-        rewrite big_ord_recr !//=.
+        rewrite -big_andE big_ord_recr !//=.
         move=>inf.
         rewrite big_andE.
         apply/andP.
         split.
           case info_utile: (m<(S n))%N.
             apply (IHm info_utile).
-          Search _ ((_<_) = false).
           move: info_utile.
           move/negbT => info_utile.
           rewrite -leqNgt in info_utile.
@@ -2414,12 +2110,10 @@ case ns1 : (1 < n)%N.
           rewrite le0r.
           apply/orP.
           by right.
-        About forallP.
         move/forallP :  hypok.
         move=> hypok.
         set m_ord := Ordinal ineg.
         change (true ==>Num.lt 0 k`_(m_ord) ).
-        About nat_of_ord.
         apply: hypok.
       apply: pos_elt_pos_sum.
       by apply: hypokle.
@@ -2429,8 +2123,6 @@ case ns1 : (1 < n)%N.
         simpl in lambda.
         prefield. ring.
       rewrite info5.
-      Search _ (Num.lt (_+_) (_+_)).
-      About ltr_add2r.
       rewrite -(ltr_add2r (k`_n -1) (1 - k`_n) 1).
       have w: (1 - k`_n + (k`_n - 1)) = 0.
         prefield; ring.
@@ -2466,7 +2158,6 @@ apply: hypconvex.
 by [].
 rewrite /x_f !//=.
 move/negPf: x1_xn_egal.
-Search _ (_ && _ = false).
 set b1 := (x1 == (x`_n).1) .
 set b2 := (x2 == (x`_n).2).
 case infob1 : b1.
@@ -2492,24 +2183,19 @@ rewrite (_ : f
                                      ((\sum_(i < n) k`_i * (x`_i).1)* (1 / lambda),
                                      (\sum_(i < n) k`_i * (x`_i).2)* (1 / lambda)));
 last first.
-  Search _ (_*_/_).
-  Search _ (_/1).
   rewrite -[X in _ = f
   (X * (1 / lambda),
   (\sum_(i < n) k`_i * (x`_i).2) * (1 / lambda))]divr1.
   rewrite -[X in _ = f
   (_ * (1 / lambda),
   (X * (1 / lambda)))]divr1.
-  rewrite mulf_div.
-  rewrite !mul1r !mul1l.
+  rewrite mulf_div !mul1r !mul1l.
   reflexivity.
 rewrite !mulr_suml.
 
 have info1: (\sum_(i < n) k`_i/lambda = 1).
   rewrite (_ : \sum_(i < n) k`_i/lambda = (\sum_(i < n) k`_i)/lambda).
-    rewrite /lambda.
-    Search _ (_/_= 1).
-    rewrite divff.
+    rewrite /lambda divff.
     reflexivity.
     rewrite -/lambda.
     move/negPf : info.
@@ -2551,9 +2237,7 @@ set F1 := fun i => k`_i / lambda.
       move=> i tmp.
       rewrite /k_sur_lam.
       simpl in F1.
-      About nth_mkseq.
-      rewrite (nth_mkseq ).
-      rewrite /F1.
+      rewrite (nth_mkseq ) /F1.
       reflexivity.
       by [].
 
@@ -2563,9 +2247,7 @@ set F1 := fun i => k`_i / lambda.
       move=> i tmp.
       rewrite /k_sur_lam.
       simpl in F1.
-      About nth_mkseq.
-      rewrite (nth_mkseq ).
-      rewrite /F1.
+      rewrite (nth_mkseq ) /F1.
       reflexivity.
       by [].
 
@@ -2575,9 +2257,7 @@ set F1 := fun i => k`_i / lambda.
       move=> i tmp.
       rewrite /k_sur_lam.
       simpl in F1.
-      About nth_mkseq.
-      rewrite (nth_mkseq ).
-      rewrite /F1.
+      rewrite (nth_mkseq ) /F1.
       reflexivity.
       by [].
 
@@ -2587,9 +2267,7 @@ set F1 := fun i => k`_i / lambda.
       move=> i tmp.
       rewrite /k_sur_lam.
       simpl in F1.
-      About nth_mkseq.
-      rewrite (nth_mkseq ).
-      rewrite /F1.
+      rewrite (nth_mkseq ) /F1.
       reflexivity.
       by [].
 
@@ -2600,10 +2278,7 @@ have hypokN_lam : ([forall (i:'I_n | true), Num.lt 0 k`_i]
     move => i tmp.
     rewrite /k_sur_lam.
     simpl in F1.
-    About nth_mkseq.
-    rewrite (nth_mkseq ).
-    rewrite /F1.
-    Search _ (Num.lt 0 (_/_)).
+    rewrite (nth_mkseq ) /F1.
       (* preuve que lambda > 0 *)
       have lambda_pos : lambda>0.
         rewrite /lambda.
@@ -2616,14 +2291,11 @@ move=> n somme_egal_1 nsup1 IHn ex lambda info x1 x2 x1_xn_egal
       info_strict_conv F1 k_sur_lam hypok ns1  i hypokle
       .
 move: hypok.
-rewrite -big_andE big_ord_recr !//=.
-rewrite big_andE.
+rewrite -big_andE big_ord_recr !//= big_andE.
 move/andP => hypokSN.
 move:hypokSN.
 move=> [hypokSN hypodernier].
         apply (strict_pos_elt_strict_pos_sum hypokSN).
-        Search _ (Num.lt 0 (_/_)).
-        Search _ (_=_ <-> _=_).
         apply eq_iff_eq_true.
         split.
           move => hyp1.
@@ -2644,14 +2316,12 @@ move=> [hypokSN hypodernier].
           move=> [lambda_nonul lambda_pos].
           move/eqP: lambda_nonul.
           by [].
-        Search _ (Num.lt 0 (_*_)).
         apply mulr_gt0.
           by [].
         by [].
         by [].
     move: hypok.
-    rewrite -big_andE big_ord_recr !//=.
-    rewrite big_andE.
+    rewrite -big_andE big_ord_recr !//= big_andE.
     move/andP => hypokN.
     move:hypokN.
     move=> [hypokN hypodernier].
@@ -2661,7 +2331,6 @@ move=> [hypokSN hypodernier].
 
 
 move=>info_k_sur_lam.
-  About Jensen_inequality.
   apply (@Jensen_inequality n f (convex_strict_implies_convex f_is_convex) 
                 x ns1 k_sur_lam info_k_sur_lam (lt_implies_le hypokN)).
 
@@ -2669,26 +2338,18 @@ move=>info_k_sur_lam.
 have autre_ing2 :  (Num.le (lambda * f (x1, x2) + k`_n * f ((x`_n).1, (x`_n).2))
                 (lambda * (\sum_(i < n) k`_i / lambda * f ((x`_i).1, (x`_i).2))
                       + k`_n * f ((x`_n).1, (x`_n).2))).
-  Search _ (Num.le (_+_) (_+_)) (Num.le _ _).
   set term1 := lambda * f (x1, x2).
   set term2 := (lambda * (\sum_(i < n) k`_i / lambda * f ((x`_i).1, (x`_i).2))).
   set term3 := (k`_n * f ((x`_n).1, (x`_n).2)).
   simpl in term1, term2, term3.
-  About ler_add.
   apply : ler_add; last first.
-    Search _ (Num.le _ _) (_=_) in ssrnum.
     by [].
-  rewrite /term1 /term2.
-  Search _ (Num.le (_*_) (_*_)).
-  Search _ (Num.le 0 (_-_)).
-  rewrite -subr_ge0.
-  Search _ ((_*_) - (_ *_)).
+  rewrite /term1 /term2 -subr_ge0.
   rewrite -mulrBr.
   apply: mulr_ge0.
   rewrite /lambda.
     move: (lt_implies_le hypok).
-    rewrite -big_andE.
-    rewrite big_ord_recr !//=.
+    rewrite -big_andE big_ord_recr !//=.
     move/andP=> hypokle.
     move:hypokle.
     move => [hypokl1 dernier].
@@ -2696,7 +2357,6 @@ have autre_ing2 :  (Num.le (lambda * f (x1, x2) + k`_n * f ((x`_n).1, (x`_n).2))
     rewrite big_andE.
     move=> hypokl1.
   apply (pos_elt_pos_sum hypokl1).
-  Search _ (Num.le 0 (_-_)).
   rewrite subr_ge0.
   by [].
 
@@ -2704,7 +2364,6 @@ move: autre_ing2.
 rewrite (_ : lambda * (\sum_(i < n) k`_i / lambda * f ((x`_i).1, (x`_i).2))
                 = (\sum_(i < n) k`_i * f ((x`_i).1, (x`_i).2))).
   move=> autre_ing2.
-  About ltr_le_trans.
   apply: (ltr_le_trans info_strict_conv autre_ing2).
   rewrite mulr_sumr.
   set F1 := fun i:'I_n => lambda * (k`_i / lambda * f ((x`_i).1, (x`_i).2)) .
@@ -2735,7 +2394,6 @@ rewrite (_ : lambda * (\sum_(i < n) k`_i / lambda * f ((x`_i).1, (x`_i).2))
       rewrite big_andE.
       by [].
     apply (strict_pos_elt_strict_pos_sum hypokSn).
-    Search _ (Num.lt 0 _) (~~ _).
     move: lambda_pos.
     rewrite lt0r.
     move/andP=> lambda_pos.
@@ -2774,10 +2432,7 @@ case xi_dif_xj_n : [exists (i:'I_n | true),
 
 
           have toto: k`_n = 1 - lambda.
-          rewrite /lambda.
-          Search _ (_ = _  -> _+_ =_+_).
-          rewrite -somme_egal_1.
-          rewrite big_ord_recr !//=.
+          rewrite /lambda -somme_egal_1 big_ord_recr !//=.
           set sum_n := \sum_(i < n) k`_i.
           simpl in sum_n.
           prefield. ring.
@@ -2791,12 +2446,8 @@ case xi_dif_xj_n : [exists (i:'I_n | true),
           by [].
         have egaly2 : (y_f.2 = (x`_n).2).
           by [].
-        rewrite -egalx1.
-        rewrite -egalx2.
-        rewrite -egaly1.
-        rewrite -egaly2.
-        simpl in x_f.
-        simpl in y_f.
+        rewrite -egalx1 -egalx2 -egaly1 -egaly2.
+        simpl in x_f, y_f.
 
         rewrite (_: x_f.1 * lambda = lambda * x_f.1); last first.
           prefield. ring.
@@ -2811,17 +2462,14 @@ case xi_dif_xj_n : [exists (i:'I_n | true),
         have info4: (Num.le lambda 1).
           rewrite (_ : lambda = 1 - k`_n).
             change (Num.le (1 - k`_n) (1-0)).
-            Search _ (Num.le (_-_) _).
             rewrite ler_sub.
                 by [].
               by [].
             move/forallP: hypok.
             move=> hypok.
-            About ord_max.
             set ord_n := (@ord_max n).
             move: (hypok ord_n).
-            rewrite /=.
-            rewrite lt0r.
+            rewrite /= lt0r.
             move/andP=> kn0a.
             move:kn0a.
             move=> [kn0a kn0b].
@@ -2829,9 +2477,7 @@ case xi_dif_xj_n : [exists (i:'I_n | true),
           rewrite toto.
           simpl in lambda.
           prefield; ring.
-        rewrite toto.
-        Print convex_fun.
-        rewrite /convex_fun.
+        rewrite toto /convex_fun.
         apply (convex_strict_implies_convex f_is_convex) .
           by [].
         by [].
@@ -2848,25 +2494,20 @@ case xi_dif_xj_n : [exists (i:'I_n | true),
                                              ((\sum_(i < n) k`_i * (x`_i).1)* (1 / lambda),
                                              (\sum_(i < n) k`_i * (x`_i).2)* (1 / lambda)));
         last first.
-          Search _ (_*_/_).
-          Search _ (_/1).
           rewrite -[X in _ = f
           (X * (1 / lambda),
           (\sum_(i < n) k`_i * (x`_i).2) * (1 / lambda))]divr1.
           rewrite -[X in _ = f
           (_ * (1 / lambda),
           (X * (1 / lambda)))]divr1.
-          rewrite mulf_div.
-          rewrite !mul1r !mul1l.
+          rewrite mulf_div !mul1r !mul1l.
           reflexivity.
         rewrite !mulr_suml.
 
 
         have info1: (\sum_(i < n) k`_i/lambda = 1).
           rewrite (_ : \sum_(i < n) k`_i/lambda = (\sum_(i < n) k`_i)/lambda).
-            rewrite /lambda.
-            Search _ (_/_= 1).
-            rewrite divff.
+            rewrite /lambda divff.
             reflexivity.
             rewrite -/lambda.
             move/negPf : info.
@@ -2908,9 +2549,7 @@ case xi_dif_xj_n : [exists (i:'I_n | true),
               move=> i tmp.
               rewrite /k_sur_lam.
               simpl in F1.
-              About nth_mkseq.
-              rewrite (nth_mkseq ).
-              rewrite /F1.
+              rewrite (nth_mkseq ) /F1.
               reflexivity.
               by [].
 
@@ -2920,9 +2559,7 @@ case xi_dif_xj_n : [exists (i:'I_n | true),
               move=> i tmp.
               rewrite /k_sur_lam.
               simpl in F1.
-              About nth_mkseq.
-              rewrite (nth_mkseq ).
-              rewrite /F1.
+              rewrite (nth_mkseq ) /F1.
               reflexivity.
               by [].
 
@@ -2932,9 +2569,7 @@ case xi_dif_xj_n : [exists (i:'I_n | true),
               move=> i tmp.
               rewrite /k_sur_lam.
               simpl in F1.
-              About nth_mkseq.
-              rewrite (nth_mkseq ).
-              rewrite /F1.
+              rewrite (nth_mkseq ) /F1.
               reflexivity.
               by [].
 
@@ -2944,9 +2579,7 @@ case xi_dif_xj_n : [exists (i:'I_n | true),
               move=> i tmp.
               rewrite /k_sur_lam.
               simpl in F1.
-              About nth_mkseq.
-              rewrite (nth_mkseq ).
-              rewrite /F1.
+              rewrite (nth_mkseq ) /F1.
               reflexivity.
               by [].
 
@@ -2963,10 +2596,7 @@ have hypokN_lam : ([forall (i:'I_n | true), Num.lt 0 k`_i]
     move => i tmp.
     rewrite /k_sur_lam.
     simpl in F1.
-    About nth_mkseq.
-    rewrite (nth_mkseq ).
-    rewrite /F1.
-    Search _ (Num.lt 0 (_/_)).
+    rewrite (nth_mkseq ) /F1.
       (* preuve que lambda > 0 *)
       have lambda_pos : lambda>0.
         rewrite /lambda.
@@ -2979,14 +2609,11 @@ move=> n somme_egal_1 nsup1 ex lambda info x1 x2 x1_xn_egal
        hypok ns1 xi_dif_xj_n i
       convex_large F1  k_sur_lam sum_k_sur_lam hypokle.
 move: hypok.
-rewrite -big_andE big_ord_recr !//=.
-rewrite big_andE.
+rewrite -big_andE big_ord_recr !//= big_andE.
 move/andP => hypokSN.
 move:hypokSN.
 move=> [hypokSN hypodernier].
         apply (strict_pos_elt_strict_pos_sum hypokSN).
-        Search _ (Num.lt 0 (_/_)).
-        Search _ (_=_ <-> _=_).
         apply eq_iff_eq_true.
         split.
           move => hyp1.
@@ -3007,14 +2634,12 @@ move=> [hypokSN hypodernier].
           move=> [lambda_nonul lambda_pos].
           move/eqP: lambda_nonul.
           by [].
-        Search _ (Num.lt 0 (_*_)).
         apply mulr_gt0.
           by [].
         by [].
         by [].
     move: hypok.
-    rewrite -big_andE big_ord_recr !//=.
-    rewrite big_andE.
+    rewrite -big_andE big_ord_recr !//= big_andE.
     move/andP => hypokN.
     move:hypokN.
     move=> [hypokN hypodernier].
@@ -3032,19 +2657,12 @@ by [].
 have autre_ing2 :  (Num.lt (lambda * f (x1, x2) + k`_n * f ((x`_n).1, (x`_n).2))
                 (lambda * (\sum_(i < n) k`_i / lambda * f ((x`_i).1, (x`_i).2))
                       + k`_n * f ((x`_n).1, (x`_n).2))).
-  Search _ (Num.lt (_+_) (_+_)) (Num.lt _ _).
   set term1 := lambda * f (x1, x2).
   set term2 := (lambda * (\sum_(i < n) k`_i / lambda * f ((x`_i).1, (x`_i).2))).
   set term3 := (k`_n * f ((x`_n).1, (x`_n).2)).
   simpl in term1, term2, term3.
-  About ltr_add2r.
-  rewrite ltr_add2r.
-  rewrite /term1 /term2.
-  Search _ (Num.le (_*_) (_*_)).
-  Search _ (Num.le 0 (_-_)).
-  rewrite -subr_gt0.
-  Search _ ((_*_) - (_ *_)).
-  rewrite -mulrBr.
+  rewrite ltr_add2r /term1 /term2.
+  rewrite -subr_gt0 -mulrBr.
   apply: mulr_gt0.
 
 
@@ -3066,8 +2684,6 @@ move/andP => hypokSN.
 move:hypokSN.
 move=> [hypokSN hypodernier].
         apply (strict_pos_elt_strict_pos_sum hypokSN).
-        Search _ (Num.lt 0 (_/_)).
-        Search _ (_=_ <-> _=_).
         apply eq_iff_eq_true.
         split.
           move => hyp1.
@@ -3081,7 +2697,6 @@ move: autre_ing2.
 rewrite (_ : lambda * (\sum_(i < n) k`_i / lambda * f ((x`_i).1, (x`_i).2))
                 = (\sum_(i < n) k`_i * f ((x`_i).1, (x`_i).2))).
   move=> autre_ing2.
-Search _ (Num.le _ _) (Num.lt _ _) in ssrnum.
 apply (ler_lt_trans convex_large autre_ing2).
 
 
@@ -3116,7 +2731,6 @@ rewrite mulr_sumr.
       rewrite big_andE.
       by [].
     apply (strict_pos_elt_strict_pos_sum hypokSn).
-    Search _ (Num.lt 0 _) (~~ _).
     move: lambda_pos.
     rewrite lt0r.
     move/andP=> lambda_pos.
@@ -3134,8 +2748,6 @@ rewrite mulr_sumr.
                  ~~ ((x`_i).1 == (x`_j).1)
                  || ~~ ((x`_i).2 == (x`_j).2)] = false *)
 
-
-Search _ ([forall _, _]) ([exists _, _]).
 
 move/negbT: xi_dif_xj_n.
 
@@ -3160,37 +2772,24 @@ have tous_meme: ([forall (i:'I_(n)|true), (x`_i).1 == (x`_0).1]
           move/andP:tous_meme.
           move=> [tous_meme1 tous_meme2].
           (* rewrite tous_meme1. *)
-  Search _ (bigop (_*_)) in ssralg.
   set F1 : 'I_n-> rat := fun i => k`_i * (x`_i).1.
   set F2 : 'I_n-> rat := fun i => k`_i * (x`_0).1.
-  About eq_bigr.
   have F1eqF2 : (forall i : 'I_n, true -> F1 i = F2 i).
     move=> i true.
     rewrite /F1 /F2.
-Print Scopes.
     move/forallP : tous_meme1.
     move=>tous_meme1.
 
-    About congr1.
     move: (tous_meme1 i).
     change (((x`_i).1 == (x`_0).1) ->
-k`_i * (x`_i).1 = k`_i * (x`_0).1).
-    About congr1.
+      k`_i * (x`_i).1 = k`_i * (x`_0).1).
     set ff := fun x => k`_i * x.
     move/eqP=> hyp1.
     by apply: (congr1 ff).
 
 
-About eq_bigr.
-rewrite (eq_bigr F2 F1eqF2).
-rewrite /F2.
-rewrite -mulr_suml.
-rewrite /lambda.
-Search _ (_*_/_).
-Search _ ((_*_)/_).
-rewrite -/lambda.
+rewrite (eq_bigr F2 F1eqF2) /F2 -mulr_suml /lambda -/lambda.
 prefield ; field.
-Search _ (Num.lt 0 _) (_==0).
 have lambda_pos: lambda>0.
     rewrite /lambda.
     move: nsup1 IHn somme_egal_1 hypok ex lambda F1 info x1 
@@ -3211,7 +2810,6 @@ have lambda_pos: lambda>0.
       rewrite big_andE.
       by [].
     apply (strict_pos_elt_strict_pos_sum hypokSn).
-    Search _ (Num.lt 0 _) (~~ _).
     move: lambda_pos.
     rewrite lt0r.
     move/andP=> lambda_pos.
@@ -3228,37 +2826,23 @@ have lambda_pos: lambda>0.
           move/andP:tous_meme.
           move=> [tous_meme1 tous_meme2].
           (* rewrite tous_meme1. *)
-  Search _ (bigop (_*_)) in ssralg.
   set F1 : 'I_n-> rat := fun i => k`_i * (x`_i).2.
   set F2 : 'I_n-> rat := fun i => k`_i * (x`_0).2.
-  About eq_bigr.
   have F1eqF2 : (forall i : 'I_n, true -> F1 i = F2 i).
     move=> i true.
     rewrite /F1 /F2.
-Print Scopes.
     move/forallP : tous_meme2.
     move=>tous_meme2.
 
-    About congr1.
     move: (tous_meme2 i).
     change (((x`_i).2 == (x`_0).2) ->
-k`_i * (x`_i).2 = k`_i * (x`_0).2).
-    About congr1.
+      k`_i * (x`_i).2 = k`_i * (x`_0).2).
     set ff := fun x => k`_i * x.
     move/eqP=> hyp1.
     by apply: (congr1 ff).
 
-rewrite /x2.
-About eq_bigr.
-rewrite (eq_bigr F2 F1eqF2).
-rewrite /F2.
-rewrite -mulr_suml.
-rewrite /lambda.
-Search _ (_*_/_).
-Search _ ((_*_)/_).
-rewrite -/lambda.
+rewrite /x2 (eq_bigr F2 F1eqF2) /F2 -mulr_suml /lambda -/lambda.
 prefield ; field.
-Search _ (Num.lt 0 _) (_==0).
 have lambda_pos: lambda>0.
     rewrite /lambda.
     move: nsup1 IHn somme_egal_1 hypok ex lambda F1 info x1 
@@ -3279,7 +2863,6 @@ have lambda_pos: lambda>0.
       rewrite big_andE.
       by [].
     apply (strict_pos_elt_strict_pos_sum hypokSn).
-    Search _ (Num.lt 0 _) (~~ _).
     move: lambda_pos.
     rewrite lt0r.
     move/andP=> lambda_pos.
@@ -3316,8 +2899,7 @@ move/eqP: infoa; move/eqP : infob.
 move=> infoa infob.
 
 have tous_meme1_Sn: [forall (i:'I_(n.+1) | true), (x`_i).1 == (x`_0).1].
-  rewrite -big_andE.
-  rewrite big_ord_recr.
+  rewrite -big_andE big_ord_recr.
   apply/andP.
   split.
     rewrite big_andE.
@@ -3325,8 +2907,7 @@ have tous_meme1_Sn: [forall (i:'I_(n.+1) | true), (x`_i).1 == (x`_0).1].
   change ((x`_n).1 == (x`_0).1).
   exact: infob.
 have tous_meme2_Sn: [forall (i:'I_(n.+1) | true), (x`_i).2 == (x`_0).2].
-  rewrite -big_andE.
-  rewrite big_ord_recr.
+  rewrite -big_andE big_ord_recr.
   apply/andP.
   split.
     rewrite big_andE.
@@ -3403,18 +2984,14 @@ have contra: (bool1 && bool2).
     by exact contra1.
   rewrite /bool2.
   by exact: contra2.
-Search _ (~~_||~~_).
 rewrite -[~~ bool1 || ~~ bool2]negb_andb.
 move:contra.
 set bbool := bool1 && bool2.
-Search _ (_ && ~~_).
 move=> hyp1 hyp2.
 have neg : (bbool && ~~bbool).
   apply/andP.
   split.
-    rewrite /bbool.
-    rewrite contra1.
-    rewrite contra2.
+    rewrite /bbool contra1 contra2.
     by [].
   by [].
 move: neg.
@@ -3435,7 +3012,6 @@ split.
    ((x`_0).2 == (x`_j).2)] ->
       [forall (i : 'I_n | true), (x`_i).1 == (x`_0).1]).
   move=> toto1.
-  Search _ ([forall _, _]).
   apply/forallP.
   move=> x0.
   change (((x`_x0).1 == (x`_0).1)).
@@ -3487,30 +3063,20 @@ reflexivity.
    ns1 : (1 < n)%N = false ce qui revient à dire que n = 1 grâce à 
    l'hypothèse nsup1 : (1 < n.+1)%N *)
 have n_egal_1 : (1 = n)%N.
-  Search _ (Num.lt _ _ = false) in ssrnum.
   move: nsup1.
-  Search _ (_ < _)%N in ssrnat.
-  About ltnS.
   rewrite ltnS.
   move=> nsup1.
-  Search _ (_ < _)%N  in ssrnat.
   move: ns1.
   rewrite ltnNge.
   move/negP => ninf1.
   move:ninf1.
-  Search _ (((_<=_)%N)) in ssrnat.
   move/negP => ninf1.
-  Search _ ((_<_)%N) ((_ <= _)%N) (_=_) in ssrnat.
   move: nsup1.
   rewrite leq_eqVlt.
   move=> nsup1.
-  Search _ (_<_)%N in ssrnat.
-  Search "anti" in ssrnat.
   apply: anti_leq.
   rewrite ninf1.
-  Search _ (_&&true).
   rewrite andb_true_r.
-  Search _ (_ <=_)%N (_==_) in ssrnat.
   rewrite leq_eqVlt.
   by [].
 
@@ -3557,17 +3123,14 @@ rewrite !plus0l.
 rewrite info1.
 
 have tmp1 : x`_0 = ((x`_0).1, (x`_0).2).
-  Search _ (_ = (_,_)).
   apply: surjective_pairing.
 have tmp2 : x`_1 = ((x`_1).1, (x`_1).2).
-  Search _ (_ = (_,_)).
   apply: surjective_pairing.
 
 rewrite -tmp1 -tmp2.
 
 move: hypok.
-rewrite -big_andE.
-rewrite !big_ord_recr !big_ord0.
+rewrite -big_andE !big_ord_recr !big_ord0.
 change (Num.lt 0 k`_0 && Num.lt 0 k`_1 -> Num.lt
   (f
      (k`_0 * (x`_0).1 + (1 - k`_0) * (x`_1).1,
@@ -3582,8 +3145,7 @@ have info2 : k`_0 = 1 - k`_1.
   move: somme_egal_1.
   rewrite big_ord_recr.
   change ((\sum_(i :'I_1) (k`_i)) + k`_1 = 1 -> k`_0 = 1 - k`_1).
-  rewrite big_ord_recr.
-  rewrite big_ord0.
+  rewrite big_ord_recr big_ord0.
   change (0 + k`_0 + k`_1 = 1 -> k`_0 = 1 - k`_1).
   rewrite plus0l.
   move=> tmp.
@@ -3596,7 +3158,6 @@ have info2 : k`_0 = 1 - k`_1.
 have info3 : Num.lt k`_0 1.
   rewrite info2.
   change (Num.lt (1 - k`_1) (1-0)).
-  Search _ (Num.lt (_-_) (_-_)).
   apply: ler_lt_sub.
     by [].
   by [].
@@ -3608,7 +3169,6 @@ have ex_utile : ((x`_0).1 != (x`_1).1) || ((x`_0).2 != (x`_1).2); last first.
   by [].
 move/existsP : ex.
 move=> [x0 ex].
-Search _ (true &&_).
 move :ex.
 rewrite andb_true_l.
 move=> ex.
@@ -3648,7 +3208,6 @@ case x0_is0 : (x0 == Ordinal ing0).
     rewrite -x0_is0 -x1_is1.
     by [].
   have contra : (x1 == Ordinal ing0).
-    Search _ (_==_) in fintype.
     apply/eqP.
     apply (eq_ordinal x1_is1).
   move/eqP : x0_is0.
@@ -3665,7 +3224,6 @@ case x0_is0 : (x0 == Ordinal ing0).
     by reflexivity.
   rewrite (_ : ~~ true = false) ;last first.
     by [].
-  Search _ (false || _).
   rewrite orb_false_l.
   by [].
 have infoa : x0 == Ordinal ing1.
@@ -3676,7 +3234,6 @@ move=> infoa.
 rewrite infoa in x0x1_dif.
 have infob : (x1 = Ordinal ing0).
   move: x0x1_dif.
-  Search _ (_ == _).
   rewrite (_ : (Ordinal ing1 == x1) = (x1 ==Ordinal ing1)).
     apply : (eq_ordinal ).
   by [].
@@ -3700,11 +3257,9 @@ Lemma sum_gt01 : forall (r1 r2:rat),
                   Num.lt 0 r1 -> Num.le 0 r2 -> Num.lt 0 (r1+r2).
 Proof.
 move=> r1 r2 hypr1 hypr2.
-Search _ (Num.lt _ (_+_)).
 rewrite (_: r1+r2 = r1 - (-r2)); last first.
   prefield. field.
 rewrite subr_gt0.
-Search _ (Num.le 0 _ = _ || _).
 move: hypr2.
 rewrite le0r.
 case info : (r2 == 0).
@@ -3714,7 +3269,6 @@ case info : (r2 == 0).
   by [].
 rewrite !//=.
 move=> hypr2.
-Search _ (Num.lt (-_) 0).
 move: hypr2.
 rewrite -oppr_lt0.
 move=> hypr2.
@@ -3727,11 +3281,9 @@ Lemma sum_gt02 : forall (r1 r2:rat),
                   Num.le 0 r1 -> Num.lt 0 r2 -> Num.lt 0 (r1+r2).
 Proof.
 move=> r1 r2 hypr1 hypr2.
-Search _ (Num.lt _ (_+_)).
 rewrite (_: r1+r2 = r2 - (-r1)); last first.
   prefield. field.
 rewrite subr_gt0.
-Search _ (Num.le 0 _ = _ || _).
 move: hypr1.
 rewrite le0r.
 case info : (r1 == 0).
@@ -3741,7 +3293,6 @@ case info : (r1 == 0).
   by [].
 rewrite !//=.
 move=> hypr1.
-Search _ (Num.lt (-_) 0).
 move: hypr1.
 rewrite -oppr_lt0.
 move=> hypr1.
@@ -3760,7 +3311,6 @@ move:Hxdify.
 move=> [Hxdify1 | Hxdify2].
 rewrite /fJensen.
 rewrite !expr2 !//=.
-Search _ ( Num.lt 0 (_-_)).
 rewrite -subr_gt0.
 have info_egalite: (k * (x.1 * x.1 + x.2 * x.2) + (1 - k) * (y.1 * y.1 + y.2 * y.2) -
    ((k * x.1 + (1 - k) * y.1) * (k * x.1 + (1 - k) * y.1) +
@@ -3769,10 +3319,8 @@ have info_egalite: (k * (x.1 * x.1 + x.2 * x.2) + (1 - k) * (y.1 * y.1 + y.2 * y
   rewrite !expr2 !//=.
   prefield; ring.
 rewrite info_egalite.
-Search _ (Num.lt 0 (_*_)).
 rewrite pmulr_rgt0; last first.
 rewrite pmulr_rgt0.
-Search _ (Num.lt 0 (_-_)).
 rewrite subr_gt0.
 exact:Hk1.
 exact H0k.
@@ -3784,29 +3332,22 @@ apply/andP.
 split; last first.
   rewrite -expr2.
   apply: sqr_ge0.
-rewrite /a.
-rewrite GRing.mulf_neq0.
+rewrite /a GRing.mulf_neq0.
   by [].
 move: Hxdify1.
-Search _ (_-_==0).
 by rewrite subr_eq0.
 move: Hxdify1.
-Search _ (_-_==0).
 by rewrite subr_eq0.
 
 
 set b := (x.2 -y.2).
-rewrite expr2.
-rewrite -expr2.
+rewrite expr2 -expr2.
 apply: sqr_ge0.
 
 
 (* Cas 2 ou on a ~~ (x.2 == y.2) *)
 
-rewrite /fJensen.
-rewrite !expr2 !//=.
-Search _ ( Num.lt 0 (_-_)).
-rewrite -subr_gt0.
+rewrite /fJensen !expr2 !//= -subr_gt0.
 have info_egalite: (k * (x.1 * x.1 + x.2 * x.2) + (1 - k) * (y.1 * y.1 + y.2 * y.2) -
    ((k * x.1 + (1 - k) * y.1) * (k * x.1 + (1 - k) * y.1) +
     (k * x.2 + (1 - k) * y.2) * (k * x.2 + (1 - k) * y.2)))
@@ -3814,10 +3355,8 @@ have info_egalite: (k * (x.1 * x.1 + x.2 * x.2) + (1 - k) * (y.1 * y.1 + y.2 * y
   rewrite !expr2 !//=.
   prefield; ring.
 rewrite info_egalite.
-Search _ (Num.lt 0 (_*_)).
 rewrite pmulr_rgt0; last first.
 rewrite pmulr_rgt0.
-Search _ (Num.lt 0 (_-_)).
 rewrite subr_gt0.
 exact:Hk1.
 exact H0k.
@@ -3828,20 +3367,16 @@ rewrite -expr2.
 apply: sqr_ge0.
 
 set b := (x.2 -y.2).
-rewrite expr2.
-rewrite ltr_def.
+rewrite expr2 ltr_def.
 apply/andP.
 split; last first.
   rewrite -expr2.
   apply: sqr_ge0.
-rewrite /b.
-rewrite GRing.mulf_neq0.
+rewrite /b GRing.mulf_neq0.
   by [].
 move: Hxdify2.
-Search _ (_-_==0).
 by rewrite subr_eq0.
 move: Hxdify2.
-Search _ (_-_==0).
 by rewrite subr_eq0.
 Qed.
 
@@ -4079,9 +3614,7 @@ have hyp: (\det (\matrix_(i<4, j<4) (if i == 0
                               else 0))).
 
 
-  rewrite (expand_det_row _ (Ordinal (trois<4))).
-  rewrite big_ord_recl.
-  rewrite !mxE !//=.
+  rewrite (expand_det_row _ (Ordinal (trois<4))) big_ord_recl !mxE !//=.
   set cof1 := cofactor
   (\matrix_(i, j) (if i == 0
                    then
@@ -4135,8 +3668,7 @@ have hyp: (\det (\matrix_(i<4, j<4) (if i == 0
                         then point2R1 p ^+ 2 + point2R2 p ^+ 2
                         else 1)) (Ordinal trois<4) ord0.
 
-  rewrite big_ord_recl.
-  rewrite !mxE !//=.
+  rewrite big_ord_recl !mxE !//=.
   set cof2 := cofactor
    (\matrix_(i, j) (if i == 0
                     then
@@ -4191,8 +3723,7 @@ have hyp: (\det (\matrix_(i<4, j<4) (if i == 0
                          else 1)) (Ordinal trois<4) 
    (lift ord0 ord0).
 
-  rewrite big_ord_recl.
-  rewrite !mxE !//=.
+  rewrite big_ord_recl !mxE !//=.
   set cof3 := cofactor
     (\matrix_(i, j) (if i == 0
                      then
@@ -4247,8 +3778,7 @@ have hyp: (\det (\matrix_(i<4, j<4) (if i == 0
                           else 1)) (Ordinal trois<4)
     (lift ord0 (lift ord0 ord0)).
 
-  rewrite big_ord_recl.
-  rewrite !mxE !//=.
+  rewrite big_ord_recl !mxE !//=.
   set cof4 := cofactor
      (\matrix_(i, j) (if i == 0
                       then
@@ -4303,24 +3833,13 @@ have hyp: (\det (\matrix_(i<4, j<4) (if i == 0
                            else 1)) (Ordinal trois<4)
      (lift ord0 (lift ord0 (lift ord0 ord0))).
 
-  rewrite big_ord0.
-  rewrite /cof1.
-  rewrite /cofactor.
-  rewrite expand_det33 !mxE !//=.
-  rewrite /cof2.
-  rewrite /cofactor.
-  rewrite expand_det33 !mxE !//=.
-  rewrite /cof3.
-  rewrite /cofactor.
-  rewrite expand_det33 !mxE !//=.
-  rewrite /cof4.
-  rewrite /cofactor.
-  rewrite expand_det33 !mxE !//=.
+  rewrite big_ord0 /cof1 /cofactor expand_det33 !mxE !//=.
+  rewrite /cof2 /cofactor expand_det33 !mxE !//=.
+  rewrite /cof3 /cofactor expand_det33 !mxE !//=.
+  rewrite /cof4 /cofactor expand_det33 !mxE !//=.
 
 
-rewrite (expand_det_row _ (Ordinal (trois<4))).
-rewrite big_ord_recl.
-rewrite !mxE !//=.
+rewrite (expand_det_row _ (Ordinal (trois<4))) big_ord_recl !mxE !//=.
 set cof1' := cofactor
   (\matrix_(i, j) (if i == 0
                    then
@@ -4383,8 +3902,7 @@ set cof1' := cofactor
                          (point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
                           point2R2 (tm t (Ordinal deux<3)) ^+ 2)
                         else 0)) (Ordinal trois<4) ord0.
-rewrite big_ord_recl.
-rewrite !mxE !//=.
+rewrite big_ord_recl !mxE !//=.
 set cof2' := cofactor
    (\matrix_(i, j) (if i == 0
                     then
@@ -4448,8 +3966,7 @@ set cof2' := cofactor
                            point2R2 (tm t (Ordinal deux<3)) ^+ 2)
                          else 0)) (Ordinal trois<4) 
    (lift ord0 ord0).
-rewrite big_ord_recl.
-rewrite !mxE !//=.
+rewrite big_ord_recl !mxE !//=.
 set cof3' := cofactor
     (\matrix_(i, j) (if i == 0
                      then
@@ -4514,8 +4031,7 @@ set cof3' := cofactor
                           else 0)) (Ordinal trois<4)
     (lift ord0 (lift ord0 ord0)).
 
-rewrite big_ord_recl.
-rewrite !mxE !//=.
+rewrite big_ord_recl !mxE !//=.
 set cof4' :=  cofactor
      (\matrix_(i, j) (if i == 0
                       then
@@ -4581,16 +4097,10 @@ set cof4' :=  cofactor
      (lift ord0 (lift ord0 (lift ord0 ord0))).
 rewrite big_ord0.
 
-rewrite /cof3'.
-rewrite /cofactor.
-rewrite expand_det33 !mxE !//=.
+rewrite /cof3' /cofactor expand_det33 !mxE !//=.
 
-rewrite !mulN1r !addr0 !//=.
-rewrite !expr2 !//=.
-rewrite !exprD !expr1 !expr0 !//= !mulr1 !//= .
-rewrite !mulN1r !//=.
-rewrite ?mul1r.
-rewrite !mul0l !plus0l !plus0r.
+rewrite !mulN1r !addr0 !//= !expr2 !//= !exprD !expr1 !expr0 !//= !mulr1 !//= .
+rewrite !mulN1r !//= ?mul1r !mul0l !plus0l !plus0r.
 
 
 
@@ -4611,10 +4121,8 @@ ring.
 
 
 
-rewrite [X in Num.lt 0 X == true]hyp.
-rewrite (expand_det_row _ (Ordinal (trois<4))).
-rewrite big_ord_recl.
-rewrite !mxE !//=.
+rewrite [X in Num.lt 0 X == true]hyp (expand_det_row _ (Ordinal (trois<4))).
+rewrite big_ord_recl !mxE !//=.
 set cof1 := cofactor
      (\matrix_(i, j) (if i == 0
                       then
@@ -4714,8 +4222,7 @@ set cof1 := cofactor
                                (tm t
                                   (Ordinal deux<3)) ^+ 2)
                            else 0)) (Ordinal trois<4) ord0.
-rewrite big_ord_recl.
-rewrite !mxE !//=.
+rewrite big_ord_recl !mxE !//=.
 set cof2 := cofactor
      (\matrix_(i, j) (if i == 0
                       then
@@ -4816,25 +4323,14 @@ set cof2 := cofactor
                                   (Ordinal deux<3)) ^+ 2)
                            else 0)) (Ordinal trois<4)
                                           (lift ord0 ord0).
-rewrite big_ord_recl.
-rewrite !mxE !//=.
-rewrite /cofactor.
-rewrite expand_det33 !mxE !//=.
-rewrite big_ord_recl.
-rewrite big_ord0.
-rewrite !mxE !//=.
-rewrite expand_det33 !mxE !//=.
+rewrite big_ord_recl !mxE !//= /cofactor expand_det33 !mxE !//=.
+rewrite big_ord_recl big_ord0 !mxE !//= expand_det33 !mxE !//=.
 
 move:toriented.
-rewrite /leftpoint.
-rewrite expand_det33 !mxE !//=.
+rewrite /leftpoint expand_det33 !mxE !//=.
 
-rewrite !mulN1r !addr0 !//=.
-rewrite !expr2 !//=.
-rewrite !exprD !expr1 !expr0 !//= !mulr1 !//= .
-rewrite !mulN1r !//=.
-About mul1l.
-rewrite !mul1l.
+rewrite !mulN1r !addr0 !//= !expr2 !//= !exprD !expr1 !expr0 !//= !mulr1 !//=.
+rewrite !mulN1r !//= !mul1l.
 
 have : k1 = 1 - k2 - k3.
   rewrite -(eqP H3).  simpl in k1. prefield; ring.
@@ -4942,13 +4438,10 @@ have devpt: (0 * cof1 +
   set f := point2R2 (tm t (Ordinal deux<3)).
   set g := point2R1 p.
   set h := point2R2 p.
-  rewrite !expr2 !//=.
-  rewrite !mul0l !plus0l !plus0r.
+  rewrite !expr2 !//= !mul0l !plus0l !plus0r.
   prefield.
   ring.
 rewrite devpt.
-Check pmulr_llt0.
-Search _ (Num.lt _ (_*_)).
    rewrite (pmulr_lgt0 (-
    (point2R1 p ^+ 2 + point2R2 p ^+ 2 -
     (1 - k2 - k3) *
@@ -4962,11 +4455,7 @@ Search _ (Num.lt _ (_*_)).
      point2R2 (tm t (Ordinal deux<3)) ^+ 2))) toriented). 
 
 
-About ltr_oppr.
-rewrite ltr_oppr oppr0.
-rewrite H1 H2 !//=.
-
-rewrite hypk1.
+rewrite ltr_oppr oppr0 H1 H2 !//= hypk1.
 
 (*Ne pas oublier d'utiliser le fait que k1, k2 et k3 >0 *)
 have: ((1 - k2 - k3) * point2R1 (tm t (Ordinal zero<3)) +
@@ -5025,67 +4514,38 @@ have : k3 = 1 - k1 - k2.
 move=> hypk3.
 
 have: k2<1.
-rewrite  hypk2.
-rewrite -{2}[1]plus0r.
-Search _ (Num.lt (_+_) (_+_)).
-rewrite !ltr_subl_addr.
-rewrite -{1}[1]plus0r.
-rewrite -{1}[1]plus0r.
+rewrite  hypk2 -{2}[1]plus0r !ltr_subl_addr -{1}[1]plus0r -{1}[1]plus0r.
 change (Num.lt ((1 + 0) + 0) ((1 + 0) + k3 + k1)).
-About ltr_add2l.
 set z:= 1+0.
 rewrite -[z]plus0r.
-About ltr_add2l.
-Check (ltr_add2l z 0 (0+k3+k1)).
 rewrite (_ : z+0+k3+k1 = z+(0+k3+k1)); last first.
   prefield; ring.
-rewrite (ltr_add2l z 0 (0+k3+k1)).
-rewrite plus0l.
-Search _ (Num.lt _ (_+_)).
+rewrite (ltr_add2l z 0 (0+k3+k1)) plus0l.
 apply: Num.Internals.addr_gt0.
 apply: H6.
 apply: H4.
 
 have: k3<1.
-rewrite  hypk3.
-rewrite -{2}[1]plus0r.
-Search _ (Num.lt (_+_) (_+_)).
-rewrite !ltr_subl_addr.
-rewrite -{1}[1]plus0r.
-rewrite -{1}[1]plus0r.
+rewrite  hypk3 -{2}[1]plus0r !ltr_subl_addr -{1}[1]plus0r -{1}[1]plus0r.
 change (Num.lt ((1 + 0) + 0) ((1 + 0) + k2 + k1)).
-About ltr_add2l.
 set z:= 1+0.
 rewrite -[z]plus0r.
-About ltr_add2l.
-Check (ltr_add2l z 0 (0+k2+k1)).
 rewrite (_ : z+0+k2+k1 = z+(0+k2+k1)); last first.
   prefield; ring.
-rewrite (ltr_add2l z 0 (0+k2+k1)).
-rewrite plus0l.
-Search _ (Num.lt _ (_+_)).
+rewrite (ltr_add2l z 0 (0+k2+k1)) plus0l.
 apply: Num.Internals.addr_gt0.
 apply: H5.
 apply: H4.
 
 have: k1<1.
-rewrite  hypk1.
-rewrite -{2}[1]plus0r.
-Search _ (Num.lt (_+_) (_+_)).
-rewrite !ltr_subl_addr.
-rewrite -{1}[1]plus0r.
-rewrite -{1}[1]plus0r.
+rewrite  hypk1 -{2}[1]plus0r.
+rewrite !ltr_subl_addr -{1}[1]plus0r -{1}[1]plus0r.
 change (Num.lt ((1 + 0) + 0) ((1 + 0) + k3 + k2)).
-About ltr_add2l.
 set z:= 1+0.
 rewrite -[z]plus0r.
-About ltr_add2l.
-Check (ltr_add2l z 0 (0+k3+k2)).
 rewrite (_ : z+0+k3+k2 = z+(0+k3+k2)); last first.
   prefield; ring.
-rewrite (ltr_add2l z 0 (0+k3+k2)).
-rewrite plus0l.
-Search _ (Num.lt _ (_+_)).
+rewrite (ltr_add2l z 0 (0+k3+k2)) plus0l.
 apply: Num.Internals.addr_gt0.
 apply: H6.
 apply: H5.
@@ -5094,7 +4554,6 @@ move=> hypk1inf1.
 move=> hypk2inf1.
 move=> hypk3inf1.
 
-Search _ (Num.lt (_-_) 0).
 rewrite (_ : ((k2 * c + k3 * e) ^+ 2 + (k2 * d + k3 * f) ^+ 2 -
    k2 * (c ^+ 2 + d ^+ 2) - k3 * (e ^+ 2 + f ^+ 2)) = 
             ((k2 * c + k3 * e) ^+ 2 + (k2 * d + k3 * f) ^+ 2 -
@@ -5111,63 +4570,47 @@ set x3:= (e, f).
 have :((k2 * c + k3 * e) ^+ 2 + (k2 * d + k3 * f) ^+ 2)
               = (fJensen (k1*x1.1 + k2*x2.1 + k3*x3.1, 
                                 k1*x1.2 + k2*x2.2 + k3*x3.2)    ).
-  rewrite /fJensen.
-  rewrite !expr2 !//=.
+  rewrite /fJensen !expr2 !//=.
   prefield; ring.
 move=> hypoJensen.
 have : (k2 * (c ^+ 2 + d ^+ 2) + k3 * (e ^+ 2 + f ^+ 2) 
           = k1*fJensen x1 + k2*fJensen x2 + k3*fJensen x3).
-  rewrite /fJensen.
-  rewrite !expr2 !//=.
+  rewrite /fJensen !expr2 !//=.
   prefield; ring.
 move=>hypo2Jensen.
 
-rewrite hypoJensen.
-rewrite hypo2Jensen.
+rewrite hypoJensen hypo2Jensen.
 
 
 move/eqP:H3.
 move=> H3.
 
-About Jensen_inequality.
 (* Transformer les k1+k2+k3 en \sum *)
 set x:= [::(x1.1, x1.2) ; (x2.1, x2.2) ; (x3.1, x3.2)].
 move:H3.
 set k := [::k1;k2;k3].
 rewrite (_ : (k1 + k2 + k3 = 1) = (\sum_(i<3) k`_i = 1)); last first.
-  rewrite !big_ord_recr !//=.
-  rewrite big_ord0.
-  rewrite plus0l.
+  rewrite !big_ord_recr !//= big_ord0 plus0l.
   by [].
 move=> H3.
 rewrite (_ : k1 * x1.1 + k2 * x2.1 + k3 * x3.1 = \sum_(i<3) k`_i *(x`_i).1)
               ; last first.
-  rewrite !big_ord_recr !//=.
-  rewrite big_ord0.
-  rewrite !mul0r !plus0l.
+  rewrite !big_ord_recr !//= big_ord0 !mul0r !plus0l.
   by reflexivity.
 rewrite (_ : k1 * x1.2 + k2 * x2.2 + k3 * x3.2 = \sum_(i<3) k`_i *(x`_i).2)
               ; last first.
-  rewrite !big_ord_recr !//=.
-  rewrite big_ord0.
-  rewrite !mul0r !plus0l.
+  rewrite !big_ord_recr !//= big_ord0 !mul0r !plus0l.
   by reflexivity.
 rewrite (_ : k1 * fJensen x1 + k2 * fJensen x2 + k3 * fJensen x3
                = \sum_(i<3) k`_i *fJensen (x`_i))
               ; last first.
-  rewrite !big_ord_recr !//=.
-  rewrite big_ord0.
-  rewrite !mul0r !plus0l.
+  rewrite !big_ord_recr !//= big_ord0 !mul0r !plus0l.
   by reflexivity.
-About Jensen_inequality.
 
 
 have test:  (Num.lt 0 k1 && Num.lt 0 k2 && Num.lt 0 k3) 
                 = [forall (i:'I_3|true), (Num.lt 0 k`_((nat_of_ord) i))].
-  rewrite -big_andE.
-  rewrite !big_ord_recr !//=.
-  rewrite big_ord0.
-  rewrite !//=.
+  rewrite -big_andE !big_ord_recr !//= big_ord0 !//=.
 
 have : Num.lt 0 k1 && Num.lt 0 k2 && Num.lt 0 k3.
   by rewrite H4 H5 H6.
@@ -5175,7 +4618,6 @@ rewrite test.
 
 
 move=> HH.
-About Jensen_inequality_strict.
 apply : (@Jensen_inequality_strict 3 _ fJensen_convex _
                 (ltn_trans (ltnSn 1) (ltnSn 2)) k  H3  HH).
 apply (triangle_non_degenere t tm).
@@ -5236,9 +4678,7 @@ case info5 : (p == tm t1 (Ordinal deux<3)).
   by move/eqP:info5=>info5; rewrite info5.
 case info6 : (p == tm t2 (Ordinal un<3)).
   move:Ha.
-  rewrite info3 info5 //=.
-  Search _ (_|| false).
-  rewrite orb_false_r.
+  rewrite info3 info5 //= orb_false_r.
   by move=>hyp; move/eqP:hyp=>hyp; rewrite hyp.
 move:Ha.
 rewrite info3 info4 //=.
@@ -5253,13 +4693,11 @@ case info5 : (p == tm t1 (Ordinal deux<3)).
   by move/eqP:info5=>info5; rewrite info5.
 case info6 : (p == tm t2 (Ordinal zero<3)).
   move:Ha.
-  rewrite info4 info5 //=.
-  rewrite !orb_false_r.
+  rewrite info4 info5 //= !orb_false_r.
   by move=>hyp; move/eqP:hyp=>hyp; rewrite hyp.
 case info7 : (p == tm t2 (Ordinal un<3)).
   move: Ha.
-  rewrite info3 info5 //=.
-  rewrite !orb_false_r.
+  rewrite info3 info5 //= !orb_false_r.
   by move=>hyp; move/eqP:hyp=>hyp; rewrite hyp.
 move: Ha.
 rewrite info3 info4 //=.
@@ -5274,13 +4712,11 @@ case info5 : (p == tm t1 (Ordinal deux<3)).
   by move/eqP:info5=>info5; rewrite info5.
 case info6 : (p == tm t2 (Ordinal zero<3)).
   move:Ha.
-  rewrite info4 info5 //=.
-  rewrite !orb_false_r.
+  rewrite info4 info5 //= !orb_false_r.
   by move=>hyp; move/eqP:hyp=>hyp; rewrite hyp.
 case info7 : (p == tm t2 (Ordinal un<3)).
   move: Ha.
-  rewrite info3 info5 //=.
-  rewrite !orb_false_r.
+  rewrite info3 info5 //= !orb_false_r.
   by move=>hyp; move/eqP:hyp=>hyp; rewrite hyp.
 move: Ha.
 rewrite info3 info4 //=.
@@ -5295,13 +4731,11 @@ case info5 : (p == tm t1 (Ordinal deux<3)).
   by move/eqP:info5=>info5; rewrite info5.
 case info6 : (p == tm t2 (Ordinal zero<3)).
   move:Ha.
-  rewrite info4 info5 //=.
-  rewrite !orb_false_r.
+  rewrite info4 info5 //= !orb_false_r.
   by move=>hyp; move/eqP:hyp=>hyp; rewrite hyp.
 case info7 : (p == tm t2 (Ordinal un<3)).
   move: Ha.
-  rewrite info3 info5 //=.
-  rewrite !orb_false_r.
+  rewrite info3 info5 //= !orb_false_r.
   by move=>hyp; move/eqP:hyp=>hyp; rewrite hyp.
 move: Ha.
 rewrite info3 info4 //=.
@@ -5322,8 +4756,7 @@ case info6 : (p == tm t2 (Ordinal zero<3)).
   by move=>hyp; move/eqP:hyp=>hyp; rewrite hyp.
 case info7 : (p == tm t2 (Ordinal un<3)).
   move: Ha.
-  rewrite info3 info5 //=.
-  rewrite !orb_false_r.
+  rewrite info3 info5 //= !orb_false_r.
   by move=>hyp; move/eqP:hyp=>hyp; rewrite hyp.
 move: Ha.
 rewrite info3 info4 //=.
@@ -5339,13 +4772,11 @@ case info5 : (p == tm t1 (Ordinal deux<3)).
   by move/eqP:info5=>info5; rewrite info5.
 case info6 : (p == tm t2 (Ordinal zero<3)).
   move:Ha.
-  rewrite info4 info5 //=.
-  rewrite !orb_false_r.
+  rewrite info4 info5 //= !orb_false_r.
   by move=>hyp; move/eqP:hyp=>hyp; rewrite hyp.
 case info7 : (p == tm t2 (Ordinal un<3)).
   move: Ha.
-  rewrite info3 info5 //=.
-  rewrite !orb_false_r.
+  rewrite info3 info5 //= !orb_false_r.
   by move=>hyp; move/eqP:hyp=>hyp; rewrite hyp.
 move: Ha.
 rewrite info3 info4 //=.
@@ -5359,13 +4790,11 @@ case toto3 : (p == tm t1 (Ordinal deux<3)).
   by move/eqP:toto3=>toto3; rewrite toto3.
 case toto4 : (p == tm t2 (Ordinal zero<3)).
   move: Ha.
-  rewrite toto2 toto3 //=.
-  rewrite !orb_false_r.
+  rewrite toto2 toto3 //= !orb_false_r.
   by move=>hyp; move/eqP:hyp=>hyp; rewrite hyp.
 case toto5: (p == tm t2 (Ordinal un<3)).
   move: Ha.
-  rewrite toto toto3 //=.
-  rewrite !orb_false_r.
+  rewrite toto toto3 //= !orb_false_r.
   by move=>hyp; move/eqP:hyp=>hyp; rewrite hyp.
 move: Ha.
 rewrite toto toto2 //=.
@@ -5382,8 +4811,6 @@ case info: (tm t2 (Ordinal zero<3)==p).
 case info2 : (p == tm t1 (Ordinal zero<3)) => //=. move/eqP:info=>info.
 move=> Ha Hb.
 case info3 : (p == tm t1 (Ordinal un<3)).
-  Search _ (_||_=false).
-  Search _ (_ <> true).
   intuition.
   rewrite info3 in Hb.
   rewrite //=.
@@ -5398,7 +4825,6 @@ case info4 : (p == tm t1 (Ordinal deux<3)).
   move: Hb.
   rewrite //=.
   move=> Hb.
-  Search _ (_||true).
   rewrite orb_true_r in Hb.
   tauto.
 case info5 : (p == tm t2 (Ordinal zero<3)).
@@ -5408,7 +4834,6 @@ case info6 : (p == tm t2 (Ordinal un<3)).
   by rewrite info6.
 move:Ha.
 rewrite info5 info6 //=.
-Search _ (_|| false).
 move/eqP=> info7.
 by rewrite info7.
 
@@ -5431,7 +4856,6 @@ case info5 : (p == tm t1 (Ordinal deux<3)).
   move: Hb.
   rewrite //=.
   move=> Hb.
-  Search _ (_||true).
   rewrite orb_true_r in Hb.
   tauto.
 case info6 : (p == tm t2 (Ordinal zero<3)).
@@ -5442,24 +4866,28 @@ case info7 : (p == tm t2 (Ordinal un<3)).
   by rewrite info7.
 move:Ha.
 rewrite info6 info7 //=.
-Search _ (_|| false).
 move/eqP=> toto.
 by rewrite toto.
 Qed.
 
 
+(* Il faut écrire un lemme qui montre que findIllegal renvoie bien ptext1 et
+   ptext2 tel que pt_in_triangle tm ptext2 t2 /\ ~pt_in_triangle tm ptext2 t1
+   et pt_in_triangle tm ptext1 t1 /\ ~pt_in_triangle tm ptext1 t2 *)
 
 
 Lemma orientedpostflip (tm: trianglemap)  (ptext1 : point) (ptext2 : point)
                            (t1:T) (t2 :T) (g:graph) (pm: pointmap) :
-(forall t:T, oriented t tm) -> isDelaunayLocal t1 t2 tm == false
+(forall t:T, oriented t tm) -> isDelaunayLocal t1 t2 tm == false 
+  -> pt_in_triangle tm ptext2 t2 /\ ~pt_in_triangle tm ptext2 t1
+  -> pt_in_triangle tm ptext1 t1 /\ ~pt_in_triangle tm ptext1 t2
   -> if flip default_triangle (tm: trianglemap) (ptext1 : point) 
                                   (ptext2 : point) (t1:T) (t2 :T) (g:graph)
                                      (pm: pointmap) is Some (g',tm') then
         forall tt:T, oriented tt tm'
      else (oriented t1 tm) && (oriented t2 tm).
 Proof.
-move => univ_o illegal.
+move => univ_o illegal [info1p2 info2p2] [info1p1 info2p1].
 have [ot1 ot2] : oriented t1 tm /\ oriented t2 tm by split; apply univ_o.
 case info : (flip default_triangle tm ptext1 ptext2 t1 t2 g pm) => [[g' tmap'] | ];
    last first.
@@ -5538,7 +4966,6 @@ set new_tr2 := (fun x : 'I_3 =>
                       (Ordinal (ltnSn 2)))).
 
 have oriented_tm2 : forall t : T, oriented t tm2.
-  About orientedunhookT.
   move: (orientedunhookT g t1 univ_o).
   rewrite info1.
   by [].
@@ -5551,7 +4978,6 @@ have oriented_tm3 : forall t : T, oriented t tm3.
 have otr1 : leftpoint (new_tr1 (inZp 0))(new_tr1 (inZp 1))(new_tr1 (inZp 2)) > 0
     ; last first.
   have oriented_vtemp : forall t : T, oriented t vtemp.
-    About orientedattachT.
     move: (orientedattachT pm oriented_tm3 otr1).
     case intel1 : (attachT new_tr1 tm3 pm) => [a | ].
       move : intel1.
@@ -5566,8 +4992,7 @@ have otr1 : leftpoint (new_tr1 (inZp 0))(new_tr1 (inZp 1))(new_tr1 (inZp 2)) > 0
         by case.
       by rewrite some_eq.
     move: intel1 info3.
-    rewrite /temp.
-    rewrite -/new_tr1.
+    rewrite /temp -/new_tr1.
     move=> tempo1.
     rewrite tempo1.
     by discriminate.
@@ -5575,13 +5000,11 @@ have otr1 : leftpoint (new_tr1 (inZp 0))(new_tr1 (inZp 1))(new_tr1 (inZp 2)) > 0
 have otr2 : leftpoint (new_tr2 (inZp 0))(new_tr2 (inZp 1))(new_tr2 (inZp 2)) > 0
     ; last first.
   have oriented_vtemp2 : forall t : T, oriented t vtemp2.
-    About orientedattachT.
     move: (orientedattachT pm oriented_vtemp otr2).
     case intel1 : (attachT new_tr2 vtemp pm) => [a | ].
       move : intel1.
       move: info4.
-      rewrite /temp2.
-      rewrite -/new_tr2.
+      rewrite /temp2 -/new_tr2.
       move=> tempo1.
       rewrite tempo1.
       move=> tempo2.
@@ -5590,8 +5013,7 @@ have otr2 : leftpoint (new_tr2 (inZp 0))(new_tr2 (inZp 1))(new_tr2 (inZp 2)) > 0
         by case.
       by rewrite some_eq.
     move: intel1 info4.
-    rewrite /temp2.
-    rewrite -/new_tr2.
+    rewrite /temp2 -/new_tr2.
     move=> tempo1.
     rewrite tempo1.
     by discriminate.
@@ -5609,13 +5031,22 @@ case h : ((ptext2 == tm t2 (Ordinal (ltn0Sn 2)))
         || (ptext1 == tm t2 (Ordinal (ltn_trans (ltnSn 1) (ltnSn 2))))
         || (ptext1 == tm t2 (Ordinal (ltnSn 2))) = false; last first.
     move => {new_tr2 info4 vtemp2istmap' temp2 tt vtemp2}.
-   rewrite h2.
-   rewrite !point2indext1t2_correct ?eqxx ?orbT //.
-      rewrite point2indext2t1_correct.
-          
+   rewrite h2 !point2indext1t2_correct; last first.
+      by [].
+    by [].
 
-
-
+   rewrite ?eqxx ?orbT // point2indext2t1_correct; last first.
+      by [].
+    by [].
+   move:illegal.
+   rewrite /isDelaunayLocal.
+   set temp1 := ~~ inCircle ((triangle2points t1 tm) (Ordinal zero<3)) t2 tm &&
+      ~~ inCircle ((triangle2points t1 tm) (Ordinal un<3)) t2 tm.
+   set temp2 := ~~ inCircle ((triangle2points t1 tm) (Ordinal deux<3)) t2 tm.
+   move/eqP => illegal.
+   move: illegal.
+   rewrite andb_false_iff /temp1 andb_false_iff /temp2.
+   
 
 
 
