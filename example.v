@@ -4661,6 +4661,38 @@ Definition pt_in_triangle  (tm : trianglemap) p t :=
       || (p == tm t (Ordinal (ltnSn 2))) = true.
 
 
+Lemma not_in_triangle (p:point) (t :T) (tm :trianglemap) :
+ (p == tm t (Ordinal zero<3))
+     || (p == tm t (Ordinal un<3))
+     || (p == tm t (Ordinal deux<3)) = false -> ~(pt_in_triangle tm p t).
+Proof.
+set temp1 := (p == tm t (Ordinal zero<3)) || (p == tm t (Ordinal un<3)).
+set bool1 := temp1 || (p == tm t (Ordinal deux<3)).
+move/negbT=> hyp.
+move: hyp.
+rewrite /bool1 negb_orb.
+move/andP=>hyp.
+move:hyp.
+move=> [hyp1 hyp3].
+move: hyp1.
+rewrite /temp1 negb_orb.
+move/andP=>hyp1.
+move:hyp1.
+move=> [hyp1 hyp2].
+rewrite /pt_in_triangle.
+move/negbTE : hyp1.
+move=> hyp1.
+rewrite hyp1.
+move/negbTE : hyp2.
+move=> hyp2.
+rewrite hyp2.
+move/negbTE : hyp3.
+move=> hyp3.
+rewrite hyp3 //.
+Qed.
+
+
+
 Lemma point2indext1t2_correct tm p t1 t2 :
     pt_in_triangle tm p t1 -> ~(pt_in_triangle tm p t2) ->
                                      tm t1 (point2indext1t2 p t1 t2 tm) = p.
@@ -5045,11 +5077,57 @@ case h : ((ptext2 == tm t2 (Ordinal (ltn0Sn 2)))
    set temp2 := ~~ inCircle ((triangle2points t1 tm) (Ordinal deux<3)) t2 tm.
    move/eqP => illegal.
    move: illegal.
-   rewrite andb_false_iff /temp1 andb_false_iff /temp2.
-   
-
-
-
+   rewrite andb_false_iff /temp1 andb_false_iff /temp2 !negb_false_iff.
+   rewrite {temp1}.
+   rewrite {temp2}.
+   move=> illegal.
+   move: info1p1.
+   rewrite /pt_in_triangle.
+   case index_ptext2_iszero : 
+          (point2indext1t2 ptext2 t1 t2 tm == Ordinal(zero<3)).
+     move/eqP: index_ptext2_iszero.
+     move=> index_ptext2_iszero.
+     rewrite index_ptext2_iszero.
+     rewrite /addOrd3 !//=.
+     move=> info1p1.
+     change (Num.lt 0
+          (leftpoint ptext2 ptext1 (tm t2 (Ordinal (modulo (2) 3)))) =
+              true).
+     rewrite (_ : (Ordinal (modulo 2 3)) = Ordinal(deux<3)); last first.
+       apply : val_inj.
+       rewrite //.
+     have orientedt1 : oriented t1 tm.
+       by [].
+     have orientedt2 : oriented t2 tm.
+       by [].
+     move: orientedt2.
+     rewrite /oriented.
+     have info : (ptext2 = (tm t2 (inZp 0))).
+       About point2indext2t1_correct.
+       rewrite -(point2indext2t1_correct info1p2 info2p2).
+       rewrite index_ptext2_iszero.
+       rewrite (_ : (Ordinal zero<3) = (inZp 0)); last first.
+         apply : val_inj.
+         rewrite //.
+       by [].
+     rewrite -info.
+     rewrite (_ : (Ordinal deux<3) = (inZp 2)); last first.
+       apply : val_inj.
+       rewrite //.
+     case index_ptext1_iszero : 
+       (point2indext1t2 ptext1 t1 t2 tm == Ordinal(zero<3)).
+       move/eqP: index_ptext1_iszero.
+       move=> index_ptext1_iszero.
+       have infop1 : (ptext1 = (tm t1 (inZp 0))).
+        About point2indext2t1_correct.
+        rewrite -(point2indext1t2_correct info1p1 info2p1).
+        rewrite index_ptext1_iszero.
+        rewrite (_ : (Ordinal zero<3) = (inZp 0)); last first.
+          apply : val_inj.
+          rewrite //.
+        by [].
+       rewrite infop1.
+       
 
 
 
