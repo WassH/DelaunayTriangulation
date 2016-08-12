@@ -15,7 +15,7 @@ Require Coq.Init.Nat.
 Require Import ZArith.
 Require Import Field.
 
-
+Locate field_tactics.
 Require Import field_tactics.
 
 (* -------------------------------------------------------------------- *)
@@ -4664,8 +4664,9 @@ Definition pt_in_triangle  (tm : trianglemap) p t :=
 Lemma not_in_triangle (p:point) (t :T) (tm :trianglemap) :
  (p == tm t (Ordinal zero<3))
      || (p == tm t (Ordinal un<3))
-     || (p == tm t (Ordinal deux<3)) = false -> ~(pt_in_triangle tm p t).
+     || (p == tm t (Ordinal deux<3)) = false <-> ~(pt_in_triangle tm p t).
 Proof.
+split.
 set temp1 := (p == tm t (Ordinal zero<3)) || (p == tm t (Ordinal un<3)).
 set bool1 := temp1 || (p == tm t (Ordinal deux<3)).
 move/negbT=> hyp.
@@ -4689,6 +4690,9 @@ rewrite hyp2.
 move/negbTE : hyp3.
 move=> hyp3.
 rewrite hyp3 //.
+
+rewrite /pt_in_triangle.
+by apply: not_true_is_false.
 Qed.
 
 
@@ -4902,6 +4906,1317 @@ move/eqP=> toto.
 by rewrite toto.
 Qed.
 
+Definition inCircle2 (p1 : point) (t1: triangle) : bool :=
+  let M:= \matrix_(i<4, j<4) if i ==0 then if j==0 then
+                                     point2R1 (t1 (inZp 0))
+                                         else if j==1 then
+                                     point2R2 (t1 (inZp 0))
+                                         else if nat_of_ord j==2 then 
+                         (point2R1 (t1 (inZp 0)))^+2
+                            + (point2R2 (t1 (inZp 0)))^+2
+                                         else 1
+                           else if i ==1 then if j==0 then
+                                     point2R1 (t1 (inZp 1))
+                                         else if j==1 then
+                                     point2R2 (t1 (inZp 1))
+                                         else if nat_of_ord j==2 then 
+                         (point2R1 (t1 (inZp 1)))^+2
+                            + (point2R2 (t1 (inZp 1)))^+2
+                                         else 1
+                           else if nat_of_ord i ==2 then if j==0 then
+                                     point2R1 (t1 (inZp 2))
+                                         else if j==1 then
+                                     point2R2 (t1 (inZp 2))
+                                         else if nat_of_ord j==2 then 
+                         (point2R1 (t1 (inZp 2)))^+2
+                            + (point2R2 (t1 (inZp 2)))^+2
+                                         else 1
+                           else if j==0 then
+                                     point2R1 p1
+                                         else if j==1 then
+                                     point2R2 p1
+                                         else if nat_of_ord j==2 then 
+                                     (point2R1 p1)^+2 + (point2R2 p1)^+2 
+                                         else 1
+   in (\det M >0).
+
+Lemma samedef_inCircle (p1 : point) (t1: triangle) (tm : trianglemap) (t2 :T): 
+tm t2 = t1 -> (inCircle p1 t2 tm = inCircle2 p1 t1).
+Proof.
+move=> hyp.
+rewrite /inCircle /inCircle2.
+rewrite hyp.
+have tmp1: (Ordinal zero<3 == inZp 0).
+  by [].
+have tmp2: (Ordinal un<3 == inZp 1).
+  by [].
+have tmp3: (Ordinal deux<3 == inZp 2).
+  by [].
+move/eqP:tmp1 => tmp1.
+move/eqP:tmp2 => tmp2.
+move/eqP:tmp3 => tmp3.
+rewrite tmp1 tmp2 tmp3.
+reflexivity.
+Qed.
+
+(* La fonction isDelaunayLocal2 va prendre 2 triangles et va renvoyer un bool
+   qui vaudra true si la construction des 2 triangles est de Delauney *)
+Definition isDelaunayLocal2 (t1: triangle) (t2: triangle) : bool :=
+  (~~(inCircle2 (t1 (Ordinal (zero<3))) t2)
+      && (~~inCircle2 (t1 (Ordinal (un<3))) t2)
+      && (~~inCircle2 (t1 (Ordinal (deux<3))) t2)).
+
+Lemma samedef_isDelaunayLocal (t1: triangle) (t2 :triangle) 
+                                  (tm: trianglemap) (t3 : T) (t4: T): 
+tm t3 = t1 -> tm t4 = t2 -> (isDelaunayLocal t3 t4 tm = isDelaunayLocal2 t1 t2).
+Proof.
+move=> hyp1 hyp2.
+rewrite /isDelaunayLocal /isDelaunayLocal2.
+rewrite /triangle2points.
+rewrite !ffunE.
+rewrite hyp1.
+rewrite (@samedef_inCircle (t1 (Ordinal zero<3)) t2 tm t4).
+rewrite (@samedef_inCircle (t1 (Ordinal un<3)) t2 tm t4).
+rewrite (@samedef_inCircle (t1 (Ordinal deux<3)) t2 tm t4).
+by [].
+by [].
+by [].
+by [].
+Qed.
+
+
+Lemma delaunay_post_flip (tm: trianglemap)  (ptext1 : point) (ptext2 : point)
+                           (t1:T) (t2 :T) (g:graph) (pm: pointmap)  : 
+  isDelaunayLocal t1 t2 tm == false
+  -> pt_in_triangle tm ptext2 t2 /\ ~pt_in_triangle tm ptext2 t1
+  -> pt_in_triangle tm ptext1 t1 /\ ~pt_in_triangle tm ptext1 t2
+  -> if flip default_triangle (tm: trianglemap) (ptext1 : point) 
+                                  (ptext2 : point) (t1:T) (t2 :T) (g:graph)
+                                     (pm: pointmap) is Some (g',tm') then
+       let new_tr1 := (fun x : 'I_3 =>
+           if x == 0
+           then
+            tm t1 (point2indext1t2 ptext1 t1 t2 tm)
+           else
+            if x == 1
+            then
+              tm t2 (point2indext1t2 ptext2 t1 t2 tm)
+            else tm t1
+                (addOrd3 (point2indext1t2 ptext1 t1 t2 tm)
+                   (inZp 2))) in
+        let new_tr2 := (fun x : 'I_3 =>
+              if x == 0
+              then tm t2 (point2indext1t2 ptext2 t1 t2 tm)
+              else
+               if x == 1
+               then tm t1 (point2indext1t2 ptext1 t1 t2 tm)
+               else tm t2
+                   (addOrd3 (point2indext1t2 ptext2 t1 t2 tm)
+                      (inZp 2))) in
+          isDelaunayLocal2 new_tr1 new_tr2
+     else true.
+Proof.
+move=> illegal infop1 infop2.
+move:infop1.
+move=> [info1p1 info2p1].
+move: infop2.
+move=>[info1p2 info2p2].
+
+case cas : (flip default_triangle tm ptext1 ptext2 t1 t2 g pm)=> [[g' tmap' ] | ]
+      ; last first.
+  by [].
+rewrite /isDelaunayLocal2.
+apply/andP.
+split.
+apply/andP.
+split.
+rewrite /inCircle2.
+rewrite //=.
+rewrite !point2indext1t2_correct; last first.
+    by [].
+  by [].
+rewrite !point2indext2t1_correct; last first.
+    by [].
+  by [].
+have : (\det (\matrix_(i<4, j<4) (if i == 0
+                         then
+                          if j == 0
+                          then point2R1 ptext2
+                          else
+                           if j == 1
+                           then point2R2 ptext2
+                           else
+                            if nat_of_ord j == 2
+                            then
+                             point2R1 ptext2 ^+ 2 +
+                             point2R2 ptext2 ^+ 2
+                            else 1
+                         else
+                          if i == 1
+                          then
+                           if j == 0
+                           then point2R1 ptext1
+                           else
+                            if j == 1
+                            then point2R2 ptext1
+                            else
+                             if nat_of_ord j == 2
+                             then
+                              point2R1 ptext1 ^+ 2 +
+                              point2R2 ptext1 ^+ 2
+                             else 1
+                          else
+                           if nat_of_ord i == 2
+                           then
+                            if j == 0
+                            then
+                             point2R1
+                               (tm t2
+                                  (addOrd3
+                                     (point2indext1t2
+                                      ptext2 t1 t2 tm)
+                                     (inZp 2)))
+                            else
+                             if j == 1
+                             then
+                              point2R2
+                                (tm t2
+                                   (addOrd3
+                                      (point2indext1t2
+                                      ptext2 t1 t2 tm)
+                                      (inZp 2)))
+                             else
+                              if nat_of_ord j == 2
+                              then
+                               point2R1
+                                 (tm t2
+                                    (addOrd3
+                                      (point2indext1t2
+                                      ptext2 t1 t2 tm)
+                                      (inZp 2))) ^+ 2 +
+                               point2R2
+                                 (tm t2
+                                    (addOrd3
+                                      (point2indext1t2
+                                      ptext2 t1 t2 tm)
+                                      (inZp 2))) ^+ 2
+                              else 1
+                           else
+                            if j == 0
+                            then point2R1 ptext1
+                            else
+                             if j == 1
+                             then point2R2 ptext1
+                             else
+                              if nat_of_ord j == 2
+                              then
+                               point2R1 ptext1 ^+ 2 +
+                               point2R2 ptext1 ^+ 2
+                              else 1)))=0; last first.
+  rewrite lt0r.
+  Search _ (~~(_ &&_)).
+  rewrite negb_andb.
+  set tmp := (\det (\matrix_(i, j) (if i == 0
+                       then
+                        if j == 0
+                        then point2R1 ptext2
+                        else
+                         if j == 1
+                         then point2R2 ptext2
+                         else
+                          if nat_of_ord j == 2
+                          then
+                           point2R1 ptext2 ^+ 2 +
+                           point2R2 ptext2 ^+ 2
+                          else 1
+                       else
+                        if i == 1
+                        then
+                         if j == 0
+                         then point2R1 ptext1
+                         else
+                          if j == 1
+                          then point2R2 ptext1
+                          else
+                           if nat_of_ord j == 2
+                           then
+                            point2R1 ptext1 ^+ 2 +
+                            point2R2 ptext1 ^+ 2
+                           else 1
+                        else
+                         if nat_of_ord i == 2
+                         then
+                          if j == 0
+                          then
+                           point2R1
+                             (tm t2
+                                (addOrd3
+                                   (point2indext1t2 ptext2
+                                      t1 t2 tm) 
+                                   (inZp 2)))
+                          else
+                           if j == 1
+                           then
+                            point2R2
+                              (tm t2
+                                 (addOrd3
+                                    (point2indext1t2 ptext2
+                                      t1 t2 tm) 
+                                    (inZp 2)))
+                           else
+                            if nat_of_ord j == 2
+                            then
+                             point2R1
+                               (tm t2
+                                  (addOrd3
+                                     (point2indext1t2
+                                      ptext2 t1 t2 tm)
+                                     (inZp 2))) ^+ 2 +
+                             point2R2
+                               (tm t2
+                                  (addOrd3
+                                     (point2indext1t2
+                                      ptext2 t1 t2 tm)
+                                     (inZp 2))) ^+ 2
+                            else 1
+                         else
+                          if j == 0
+                          then point2R1 ptext1
+                          else
+                           if j == 1
+                           then point2R2 ptext1
+                           else
+                            if nat_of_ord j == 2
+                            then
+                             point2R1 ptext1 ^+ 2 +
+                             point2R2 ptext1 ^+ 2
+                            else 1))).
+  move/eqP=> infotmp.
+  rewrite infotmp.
+  by rewrite //.
+  set tmp := (\matrix_(i, j) (if i == 0
+                       then
+                        if j == 0
+                        then point2R1 ptext2
+                        else
+                         if j == 1
+                         then point2R2 ptext2
+                         else
+                          if nat_of_ord j == 2
+                          then
+                           point2R1 ptext2 ^+ 2 +
+                           point2R2 ptext2 ^+ 2
+                          else 1
+                       else
+                        if i == 1
+                        then
+                         if j == 0
+                         then point2R1 ptext1
+                         else
+                          if j == 1
+                          then point2R2 ptext1
+                          else
+                           if nat_of_ord j == 2
+                           then
+                            point2R1 ptext1 ^+ 2 +
+                            point2R2 ptext1 ^+ 2
+                           else 1
+                        else
+                         if nat_of_ord i == 2
+                         then
+                          if j == 0
+                          then
+                           point2R1
+                             (tm t2
+                                (addOrd3
+                                   (point2indext1t2 ptext2
+                                      t1 t2 tm) 
+                                   (inZp 2)))
+                          else
+                           if j == 1
+                           then
+                            point2R2
+                              (tm t2
+                                 (addOrd3
+                                    (point2indext1t2 ptext2
+                                      t1 t2 tm) 
+                                    (inZp 2)))
+                           else
+                            if nat_of_ord j == 2
+                            then
+                             point2R1
+                               (tm t2
+                                  (addOrd3
+                                     (point2indext1t2
+                                      ptext2 t1 t2 tm)
+                                     (inZp 2))) ^+ 2 +
+                             point2R2
+                               (tm t2
+                                  (addOrd3
+                                     (point2indext1t2
+                                      ptext2 t1 t2 tm)
+                                     (inZp 2))) ^+ 2
+                            else 1
+                         else
+                          if j == 0
+                          then point2R1 ptext1
+                          else
+                           if j == 1
+                           then point2R2 ptext1
+                           else
+                            if nat_of_ord j == 2
+                            then
+                             point2R1 ptext1 ^+ 2 +
+                             point2R2 ptext1 ^+ 2
+                            else 1)).
+About determinant_alternate.
+have infolem1 : ~~(Ordinal (un<4) == Ordinal(trois<4)).
+  by [].
+have infolem2 : (tmp (Ordinal (un<4)) =1 tmp (Ordinal (trois<4))).
+  rewrite /tmp.
+  Locate "=1".
+  (* 
+apply (determinant_alternate infolem1 tmp).
+
+
+
+rewrite (expand_det_col _ (inZp 3)).
+rewrite big_ord_recl.
+rewrite !mxE. rewrite //=.
+rewrite /cofactor !//=.
+rewrite expand_det33.
+rewrite !mxE. rewrite //.
+
+rewrite big_ord_recl.
+rewrite !mxE. rewrite //.
+rewrite /cofactor. rewrite //.
+rewrite expand_det33.
+rewrite !mxE. rewrite //.
+
+rewrite big_ord_recl.
+rewrite !mxE. rewrite //.
+rewrite /cofactor. rewrite //.
+rewrite expand_det33.
+rewrite !mxE. rewrite //.
+
+rewrite big_ord_recl.
+rewrite !mxE. rewrite //.
+rewrite /cofactor. rewrite //.
+rewrite expand_det33.
+rewrite !mxE. rewrite //.
+
+rewrite big_ord0.
+rewrite /=.
+rewrite !mul1l.
+rewrite plus0r  !expr2.
+rewrite //.
+
+
+
+
+ (* Montrons que isDelaunayLocal new_tr1 new_tr2 tm == true *)
+case p0inCircle : (inCircle ((triangle2points t1 tm) (Ordinal zero<3)) t2 tm).
+set M := \matrix_(i<4, j<4) if i ==0 then if j==0 then
+                                     point2R1 ((triangle2points t1 tm) (Ordinal zero<3))
+                                         else if j==1 then
+                                     point2R2 ((triangle2points t1 tm) (Ordinal zero<3))
+                                         else if nat_of_ord j==2 then 
+                         (point2R1 ((triangle2points t1 tm) (Ordinal zero<3)))^+2
+                            + (point2R2 ((triangle2points t1 tm) (Ordinal zero<3)))^+2
+                                         else 1
+                           else if i ==1 then if j==0 then
+                                     point2R1 (ptext2)
+                                         else if j==1 then
+                                     point2R2 (ptext2)
+                                         else if nat_of_ord j==2 then 
+                         (point2R1 (ptext2))^+2
+                            + (point2R2 (ptext2))^+2
+                                         else 1
+                           else if nat_of_ord i ==2 then if j==0 then
+                                     point2R1 (tm t2
+                (addOrd3 (point2indext1t2 ptext2 t1 t2 tm)
+                   (Ordinal un<3)))
+                                         else if j==1 then
+                                     point2R2 (tm t2
+                (addOrd3 (point2indext1t2 ptext2 t1 t2 tm)
+                   (Ordinal un<3)))
+                                         else if nat_of_ord j==2 then 
+                         (point2R1 (tm t2
+                (addOrd3 (point2indext1t2 ptext2 t1 t2 tm)
+                   (Ordinal un<3))))^+2
+                            + (point2R2 (tm t2
+                (addOrd3 (point2indext1t2 ptext2 t1 t2 tm)
+                   (Ordinal un<3))))^+2
+                                         else 1
+                           else 
+                                let p2 := tm t2
+                (addOrd3 (point2indext1t2 ptext2 t1 t2 tm)
+                   (Ordinal deux<3)) in
+                                      if j==0 then
+                                     point2R1 p2
+                                         else if j==1 then
+                                     point2R2 p2
+                                         else if nat_of_ord j==2 then 
+                                     (point2R1 p2)^+2 + (point2R2 p2)^+2 
+                                         else 1
+                              ; last first.
+have not_illegal_after_flip : (\det M <0).
+  move: illegal.
+  rewrite /isDelaunayLocal.
+  move=> illegal.
+
+    rewrite //.
+    move: p0inCircle.
+    rewrite /inCircle.
+    rewrite (expand_det_col _ (Ordinal (trois<4))).
+    rewrite big_ord_recl.
+    rewrite mxE. rewrite //=.
+    rewrite /cofactor !//=.
+    rewrite expand_det33.
+    rewrite !mxE !//=.
+
+    rewrite big_ord_recl.
+    rewrite mxE. rewrite //=.
+    rewrite /cofactor !//=.
+    rewrite expand_det33.
+    rewrite !mxE !//=.
+
+    rewrite big_ord_recl.
+    rewrite mxE. rewrite //=.
+    rewrite /cofactor !//=.
+    rewrite expand_det33.
+    rewrite !mxE !//=.
+
+    rewrite big_ord_recl.
+    rewrite mxE. rewrite //=.
+    rewrite /cofactor !//=.
+    rewrite expand_det33.
+    rewrite !mxE !//=.
+
+    rewrite big_ord0.
+    rewrite !mul1l.
+    rewrite plus0r  !expr2.
+    rewrite !//=.
+
+
+    (* Développement de M *)
+    rewrite /M.
+    rewrite (expand_det_col _ (Ordinal (trois<4))).
+    rewrite big_ord_recl.
+    rewrite mxE. rewrite //=.
+    rewrite /cofactor !//=.
+    rewrite expand_det33.
+    rewrite !mxE !//=.
+
+    rewrite big_ord_recl.
+    rewrite mxE. rewrite //=.
+    rewrite /cofactor !//=.
+    rewrite expand_det33.
+    rewrite !mxE !//=.
+
+    rewrite big_ord_recl.
+    rewrite mxE. rewrite //=.
+    rewrite /cofactor !//=.
+    rewrite expand_det33.
+    rewrite !mxE !//=.
+
+    rewrite big_ord_recl.
+    rewrite mxE. rewrite //=.
+    rewrite /cofactor !//=.
+    rewrite expand_det33.
+    rewrite !mxE !//=.
+
+    rewrite big_ord0.
+    About point2indext1t2_correct.
+    case index_ptext2_iszero : 
+          (point2indext1t2 ptext2 t1 t2 tm == Ordinal(zero<3)).
+    move/eqP : index_ptext2_iszero.
+    move=> index_ptext2_iszero.
+    rewrite !index_ptext2_iszero .
+    rewrite !mul1l.
+    rewrite plus0r  !expr2.
+    rewrite !//=.
+    set a := point2R1 (tm t2 (Ordinal zero<3)).
+    set b := point2R2 (tm t2 (Ordinal zero<3)).
+    set c := point2R1 (tm t2 (Ordinal un<3)).
+    set d := point2R2 (tm t2 (Ordinal un<3)).
+    set e := point2R1 (tm t2 (Ordinal deux<3)).
+    set f := point2R2 (tm t2 (Ordinal deux<3)).
+    set h := point2R1 ((triangle2points t1 tm) (Ordinal zero<3)).
+    set i := point2R2 ((triangle2points t1 tm) (Ordinal zero<3)).
+    rewrite (_ : addOrd3 (Ordinal zero<3) (Ordinal deux<3) = (Ordinal deux<3))
+        ; last first.
+      rewrite /addOrd3.
+      apply: val_inj.
+      by rewrite //.
+    have rew1 : ptext2 = tm t2 (Ordinal zero<3).
+      rewrite -index_ptext2_iszero.
+      by rewrite point2indext2t1_correct.
+    rewrite rew1 -/f -/e -/a -/b -/c -/d -/h -/i.
+    rewrite (_ : addOrd3 (Ordinal zero<3) (Ordinal un<3) = (Ordinal un<3))
+        ; last first.
+      rewrite /addOrd3.
+      apply: val_inj.
+      by rewrite //.
+    rewrite -/f -/e -/a -/b -/c -/d -/h -/i.
+    rewrite !//=.
+    Search _ (Num.lt _ 0) (Num.lt 0 (-_)).
+    rewrite -oppr_gt0.
+    rewrite (_ : (-
+   ((-1) ^+ (0 + 3) *
+    (a * d * (e * e + f * f) - a * (c * c + d * d) * f -
+     b * c * (e * e + f * f) + b * (c * c + d * d) * e +
+     (a * a + b * b) * c * f - (a * a + b * b) * d * e) +
+    (h * d * (e * e + f * f) - h * (c * c + d * d) * f -
+     i * c * (e * e + f * f) + i * (c * c + d * d) * e +
+     (h * h + i * i) * c * f - (h * h + i * i) * d * e +
+     ((-1) ^+ (bump 0 (bump 0 0) + 3) *
+      (h * b * (e * e + f * f) - h * (a * a + b * b) * f -
+       i * a * (e * e + f * f) + i * (a * a + b * b) * e +
+       (h * h + i * i) * a * f - (h * h + i * i) * b * e) +
+      (h * b * (c * c + d * d) - h * (a * a + b * b) * d -
+       i * a * (c * c + d * d) + i * (a * a + b * b) * c +
+       (h * h + i * i) * a * d - (h * h + i * i) * b * c))))) 
+    = ((-1) ^+ (0 + 3) *
+   (c * f * (h * h + i * i) - c * (e * e + f * f) * i -
+    d * e * (h * h + i * i) + d * (e * e + f * f) * h +
+    (c * c + d * d) * e * i - (c * c + d * d) * f * h) +
+   (a * f * (h * h + i * i) - a * (e * e + f * f) * i -
+    b * e * (h * h + i * i) + b * (e * e + f * f) * h +
+    (a * a + b * b) * e * i - (a * a + b * b) * f * h +
+    ((-1) ^+ (bump 0 (bump 0 0) + 3) *
+     (a * d * (h * h + i * i) - a * (c * c + d * d) * i -
+      b * c * (h * h + i * i) + b * (c * c + d * d) * h +
+      (a * a + b * b) * c * i - (a * a + b * b) * d * h) +
+     (a * d * (e * e + f * f) - a * (c * c + d * d) * f -
+      b * c * (e * e + f * f) + b * (c * c + d * d) * e +
+      (a * a + b * b) * c * f - (a * a + b * b) * d * e)))) ); last first.
+    change (-
+((-1) ^+ (3) *
+ (a * d * (e * e + f * f) - a * (c * c + d * d) * f -
+  b * c * (e * e + f * f) + b * (c * c + d * d) * e +
+  (a * a + b * b) * c * f - (a * a + b * b) * d * e) +
+ (h * d * (e * e + f * f) - h * (c * c + d * d) * f -
+  i * c * (e * e + f * f) + i * (c * c + d * d) * e +
+  (h * h + i * i) * c * f - (h * h + i * i) * d * e +
+  ((-1) ^+ (bump 0 (bump 0 0) + 3) *
+   (h * b * (e * e + f * f) - h * (a * a + b * b) * f -
+    i * a * (e * e + f * f) + i * (a * a + b * b) * e +
+    (h * h + i * i) * a * f - (h * h + i * i) * b * e) +
+   (h * b * (c * c + d * d) - h * (a * a + b * b) * d -
+    i * a * (c * c + d * d) + i * (a * a + b * b) * c +
+    (h * h + i * i) * a * d - (h * h + i * i) * b * c)))) =
+(-1) ^+ (3) *
+(c * f * (h * h + i * i) - c * (e * e + f * f) * i -
+ d * e * (h * h + i * i) + d * (e * e + f * f) * h +
+ (c * c + d * d) * e * i - (c * c + d * d) * f * h) +
+(a * f * (h * h + i * i) - a * (e * e + f * f) * i -
+ b * e * (h * h + i * i) + b * (e * e + f * f) * h +
+ (a * a + b * b) * e * i - (a * a + b * b) * f * h +
+ ((-1) ^+ (bump 0 (bump 0 0) + 3) *
+  (a * d * (h * h + i * i) - a * (c * c + d * d) * i -
+   b * c * (h * h + i * i) + b * (c * c + d * d) * h +
+   (a * a + b * b) * c * i - (a * a + b * b) * d * h) +
+  (a * d * (e * e + f * f) - a * (c * c + d * d) * f -
+   b * c * (e * e + f * f) + b * (c * c + d * d) * e +
+   (a * a + b * b) * c * f - (a * a + b * b) * d * e)))).
+    rewrite (_ : ((bump 0 (bump 0 0) + 3) = 5)%N); last first.
+      by [].
+    rewrite //.
+    Search _ (_^+ _) odd.
+    rewrite -GRing.signr_odd.
+    rewrite (_ : odd 3 = true); last first.
+      by [].
+    rewrite !//= expr1.
+    rewrite -GRing.signr_odd.
+    rewrite (_ : odd 5 = true); last first.
+      by [].
+    rewrite !//= expr1.
+    prefield. ring.
+    by [].
+   *)
+Admitted.
+
+
+(*===================================
+                  PROOF OF YB for ccw_exchange
+===================================*)
+
+
+Definition ccwd (xp yp xq yq xr yr : rat) :=
+  xp * yq - xq * yp - xp * yr + xr * yp + xq * yr - xr * yq.
+
+Definition ccwr (xp yp xq yq xr yr : rat) := ccwd xp yp xq yq xr yr > 0.
+
+Lemma axiom1' : forall xp yp xq yq xr yr,
+  ccwd xp yp xq yq xr yr = ccwd xq yq xr yr xp yp.
+move=> xp yp xq yq xr yr.
+rewrite /ccwd.
+rat_field.
+Qed.
+
+Lemma axiom1 : forall xp yp xq yq xr yr,
+  ccwr xp yp xq yq xr yr -> ccwr xq yq xr yr xp yp.
+rewrite /ccwr.
+move=> xp yp xq yq xr yr H.
+rewrite axiom1' in H.
+by [].
+Qed.
+
+Lemma axiom5 :
+  forall xp yp xq yq xr yr xs ys xt yt,
+  ccwr xq yq xp yp xr yr -> ccwr xq yq xp yp xs ys -> 
+  ccwr xq yq xp yp xt yt -> ccwr xq yq xr yr xs ys ->
+  ccwr xq yq xs ys xt yt -> ccwr xq yq xr yr xt yt.
+rewrite /ccwr.
+move=> xp yp xq yq xr yr xs ys xt yt pqr pqs pqt prs pst.
+(* This is taken from Bertot & Pichardie 2001. *)
+have : (ccwd xq yq xr yr xt yt = 
+        (ccwd xq yq xs ys xt yt * ccwd xq yq xp yp xr yr + 
+        ccwd xq yq xr yr xs ys * ccwd xq yq xp yp xt yt)
+        /ccwd xq yq xp yp xs ys ).
+  rewrite /ccwd.  move: pqs. rewrite /ccwd. rewrite lt0r.
+  move/andP => info.
+  move: info.
+  move=> [info1 info2].
+  move:info1.
+  move/eqP=>info1.
+  rat_field.
+  by [].
+move=>H.
+rewrite H.
+Search _ (Num.lt 0 (_/_)).
+apply: divr_gt0.
+Search _ (Num.lt 0 (_+_)).
+apply: addr_gt0.
+Search _ (Num.lt 0 (_*_)).
+apply: mulr_gt0.
+by [].
+by [].
+apply: mulr_gt0.
+by [].
+by [].
+by [].
+Qed.
+
+Lemma eq_not_ccwr :
+  forall xp yp xq yq xr yr, xp = xq -> yp = yq -> ~ccwr xp yp xq yq xr yr.
+move=> xp yp xq yq xr yr q1 q2.
+rewrite q1 q2.
+rewrite /ccwr /ccwd.
+have info : (xq * yq - xq * yq - xq * yr + xr * yq + xq * yr -
+   xr * yq) = 0.
+  set a := xq * yq.
+  set b := xq * yr.
+  set c := xq * yr.
+  set d := xr * yq.
+  simpl in a, b, c, d.
+  prefield. ring.
+rewrite info.
+by [].
+Qed.
+
+Definition in_circled (xp yp xq yq xr yr xs ys : rat) :=
+  xp *
+       (yq * ((xr * xr + yr * yr) * 1 - 1 * (xs * xs + ys * ys)) -
+        yr * ((xq * xq + yq * yq) * 1 - 1 * (xs * xs + ys * ys)) +
+        ys * ((xq * xq + yq * yq) * 1 - 1 * (xr * xr + yr * yr))) -
+       xq *
+       (yp * ((xr * xr + yr * yr) * 1 - 1 * (xs * xs + ys * ys)) -
+        yr * ((xp * xp + yp * yp) * 1 - 1 * (xs * xs + ys * ys)) +
+        ys * ((xp * xp + yp * yp) * 1 - 1 * (xr * xr + yr * yr))) +
+       xr *
+       (yp * ((xq * xq + yq * yq) * 1 - 1 * (xs * xs + ys * ys)) -
+        yq * ((xp * xp + yp * yp) * 1 - 1 * (xs * xs + ys * ys)) +
+        ys * ((xp * xp + yp * yp) * 1 - 1 * (xq * xq + yq * yq))) -
+       xs *
+       (yp * ((xq * xq + yq * yq) * 1 - 1 * (xr * xr + yr * yr)) -
+        yq * ((xp * xp + yp * yp) * 1 - 1 * (xr * xr + yr * yr)) +
+        yr * ((xp * xp + yp * yp) * 1 - 1 * (xq * xq + yq * yq))).
+
+Lemma ccwd_translation :
+  forall a b xp yp xq yq xr yr,
+  ccwd (xp + a) (yp + b) (xq + a) (yq + b) (xr + a) (yr + b) =
+  ccwd xp yp xq yq xr yr.
+move=> a b xp yp xq yq xr yr.
+rewrite /ccwd.
+rat_field.
+Qed.
+
+Definition distance_sq (xp yp xq yq:rat) :=
+  (xp - xq)*(xp - xq) + (yp - yq)*(yp - yq).
+
+
+Definition implicit_to_center_and_radius :
+  forall (a b c x y :rat),  x*x + y*y + a*x +b*y + c =
+  distance_sq x y (-a/(1+1)) (-b/(1+1)) 
+                            + (c - ((a*a + b * b)/(1+1+1+1))).
+move=> a b c x y.
+rewrite /distance_sq.
+prefield. field.
+split.
+  rewrite //.
+change (2%:R <> 0%Q).
+by [].
+Qed.
+
+Lemma translation_distance :
+  forall (a b xp yp xq yq : rat),
+    distance_sq (xp - a) (yp - b) (xq - a) (yq - b) =
+    distance_sq xp yp xq yq.
+move=> a b xp yp xq yq.
+rewrite /distance_sq.
+rat_field.
+Qed.
+
+Definition in_circle (xp yp xq yq xr yr xs ys : rat) :=
+  in_circled xp yp xq yq xr yr xs ys > 0.
+
+Lemma in_circled_polynomial :
+  forall xp yp xq yq xr yr x y,
+    in_circled xp yp xq yq xr yr x y =
+    (- ccwd xp yp xq yq xr yr * (x * x + y * y) -
+       ccwd yp (xp^+2 + yp^+2) yq (xq^+2 + yq^+2) yr (xr^+2 + yr^+2) * x +
+       ccwd xp (xp^+2 + yp^+2) xq (xq^+2 + yq^+2) xr (xr^+2 + yr^+2) * y +
+       ((xr^+2 + yr^+2) * yq * xp + xq * yr * (xp^+2 + yp^+2) +
+        xr * yp * (xq^+2 + yq^+2) - xp * yr * (xq^+2 + yq^+2) -
+        xq * yp * (xr^+2 + yr^+2) - xr * yq * (xp^+2 + yp^+2))).
+move=> xp yp xq yq xr yr x y.
+rewrite /in_circled /ccwd.
+rewrite !expr2 !mul1r !mul1l.
+rat_field.
+Qed.
+
+Lemma in_circled_distance :
+  forall (xp yp xq yq xr yr: rat),
+    ccwd xp yp xq yq xr yr > 0 ->
+    exists a, exists b, exists r,
+    forall x y,
+    in_circled xp yp xq yq xr yr x y =
+    - ccwd xp yp xq yq xr yr * ((distance_sq x y a b) - r).
+Proof.
+move=> xp yp xq yq xr yr cc.
+have ccn : (ccwd xp yp xq yq xr yr <> 0).
+  move=> H; rewrite H in cc.
+  by [].
+(* The formulas here are proposed by Coq in dummy proofs, where
+  one first proposes 0 as value and use field_simplify
+  to see what comes up.*)
+exists (-(ccwd yp (xp^+2 + yp^+2) yq (xq^+2 + yq^+2) yr (xr^+2 + yr^+2)
+         / ((1+1) * ccwd xp yp xq yq xr yr))).
+exists (ccwd xp (xp^+2 + yp^+2) xq (xq^+2 + yq^+2) xr (xr^+2 + yr^+2)
+         / ((1+1) * ccwd xp yp xq yq xr yr)).
+exists(((1+1+1+1) * ccwd xp yp xq yq xr yr ^+2 * (xr ^+2) * yq * xp -
+    (1+1+1+1) * ccwd xp yp xq yq xr yr ^+2 * xr ^+2 * xq * yp +
+    (1+1+1+1) * ccwd xp yp xq yq xr yr ^+2 * xr * yq ^+2 * yp -
+    (1+1+1+1) * ccwd xp yp xq yq xr yr ^+2 * xr * yq * xp ^+2 -
+    (1+1+1+1) * ccwd xp yp xq yq xr yr ^+2 * xr * yq * yp ^+2 +
+    (1+1+1+1) * ccwd xp yp xq yq xr yr ^+2 * xr * xq ^+2 * yp +
+    (1+1+1+1) * ccwd xp yp xq yq xr yr ^+2 * yr ^+2 * yq * xp -
+    (1+1+1+1) * ccwd xp yp xq yq xr yr ^+2 * yr ^+2 * xq * yp -
+    (1+1+1+1) * ccwd xp yp xq yq xr yr ^+2 * yr * yq ^+2 * xp +
+    (1+1+1+1) * ccwd xp yp xq yq xr yr ^+2 * yr * xp ^+2 * xq -
+    (1+1+1+1) * ccwd xp yp xq yq xr yr ^+2 * yr * xp * xq ^+2 +
+    (1+1+1+1) * ccwd xp yp xq yq xr yr ^+2 * yr * xq * yp ^+2 +
+    ccwd xp yp xq yq xr yr *
+    ccwd yp (xp ^+2 + yp ^+2) yq (xq ^+2 + yq ^+2) yr (xr ^+2 + yr ^+2) ^+2 +
+    ccwd xp yp xq yq xr yr *
+    ccwd xp (xp ^+2 + yp ^+2) xq (xq ^+2 + yq ^+2) xr (xr ^+2 + yr ^+2) ^+2) /
+   ((1+1+1+1) * ccwd xp yp xq yq xr yr ^+3)).
+move=> x y; rewrite in_circled_polynomial.
+rewrite /distance_sq.
+rewrite !exprSr !expr0.
+rewrite !mul1l.
+rewrite /ccwd.
+prefield. field.
+split.
+  move: cc.
+  rewrite lt0r.
+  move/andP=> cc.
+  move:cc.
+  move=> [cc1 cc2].
+  move/eqP: cc1.
+  rewrite /ccwd.
+  by [].
+rewrite //.
+Qed.
+
+Lemma distance_0_eq :
+  forall x y x' y', distance_sq x y x' y' = 0 -> x = x' /\ y = y'.
+move=> x y x' y'. rewrite /distance_sq; split.
+Search _ (_ \/ _ \/ _).
+About Num.RealMixin.le_total.
+set a := (x - x') * (x - x').
+set b := (y - y') * (y - y').
+simpl in a,b.
+set k := [::a;b].
+move:H.
+rewrite (_ : (x - x') * (x - x') + (y - y') * (y - y') = \sum_(i<2) k`_i)
+        ; last first.
+  rewrite big_ord_recr.
+  change ((x - x') * (x - x') + (y - y') * (y - y') = \sum_(i<1) k`_i + k`_1).
+  rewrite big_ord_recr big_ord0.
+  change ((x - x') * (x - x') + (y - y') * (y - y') = 0 + k`_0 + k`_1).
+  rewrite plus0l.
+  rewrite /k.
+  by rewrite //.
+have elt1pos : Num.le 0 k`_0.
+  rewrite /k.
+  rewrite !//=.
+  rewrite /a.
+  set a1 := (x - x').
+  rewrite -expr2.
+  Search _ (Num.le 0 (_^+_)).
+  apply: exprn_even_ge0.
+  by [].
+have elt2pos : Num.le 0 k`_1.
+  rewrite /k.
+  rewrite !//=.
+  rewrite /b.
+  set b1 := (y - y').
+  rewrite -expr2.
+  Search _ (Num.le 0 (_^+_)).
+  apply: exprn_even_ge0.
+  by [].
+have pos : [forall (i:'I_2 | true), Num.le 0 k`_i] = true.
+  rewrite -big_andE.
+  rewrite big_ord_recr.
+  change ((\big[andb_monoid/true]_(i < 1) Num.le 0 k`_i && (Num.le 0 k`_1)) = true).
+  rewrite big_ord_recr big_ord0.
+  change ( (Num.le 0 k`_0) && (Num.le 0 k`_1) = true).
+  apply/andP.
+  by [].
+move/eqP=>tmp.
+move:tmp.
+rewrite (sum_eq0 pos).
+move/forallP=>tmp2.
+move : (tmp2 ord0).
+change ((k`_0 == 0%Q) -> x = x').
+rewrite /k.
+rewrite !//=.
+rewrite /a.
+Search _ ((_*_) ==0).
+rewrite mulf_eq0.
+rewrite orb_diag.
+move/eqP=>tmp3.
+Search _ ((_-_)=0).
+apply subr0_eq.
+by [].
+set a := (x - x') * (x - x').
+set b := (y - y') * (y - y').
+simpl in a,b.
+set k := [::a;b].
+move:H.
+rewrite (_ : (x - x') * (x - x') + (y - y') * (y - y') = \sum_(i<2) k`_i)
+        ; last first.
+  rewrite big_ord_recr.
+  change ((x - x') * (x - x') + (y - y') * (y - y') = \sum_(i<1) k`_i + k`_1).
+  rewrite big_ord_recr big_ord0.
+  change ((x - x') * (x - x') + (y - y') * (y - y') = 0 + k`_0 + k`_1).
+  rewrite plus0l.
+  rewrite /k.
+  by rewrite //.
+have elt1pos : Num.le 0 k`_0.
+  rewrite /k.
+  rewrite !//=.
+  rewrite /a.
+  set a1 := (x - x').
+  rewrite -expr2.
+  Search _ (Num.le 0 (_^+_)).
+  apply: exprn_even_ge0.
+  by [].
+have elt2pos : Num.le 0 k`_1.
+  rewrite /k.
+  rewrite !//=.
+  rewrite /b.
+  set b1 := (y - y').
+  rewrite -expr2.
+  Search _ (Num.le 0 (_^+_)).
+  apply: exprn_even_ge0.
+  by [].
+have pos : [forall (i:'I_2 | true), Num.le 0 k`_i] = true.
+  rewrite -big_andE.
+  rewrite big_ord_recr.
+  change ((\big[andb_monoid/true]_(i < 1) Num.le 0 k`_i && (Num.le 0 k`_1)) = true).
+  rewrite big_ord_recr big_ord0.
+  change ( (Num.le 0 k`_0) && (Num.le 0 k`_1) = true).
+  apply/andP.
+  by [].
+move/eqP=>tmp.
+move:tmp.
+rewrite (sum_eq0 pos).
+move/forallP=>tmp2.
+move : (tmp2 (inZp 1)).
+change ((k`_1 == 0%Q) -> y = y').
+rewrite /k.
+rewrite !//=.
+rewrite /b.
+Search _ ((_*_) ==0).
+rewrite mulf_eq0.
+rewrite orb_diag.
+move/eqP=>tmp3.
+Search _ ((_-_)=0).
+apply subr0_eq.
+by [].
+Qed.
+
+
+Lemma distance_sq_pos :
+  forall x y x' y', distance_sq x y x' y' >= 0.
+move=> x y x' y'; rewrite /distance_sq.
+have pos1 : Num.le 0 ((x - x') * (x - x')).
+  rewrite -expr2.
+  Search _ (Num.le 0 (_^+_)).
+  apply: exprn_even_ge0.
+  by [].
+have pos2 : Num.le 0 ((y - y') * (y - y')).
+  rewrite -expr2.
+  Search _ (Num.le 0 (_^+_)).
+  apply: exprn_even_ge0.
+  by [].
+About pos_elt_pos_sum.
+set a := (x - x') * (x - x').
+set b := (y - y') * (y - y').
+simpl in a,b.
+set k := [::a;b].
+rewrite (_ : (x - x') * (x - x') + (y - y') * (y - y') = \sum_(i < 2) k`_i).
+apply pos_elt_pos_sum.
+  rewrite -big_andE.
+  rewrite big_ord_recr.
+  change ((\big[andb_monoid/true]_(i < 1) Num.le 0 k`_i && (Num.le 0 k`_1)) = true).
+  rewrite big_ord_recr big_ord0.
+  change ( (Num.le 0 k`_0) && (Num.le 0 k`_1) = true).
+  apply/andP.
+  by [].
+  rewrite big_ord_recr.
+  change ((x - x') * (x - x') + (y - y') * (y - y') = \sum_(i<1) k`_i + k`_1).
+  rewrite big_ord_recr big_ord0.
+  change ((x - x') * (x - x') + (y - y') * (y - y') = 0 + k`_0 + k`_1).
+  rewrite plus0l.
+  rewrite /k.
+  by rewrite //.
+Qed.
+
+Lemma in_circled1 :
+  forall xp yp xq yq xr yr, in_circled xp yp xq yq xr yr xp yp = 0.
+move=> xp yp xq yq xr yr; rewrite /in_circled.
+prefield. ring.
+Qed.
+
+Lemma in_circled2 :
+  forall xp yp xq yq xr yr, in_circled xp yp xq yq xr yr xq yq = 0.
+move=> xp yp xq yq xr yr; rewrite /in_circled.
+prefield. ring.
+Qed.
+
+Lemma in_circled3 :
+  forall xp yp xq yq xr yr, in_circled xp yp xq yq xr yr xr yr = 0.
+move=> xp yp xq yq xr yr; rewrite /in_circled.
+prefield. ring.
+Qed.
+
+Lemma ccw_circle_positive_radius :
+  forall xp yp xq yq xr yr a b r,
+    ccwd xp yp xq yq xr yr > 0 ->
+    (forall x y, in_circled xp yp xq yq xr yr x y =
+    - ccwd xp yp xq yq xr yr * ((distance_sq x y a b) - r)) ->
+    r > 0.
+move=> xp yp xq yq xr yr a b r q d.
+have vp := (in_circled1 xp yp xq yq xr yr).
+rewrite d in vp.
+have vdp := (distance_sq_pos xp yp a b).
+have info : (r >= 0).
+  Search _ ((_*_) = 0).
+  move : vp.
+  set p1 := - ccwd xp yp xq yq xr yr.
+  set p2 := (distance_sq xp yp a b - r).
+  move=> vp.
+  simpl in p1, p2.
+  Search _ ((_*_) == 0).
+  move/eqP: vp.
+  rewrite GRing.mulf_eq0.
+  move:q.
+  rewrite /p1.
+  rewrite lt0r.
+  Search _ (-_ ==0).
+  rewrite oppr_eq0.
+  move/andP=> q.
+  move:q.
+  move=> [q1 q2].
+  move/negbTE:q1.
+  move=> q1.
+  rewrite q1.
+  Search _ (false || _).
+  rewrite orb_false_l.
+  rewrite /p2.
+  Search _ (_ - _ == _).
+  rewrite subr_eq0.
+  move/eqP=>info2.
+  rewrite -info2.
+  by [].
+
+move:info.
+rewrite le0r.
+move=> info.
+case nul_ou_spos : ((r == 0)); last first.
+  rewrite nul_ou_spos in info.
+  rewrite orb_false_l in info.
+  by [].
+have pa : (distance_sq xp yp a b = 0).
+  move/eqP: vp.
+  rewrite GRing.mulf_eq0.
+  move:q.
+  set p1 := - ccwd xp yp xq yq xr yr.
+  set p2 := (distance_sq xp yp a b - r).
+  rewrite /p1.
+  rewrite lt0r.
+  Search _ (-_ ==0).
+  rewrite oppr_eq0.
+  move/andP=> q.
+  move:q.
+  move=> [q1 q2].
+  move/negbTE:q1.
+  move=> q1.
+  rewrite q1.
+  rewrite orb_false_l.
+  rewrite /p2.
+  move/eqP => fin.
+  apply/eqP.
+  move/eqP : nul_ou_spos.
+  move=> nul_ou_spos.
+  rewrite nul_ou_spos in fin.
+  move : fin.
+  Search _ (_ - 0).
+  rewrite subr0.
+  move/eqP => t.
+  by [].
+have vq := (in_circled2 xp yp xq yq xr yr).
+rewrite d in vq.
+have qa : (distance_sq xq yq a b = 0).
+  set p1 := - ccwd xp yp xq yq xr yr.
+  set p2 := (distance_sq xq yq a b - r).
+  move/eqP:vq.
+  rewrite -/p1 -/p2.
+  simpl in p1, p2.
+  Search _ ((_*_) == 0).
+  rewrite GRing.mulf_eq0.
+  move:q.
+  rewrite /p1.
+  rewrite lt0r.
+  Search _ (-_ ==0).
+  rewrite oppr_eq0.
+  move/andP=> q.
+  move:q.
+  move=> [q1 q2].
+  move/negbTE:q1.
+  move=> q1.
+  rewrite q1.
+  rewrite orb_false_l.
+  rewrite /p2.
+  move/eqP : nul_ou_spos.
+  move=> nul_ou_spos.
+  rewrite nul_ou_spos.
+  rewrite subr0.
+  move/eqP => t.
+  by [].
+move : (distance_0_eq pa).
+move : (distance_0_eq  qa).
+move=> [info1a info1b] [info2a info2b].
+have xpq :  (xp = xq).
+  by rewrite info1a info2a.
+have ypq :(yp = yq).
+  by rewrite info1b info2b.
+move : (@eq_not_ccwr xp yp xq yq xr yr xpq ypq).
+move=> tmp.
+case tmp.
+rewrite /ccwr.
+by [].
+Qed.
+
+Lemma in_circle_ccwr :
+  forall x y a b, 0 < a^+2 + b^+2 ->
+    distance_sq x y a b <= (a^+2 + b^+2) -> (x = 0 -> y <> 0) ->
+    ccwr 0 0 b (-a) x y.
+Proof.
+rewrite /ccwr.
+rewrite /ccwd.
+rewrite /distance_sq.
+move=> x y a b rp inc diff.
+rewrite !mul0l !mul0r.
+Search _ (0 - _).
+rewrite !subr0 plus0l.
+rewrite !expr2 in inc.
+case nul_ou_non : ((x == 0)).
+  move/eqP : nul_ou_non.
+  move=> nul_ou_non.
+  rewrite nul_ou_non mul0l.
+  Search _ (_ -0).
+  rewrite subr0.
+  move: (diff nul_ou_non).
+  rewrite nul_ou_non in inc.
+  rewrite !sub0r in inc.
+  move : inc.
+  
+intros x0; rewrite x0 in inc |- *. 
+assert (diff' := diff x0); psatz R.
+intros; psatz R.
+Qed.
+
+Lemma exists_tangent :
+  forall xp yp xq yq xr yr, ccwr xp yp xq yq xr yr ->
+   exists xt, exists yt,  ccwr xp yp xt yt xq yq /\ ccwr xp yp xt yt xr yr /\
+      forall xs ys, in_circle xp yp xq yq xr yr xs ys -> ccwr xp yp xt yt xs ys.
+intros xp yp xq yq xr yr cc.
+destruct (in_circled_distance xp yp xq yq xr yr cc) as [a [b [r H]]].
+exists (xp + b - yp); exists (yp + xp - a).
+assert (qa : distance_sq xq yq a b = r).
+assert (ciq := in_circled2 xp yp xq yq xr yr).
+rewrite H in ciq; unfold ccwr in cc; psatz R.
+assert (ra : distance_sq xr yr a b = r).
+assert (cir := in_circled3 xp yp xq yq xr yr).
+rewrite H in cir; unfold ccwr in cc; psatz R.
+assert (xq - xp = 0 -> yq - yp <> 0).
+  intros H1 H2; assert (H1' : xp = xq) by psatz R.
+  assert (H2' : yp = yq) by psatz R.
+case (eq_not_ccwr _ _ _ _ xr yr H1' H2'); assumption.
+assert (xr - xp = 0 -> yr - yp <> 0).
+  intros H1 H2; assert (H1' : xr = xp) by psatz R.
+  assert (H2' : yr = yp) by psatz R.
+case (eq_not_ccwr _ _ _ _ xq yq H1' H2').
+apply axiom1; apply axiom1; assumption.
+assert (pa : distance_sq xp yp a b = r).
+assert (cip := in_circled1 xp yp xq yq xr yr).
+rewrite H in cip; unfold ccwr in cc; psatz R.
+unfold ccwr; rewrite <- (ccwd_translation (-xp) (-yp) _ _ _ _ xq yq).
+rewrite <- (ccwd_translation (-xp) (-yp) _ _ _ _ xr yr).
+replace (xp + - xp) with 0 by ring.
+replace (yp + - yp) with 0 by ring.
+replace (xp + b - yp + - xp) with (b - yp) by ring.
+replace (yp + xp - a + - yp) with (-(a - xp)) by ring.
+assert (rp := ccw_circle_positive_radius xp yp xq yq xr yr a b r cc H).
+assert (d' : 0 < (a-xp)^2 + (b-yp)^2).
+match goal with |- 0 < ?A => replace A with (distance_sq xp yp a b) end.
+rewrite pa; solve[auto with real].
+unfold distance_sq; ring.
+split.
+apply in_circle_ccwr.
+assumption.
+fold (xq - xp); fold (yq - yp); rewrite translation_distance.
+match goal with |- ?a <= ?b => assert (dq : a = b) end.
+rewrite qa, <- pa; unfold distance_sq; ring.
+rewrite dq; solve [auto with real].
+assumption.
+split.
+apply in_circle_ccwr.
+assumption.
+fold (xr - xp); fold (yr - yp); rewrite translation_distance.
+match goal with |- ?a <= ?b => assert (dq : a = b) end.
+rewrite ra, <- pa; unfold distance_sq; ring.
+rewrite dq; solve [auto with real].
+assumption.
+intros xs ys inc.
+rewrite <- (ccwd_translation (-xp) (-yp) _ _ _ _ xs ys).
+replace (xp + - xp) with 0 by ring.
+replace (yp + - yp) with 0 by ring.
+replace (xp + b - yp + - xp) with (b - yp) by ring.
+replace (yp + xp - a + - yp) with (-(a - xp)) by ring.
+apply in_circle_ccwr.
+assumption.
+unfold in_circle in inc; rewrite H in inc.
+assert (sa : distance_sq xs ys a b < r).
+unfold ccwr in cc; psatz R.
+fold (xs - xp); fold (ys - yp); rewrite translation_distance.
+match goal with |- _ <= ?A => assert (dd : distance_sq xp yp a b = A) end.
+unfold distance_sq; ring.
+rewrite <- dd, pa; solve[auto with real].
+intros Hx Hy; assert (Hx' : xs = xp) by (clear - Hx; psatz R).
+assert (Hy' : ys = yp) by (clear - Hy; psatz R).
+rewrite Hx', Hy' in inc; unfold in_circle in inc; rewrite in_circled1 in inc.
+clear -inc; psatz R.
+Qed.
+
+Lemma exchange :
+forall xp yp xq yq xr yr xs ys,  ccwr xp yp xq yq xr yr ->
+  ccwr xp yp xr yr xs ys ->
+  in_circle xp yp xq yq xr yr xs ys ->
+  ccwr xp yp xq yq xs ys /\ ccwr xq yq xr yr xs ys.
+Proof.
+intros xp yp xq yq xr yr xs ys cc1 cc2 ic.
+split.
+destruct (exists_tangent _ _ _ _ _ _ cc1) as
+  [xt [yt [ptq [ptr pta]]]].
+apply axiom5 with xt yt xr yr; try assumption.
+apply pta; assumption.
+apply axiom1 in cc2.
+destruct (exists_tangent _ _ _ _ _ _ cc2) as
+  [xt [yt [rts [rtp rta]]]].
+apply axiom1; apply axiom1.
+apply axiom5 with xt yt xp yp; try assumption.
+apply rta.
+unfold in_circle; replace
+  (in_circled xr yr xs ys xp yp xq yq) with
+  (in_circled xp yp xq yq xr yr xs ys).
+exact ic.
+unfold in_circled; ring.
+apply axiom1; apply axiom1; assumption.
+Qed.
+
+(*========END OF YB'PROOF========*)
+
+(*===========BRIDGE============ *)
+Lemma ccw_exchange_bis: forall (p q r s: point),
+  ccw p q r -> ccw p r s -> inCircle p q r s ->
+      (ccw p q s /\ ccw q r s).
+Proof.
+  induction p. rename a into xp. rename b into yp. 
+  induction q. rename a into xq. rename b into yq. 
+  induction r. rename a into xr. rename b into yr. 
+  induction s. rename a into xs. rename b into ys. 
+  unfold ModelOfKnuth.ccw. unfold ModelOfKnuth.det.
+  unfold inCircle. simpl. 
+  generalize (exchange xp yp xq yq xr yr xs ys). 
+  unfold ccwr. unfold ccwd. unfold in_circle. 
+  unfold in_circled. unfold det4. unfold det3. unfold det2. 
+  intros. 
+  set(D:=
+    xp *
+    (yq * ((xr * xr + yr * yr) * 1 - 1 * (xs * xs + ys * ys)) -
+     yr * ((xq * xq + yq * yq) * 1 - 1 * (xs * xs + ys * ys)) +
+     ys * ((xq * xq + yq * yq) * 1 - 1 * (xr * xr + yr * yr))) -
+    xq *
+    (yp * ((xr * xr + yr * yr) * 1 - 1 * (xs * xs + ys * ys)) -
+     yr * ((xp * xp + yp * yp) * 1 - 1 * (xs * xs + ys * ys)) +
+     ys * ((xp * xp + yp * yp) * 1 - 1 * (xr * xr + yr * yr))) +
+    xr *
+    (yp * ((xq * xq + yq * yq) * 1 - 1 * (xs * xs + ys * ys)) -
+     yq * ((xp * xp + yp * yp) * 1 - 1 * (xs * xs + ys * ys)) +
+     ys * ((xp * xp + yp * yp) * 1 - 1 * (xq * xq + yq * yq))) -
+    xs *
+    (yp * ((xq * xq + yq * yq) * 1 - 1 * (xr * xr + yr * yr)) -
+     yq * ((xp * xp + yp * yp) * 1 - 1 * (xr * xr + yr * yr)) +
+     yr * ((xp * xp + yp * yp) * 1 - 1 * (xq * xq + yq * yq)))). 
+  fold D in H2. fold D in H. 
+  apply H. tauto. tauto. tauto. 
+Qed. 
+
+(* IMPORTANT: *)
+
+Theorem ccw_exchange: forall (p q r s: point),
+  ccw p q r -> ccw q p s -> inCircle p q r s ->
+      (ccw r s q /\ ccw s r p).
+Proof. 
+  intros. 
+  generalize (ccw_exchange_bis q r p s). 
+  intros. 
+  generalize (ccw_axiom_1 p q r H). intro. 
+  generalize (inCircle_tr p q r s H1). intro. 
+  assert (ccw q r s /\ ccw r p s). tauto. 
+  split. apply ccw_axiom_1. tauto. 
+  apply ccw_axiom_1. apply ccw_axiom_1. tauto. 
+Qed.
+
+(*===========END BRIDGE=====================*)
+
 
 (* Il faut écrire un lemme qui montre que findIllegal renvoie bien ptext1 et
    ptext2 tel que pt_in_triangle tm ptext2 t2 /\ ~pt_in_triangle tm ptext2 t1
@@ -5053,6 +6368,8 @@ have otr2 : leftpoint (new_tr2 (inZp 0))(new_tr2 (inZp 1))(new_tr2 (inZp 2)) > 0
 by rewrite -vtemp2istmap'.
 
 
+
+
 (* Reste encore à prouver que les 2 triangles créés new_tr1 et new_tr2 sont 
    bien orientés *)
 rewrite /new_tr2 /=.
@@ -5103,9 +6420,7 @@ case h : ((ptext2 == tm t2 (Ordinal (ltn0Sn 2)))
      move: orientedt2.
      rewrite /oriented.
      have info : (ptext2 = (tm t2 (inZp 0))).
-       About point2indext2t1_correct.
-       rewrite -(point2indext2t1_correct info1p2 info2p2).
-       rewrite index_ptext2_iszero.
+       rewrite -(point2indext2t1_correct info1p2 info2p2) index_ptext2_iszero.
        rewrite (_ : (Ordinal zero<3) = (inZp 0)); last first.
          apply : val_inj.
          rewrite //.
@@ -5119,9 +6434,7 @@ case h : ((ptext2 == tm t2 (Ordinal (ltn0Sn 2)))
        move/eqP: index_ptext1_iszero.
        move=> index_ptext1_iszero.
        have infop1 : (ptext1 = (tm t1 (inZp 0))).
-        About point2indext2t1_correct.
-        rewrite -(point2indext1t2_correct info1p1 info2p1).
-        rewrite index_ptext1_iszero.
+        rewrite -(point2indext1t2_correct info1p1 info2p1) index_ptext1_iszero.
         rewrite (_ : (Ordinal zero<3) = (inZp 0)); last first.
           apply : val_inj.
           rewrite //.
