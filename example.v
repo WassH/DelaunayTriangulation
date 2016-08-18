@@ -136,6 +136,8 @@ Definition oriented (t : T) (tm :trianglemap) :=
   leftpoint (tm t (inZp 0)) (tm t (inZp 1)) (tm t (inZp 2)) > 0.
 
 
+
+
 (* -------------------------------------------------------------------- *)
 (* Dans cette section, on va prouver l'équivalence entre être <<dans>> 
    un triangle et s'écrire comme un barycentre des 3 sommets *)
@@ -354,7 +356,7 @@ rewrite /F5. rewrite 4!mxE /= /F7. rewrite 4!mxE /= /F8 4!mxE /=.
 rewrite /F9 4!mxE /= /F12 4!mxE /= /F11 4!mxE /= /F3 4!mxE /= /F10 4!mxE /=.
 
 rewrite !mulN1r !addr0 !//= !expr2 !//= !exprD !expr1 !expr0 !//= !mulr1 !//=.
-rewrite !mulN1r !//= !mul1r !mulrN1.
+rewrite !mulN1r !//= !mulrN1.
 
 set a := point2R1 (tm t (Ordinal zero<3)).
 set b := point2R2 (tm t (Ordinal zero<3)).
@@ -558,7 +560,7 @@ rewrite /F11 4!mxE /= /F3 4!mxE /= /F10 4!mxE /=.
 
 rewrite !mulN1r !addr0 !//= !expr2 !//=.
 rewrite !exprD !expr1 !expr0 !//= !mulr1 !//= !mulN1r !//=.
-rewrite !mul1r !mulrN1.
+rewrite !mulrN1.
 
 set a := point2R1 (tm t (Ordinal zero<3)).
 set b := point2R2 (tm t (Ordinal zero<3)).
@@ -770,7 +772,7 @@ rewrite /F12  4!mxE /= /F11  4!mxE /=.
 rewrite /F3  4!mxE /= /F10  4!mxE /=.
 
 rewrite !mulN1r !addr0 !//= !expr2 !//=.
-rewrite !exprD !expr1 !expr0 !//= !mulr1 !//=  !mulN1r !//= !mul1r !mulrN1.
+rewrite !exprD !expr1 !expr0 !//= !mulr1 !//=  !mulN1r !//=  !mulrN1.
 
 set a := point2R1 (tm t (Ordinal zero<3)).
 set b := point2R2 (tm t (Ordinal zero<3)).
@@ -919,6 +921,8 @@ rewrite divr_gt0; last first.
   by [].
 Qed.
 
+
+
 Lemma mul0l (n :rat_Ring) : 0*n = 0.
 Proof.
 prefield.
@@ -956,6 +960,223 @@ Proof.
 prefield.
 field.
 Qed.
+
+
+Lemma expand_det44 (M : 'M[rat]_(4,4)) : 
+\det M
+=
+
+M (@Ordinal 4 0 isT) (@Ordinal 4 0 isT) * 
+(  M (@Ordinal 4 1 isT) (@Ordinal 4 1 isT) *
+  M (@Ordinal 4 2 isT) (@Ordinal 4 2 isT) *
+  M (@Ordinal 4 3 isT) (@Ordinal 4 3 isT) -
+  M (@Ordinal 4 1 isT) (@Ordinal 4 1 isT) *
+  M (@Ordinal 4 2 isT) (@Ordinal 4 3 isT) *
+  M (@Ordinal 4 3 isT) (@Ordinal 4 2 isT) -
+  M (@Ordinal 4 1 isT) (@Ordinal 4 2 isT) *
+  M (@Ordinal 4 2 isT) (@Ordinal 4 1 isT) *
+  M (@Ordinal 4 3 isT) (@Ordinal 4 3 isT) +
+  M (@Ordinal 4 1 isT) (@Ordinal 4 2 isT) *
+  M (@Ordinal 4 2 isT) (@Ordinal 4 3 isT) *
+  M (@Ordinal 4 3 isT) (@Ordinal 4 1 isT) +
+  M (@Ordinal 4 1 isT) (@Ordinal 4 3 isT) *
+  M (@Ordinal 4 2 isT) (@Ordinal 4 1 isT) *
+  M (@Ordinal 4 3 isT) (@Ordinal 4 2 isT) -
+  M (@Ordinal 4 1 isT) (@Ordinal 4 3 isT) *
+  M (@Ordinal 4 2 isT) (@Ordinal 4 2 isT) *
+  M (@Ordinal 4 3 isT) (@Ordinal 4 1 isT))
+
+- M (@Ordinal 4 1 isT) (@Ordinal 4 0 isT) * 
+(   M (@Ordinal 4 0 isT) (@Ordinal 4 1 isT) *
+  M (@Ordinal 4 2 isT) (@Ordinal 4 2 isT) *
+  M (@Ordinal 4 3 isT) (@Ordinal 4 3 isT) -
+  M (@Ordinal 4 0 isT) (@Ordinal 4 1 isT) *
+  M (@Ordinal 4 2 isT) (@Ordinal 4 3 isT) *
+  M (@Ordinal 4 3 isT) (@Ordinal 4 2 isT) -
+  M (@Ordinal 4 0 isT) (@Ordinal 4 2 isT) *
+  M (@Ordinal 4 2 isT) (@Ordinal 4 1 isT) *
+  M (@Ordinal 4 3 isT) (@Ordinal 4 3 isT) +
+  M (@Ordinal 4 0 isT) (@Ordinal 4 2 isT) *
+  M (@Ordinal 4 2 isT) (@Ordinal 4 3 isT) *
+  M (@Ordinal 4 3 isT) (@Ordinal 4 1 isT) +
+  M (@Ordinal 4 0 isT) (@Ordinal 4 3 isT) *
+  M (@Ordinal 4 2 isT) (@Ordinal 4 1 isT) *
+  M (@Ordinal 4 3 isT) (@Ordinal 4 2 isT) -
+  M (@Ordinal 4 0 isT) (@Ordinal 4 3 isT) *
+  M (@Ordinal 4 2 isT) (@Ordinal 4 2 isT) *
+  M (@Ordinal 4 3 isT) (@Ordinal 4 1 isT))
+
++ M (@Ordinal 4 2 isT) (@Ordinal 4 0 isT) * 
+(  M (@Ordinal 4 0 isT) (@Ordinal 4 1 isT) *
+  M (@Ordinal 4 1 isT) (@Ordinal 4 2 isT) *
+  M (@Ordinal 4 3 isT) (@Ordinal 4 3 isT) -
+  M (@Ordinal 4 0 isT) (@Ordinal 4 1 isT) *
+  M (@Ordinal 4 1 isT) (@Ordinal 4 3 isT) *
+  M (@Ordinal 4 3 isT) (@Ordinal 4 2 isT) -
+  M (@Ordinal 4 0 isT) (@Ordinal 4 2 isT) *
+  M (@Ordinal 4 1 isT) (@Ordinal 4 1 isT) *
+  M (@Ordinal 4 3 isT) (@Ordinal 4 3 isT) +
+  M (@Ordinal 4 0 isT) (@Ordinal 4 2 isT) *
+  M (@Ordinal 4 1 isT) (@Ordinal 4 3 isT) *
+  M (@Ordinal 4 3 isT) (@Ordinal 4 1 isT) +
+  M (@Ordinal 4 0 isT) (@Ordinal 4 3 isT) *
+  M (@Ordinal 4 1 isT) (@Ordinal 4 1 isT) *
+  M (@Ordinal 4 3 isT) (@Ordinal 4 2 isT) -
+  M (@Ordinal 4 0 isT) (@Ordinal 4 3 isT) *
+  M (@Ordinal 4 1 isT) (@Ordinal 4 2 isT) *
+  M (@Ordinal 4 3 isT) (@Ordinal 4 1 isT))
+
+- M (@Ordinal 4 3 isT) (@Ordinal 4 0 isT) * 
+(  M (@Ordinal 4 0 isT) (@Ordinal 4 1 isT) *
+  M (@Ordinal 4 1 isT) (@Ordinal 4 2 isT) *
+  M (@Ordinal 4 2 isT) (@Ordinal 4 3 isT) -
+  M (@Ordinal 4 0 isT) (@Ordinal 4 1 isT) *
+  M (@Ordinal 4 1 isT) (@Ordinal 4 3 isT) *
+  M (@Ordinal 4 2 isT) (@Ordinal 4 2 isT) -
+  M (@Ordinal 4 0 isT) (@Ordinal 4 2 isT) *
+  M (@Ordinal 4 1 isT) (@Ordinal 4 1 isT) *
+  M (@Ordinal 4 2 isT) (@Ordinal 4 3 isT) +
+  M (@Ordinal 4 0 isT) (@Ordinal 4 2 isT) *
+  M (@Ordinal 4 1 isT) (@Ordinal 4 3 isT) *
+  M (@Ordinal 4 2 isT) (@Ordinal 4 1 isT) +
+  M (@Ordinal 4 0 isT) (@Ordinal 4 3 isT) *
+  M (@Ordinal 4 1 isT) (@Ordinal 4 1 isT) *
+  M (@Ordinal 4 2 isT) (@Ordinal 4 2 isT) -
+  M (@Ordinal 4 0 isT) (@Ordinal 4 3 isT) *
+  M (@Ordinal 4 1 isT) (@Ordinal 4 2 isT) *
+  M (@Ordinal 4 2 isT) (@Ordinal 4 1 isT)).
+
+Proof.
+    rewrite (expand_det_col _ (inZp 3)) big_ord_recl.
+    rewrite !//= /cofactor !//= expand_det33 !mxE. rewrite !//=.
+
+    rewrite big_ord_recl !//= /cofactor !//= expand_det33 !mxE !//=.
+    rewrite big_ord_recl !//= /cofactor !//= expand_det33 !mxE !//=.
+    rewrite big_ord_recl !//= /cofactor !//= expand_det33 !mxE !//=.
+    rewrite big_ord0.
+    rewrite !//=.
+    rewrite (_ :  ((-1) ^+ (bump 0 (bump 0 0) + 3 %% 4) = -1)); last first.
+      by [].
+    rewrite (_ : (-1) ^+ (0 + 3 %% 4)  = -1); last first.
+      by [].
+    rewrite (_ : (-1) ^+ (bump 0 0 + 3 %% 4)  = 1); last first.
+      by [].
+    rewrite (_ : (-1) ^+ (bump 0 (bump 0 (bump 0 0)) + 3 %% 4) = 1); last first.
+      by [].
+    rewrite plus0r !//= !mul1l.
+    rewrite (_ : (lift ord0 (lift ord0 (lift ord0 ord0)) = @Ordinal 4 3 isT))
+                  ; last first.
+      apply val_inj.
+      rewrite //.
+    rewrite (_ : ((lift ord0 (lift ord0 ord0)) = @Ordinal 4 2 isT))
+                  ; last first.
+      apply val_inj.
+      rewrite //.
+    rewrite (_ : (lift ord0 (@Ordinal 3 0 isT) = @Ordinal 4 1 isT))
+                  ; last first.
+      apply val_inj.
+      rewrite //.
+    rewrite (_ : (lift (inZp 3) (@Ordinal 3 2 isT)) = @Ordinal 4 2 isT)
+                  ; last first.
+      apply val_inj.
+      rewrite //.
+    rewrite (_ : (lift (inZp 3) (@Ordinal 3 0 isT)) = @Ordinal 4 0 isT)
+                  ; last first.
+      apply val_inj.
+      rewrite //.
+    rewrite (_ : (lift (inZp 3) (@Ordinal 3 1 isT)) = @Ordinal 4 1 isT)
+                  ; last first.
+      apply val_inj.
+      rewrite //.
+    rewrite (_ : lift ord0 (@Ordinal 3 1 isT) = @Ordinal 4 2 isT)
+                  ; last first.
+      apply val_inj.
+      rewrite //.
+    rewrite (_ : lift ord0 (@Ordinal 3 2 isT) = @Ordinal 4 3 isT)
+                  ; last first.
+      apply val_inj.
+      rewrite //.
+    rewrite (_ : lift ord0 ord0 = @Ordinal 4 1 isT)
+                  ; last first.
+      apply val_inj.
+      rewrite //.
+    rewrite (_ : (lift (@Ordinal 4 2 isT) (@Ordinal 3 1 isT))
+                       = @Ordinal 4 1 isT)
+                  ; last first.
+      apply val_inj.
+      rewrite //.
+    rewrite (_ : (lift (@Ordinal 4 3 isT) (@Ordinal 3 1 isT))
+                       = @Ordinal 4 1 isT)
+                  ; last first.
+      apply val_inj.
+      rewrite //.
+    rewrite (_ : (lift (@Ordinal 4 1 isT) (@Ordinal 3 1 isT))
+                       = @Ordinal 4 2 isT)
+                  ; last first.
+      apply val_inj.
+      rewrite //.
+    rewrite (_ : (lift (@Ordinal 4 1 isT) (@Ordinal 3 0 isT))
+                       = @Ordinal 4 0 isT)
+                  ; last first.
+      apply val_inj.
+      rewrite //.
+    rewrite (_ : (lift (@Ordinal 4 1 isT) (@Ordinal 3 2 isT))
+                       = @Ordinal 4 3 isT)
+                  ; last first.
+      apply val_inj.
+      rewrite //.
+    rewrite (_ : (lift (@Ordinal 4 2 isT) (@Ordinal 3 0 isT))
+                       = @Ordinal 4 0 isT)
+                  ; last first.
+      apply val_inj.
+      rewrite //.
+    rewrite (_ : (lift (@Ordinal 4 2 isT) (@Ordinal 3 2 isT))
+                       = @Ordinal 4 3 isT)
+                  ; last first.
+      apply val_inj.
+      rewrite //.
+    rewrite (_ : (lift (@Ordinal 4 3 isT) (@Ordinal 3 0 isT))
+                       = @Ordinal 4 0 isT)
+                  ; last first.
+      apply val_inj.
+      rewrite //.
+    rewrite (_ : (lift (@Ordinal 4 3 isT) (@Ordinal 3 2 isT))
+                       = @Ordinal 4 2 isT)
+                  ; last first.
+      apply val_inj.
+      rewrite //.
+
+      rewrite (_ : @inZp 3 3 = @Ordinal 4 3 isT); last first.
+        apply: val_inj.
+        by rewrite //.
+
+      rewrite (_ : @ord0 3 = @Ordinal 4 0 isT); last first.
+        apply: val_inj.
+        by rewrite //.
+
+      set a00 := M (@Ordinal 4 0 isT) (@Ordinal 4 0 isT).
+      set a01 := M (@Ordinal 4 0 isT) (@Ordinal 4 1 isT).
+      set a02 := M (@Ordinal 4 0 isT) (@Ordinal 4 2 isT).
+      set a03 := M (@Ordinal 4 0 isT) (@Ordinal 4 3 isT).
+
+      set a10 := M (@Ordinal 4 1 isT) (@Ordinal 4 0 isT).
+      set a11 := M (@Ordinal 4 1 isT) (@Ordinal 4 1 isT).
+      set a12 := M (@Ordinal 4 1 isT) (@Ordinal 4 2 isT).
+      set a13 := M (@Ordinal 4 1 isT) (@Ordinal 4 3 isT).
+
+      set a20 := M (@Ordinal 4 2 isT) (@Ordinal 4 0 isT).
+      set a21 := M (@Ordinal 4 2 isT) (@Ordinal 4 1 isT).
+      set a22 := M (@Ordinal 4 2 isT) (@Ordinal 4 2 isT).
+      set a23 := M (@Ordinal 4 2 isT) (@Ordinal 4 3 isT).
+
+      set a30 := M (@Ordinal 4 3 isT) (@Ordinal 4 0 isT).
+      set a31 := M (@Ordinal 4 3 isT) (@Ordinal 4 1 isT).
+      set a32 := M (@Ordinal 4 3 isT) (@Ordinal 4 2 isT).
+      set a33 := M (@Ordinal 4 3 isT) (@Ordinal 4 3 isT).
+
+      prefield; ring.
+Qed.
+
 
 Lemma fois_div (n1 n2: rat_Ring) : n2 <>0 -> n1 *n2/n2 = n1.
 Proof.
@@ -1025,8 +1246,7 @@ rewrite orb_false_l in hyp.
 apply: anti_leq.
 move:b.
 change ((a < 1+1)%N -> (a <= 1 <= a)%N).
-rewrite ltnS.
-rewrite !//=.
+rewrite ltnS !//=.
 move=> hyp2.
 rewrite hyp hyp2.
 by [].
@@ -1485,7 +1705,7 @@ have convex_large : (Num.le (f (x1 * lambda + k`_n * (x`_n).1,
       
 
 
-          have toto: k`_n = 1 - lambda.
+          have infokn: k`_n = 1 - lambda.
           rewrite /lambda.
           Search _ (_ = _  -> _+_ =_+_).
           rewrite -somme_egal_1 big_ord_recr !//=.
@@ -1511,7 +1731,7 @@ have convex_large : (Num.le (f (x1 * lambda + k`_n * (x`_n).1,
           prefield. ring.
 
         move: lambda_pos.
-        rewrite toto.
+        rewrite infokn.
         have intel: (Num.le lambda 1).
           rewrite (_ : lambda = 1 - k`_n).
             change (Num.le (1 - k`_n) (1-0)).
@@ -1526,7 +1746,7 @@ have convex_large : (Num.le (f (x1 * lambda + k`_n * (x`_n).1,
             move: (hypok ord_n).
             rewrite /=.
             by [].
-          rewrite toto.
+          rewrite infokn.
           simpl in lambda.
           prefield; ring.
         move: intel.
@@ -2431,7 +2651,7 @@ case xi_dif_xj_n : [exists (i:'I_n | true),
         apply (strict_pos_elt_strict_pos_sum hypokSn).
 
 
-          have toto: k`_n = 1 - lambda.
+          have infokn: k`_n = 1 - lambda.
           rewrite /lambda -somme_egal_1 big_ord_recr !//=.
           set sum_n := \sum_(i < n) k`_i.
           simpl in sum_n.
@@ -2474,10 +2694,10 @@ case xi_dif_xj_n : [exists (i:'I_n | true),
             move:kn0a.
             move=> [kn0a kn0b].
             by [].
-          rewrite toto.
+          rewrite infokn.
           simpl in lambda.
           prefield; ring.
-        rewrite toto /convex_fun.
+        rewrite infokn /convex_fun.
         apply (convex_strict_implies_convex f_is_convex) .
           by [].
         by [].
@@ -2753,7 +2973,7 @@ move/negbT: xi_dif_xj_n.
 
 rewrite negb_exists /= => /forallP => fne.
 
-have toto : [forall i: 'I_n, [forall j : 'I_n,
+have tous_egaux : [forall i: 'I_n, [forall j : 'I_n,
     ((x`_i).1 == (x`_j).1) && ((x`_i).2 == (x`_j).2)]].
 apply/forallP => i; move:(fne i); rewrite negb_exists /= => /forallP fnei.
 by apply/forallP => j; move:(fnei j); rewrite negb_orb !negb_involutive.
@@ -2793,12 +3013,12 @@ prefield ; field.
 have lambda_pos: lambda>0.
     rewrite /lambda.
     move: nsup1 IHn somme_egal_1 hypok ex lambda F1 info x1 
-          x2 x1_xn_egal ns1 F2 F1eqF2 fne toto tous_meme1 tous_meme2
+          x2 x1_xn_egal ns1 F2 F1eqF2 fne tous_egaux tous_meme1 tous_meme2
             .
     case : n.
       by [].
     move=> n nsup1 IHn somme_egal_1 hypok ex lambda F1 info x1 
-          x2 x1_xn_egal ns1 F2 F1eqF2 fne toto tous_meme1 tous_meme2
+          x2 x1_xn_egal ns1 F2 F1eqF2 fne tous_egaux tous_meme1 tous_meme2
             .
     have hypokSn : [forall (i:'I_(S n) | true), Num.lt 0 k`_i].
       move: hypok.
@@ -2846,12 +3066,12 @@ prefield ; field.
 have lambda_pos: lambda>0.
     rewrite /lambda.
     move: nsup1 IHn somme_egal_1 hypok ex lambda F1 info x1 
-          x2 x1_xn_egal ns1 F2 F1eqF2 fne toto tous_meme1 tous_meme2 hh1
+          x2 x1_xn_egal ns1 F2 F1eqF2 fne tous_egaux tous_meme1 tous_meme2 hh1
             .
     case : n.
       by [].
     move=> n nsup1 IHn somme_egal_1 hypok ex lambda F1 info x1 
-          x2 x1_xn_egal ns1 F2 F1eqF2 fne toto tous_meme1 tous_meme2 hh1
+          x2 x1_xn_egal ns1 F2 F1eqF2 fne tous_egaux tous_meme1 tous_meme2 hh1
             .
     have hypokSn : [forall (i:'I_(S n) | true), Num.lt 0 k`_i].
       move: hypok.
@@ -3002,59 +3222,59 @@ by [].
 (* Reste à démontrer le have tous_meme *)
 apply/andP.
 split.
-  move/forallP : toto.
-  move=> toto.
+  move/forallP : tous_egaux.
+  move=> tous_egaux.
   have zero_inf_n : (0 < n)%N.
     by apply : ltn_trans (ltnSn 0)  (ns1).
-  move: (toto (Ordinal zero_inf_n)).
+  move: (tous_egaux (Ordinal zero_inf_n)).
   change ([forall (j : 'I_n|true),
    ((x`_0).1 == (x`_j).1) &&
    ((x`_0).2 == (x`_j).2)] ->
       [forall (i : 'I_n | true), (x`_i).1 == (x`_0).1]).
-  move=> toto1.
+  move=> tous_egaux_0.
   apply/forallP.
   move=> x0.
   change (((x`_x0).1 == (x`_0).1)).
-  move/forallP : toto1.
-  move=> toto1.
-  move: (toto1 x0).
+  move/forallP : tous_egaux_0.
+  move=> tous_egaux_0.
+  move: (tous_egaux_0 x0).
   change (((x`_0).1 == (x`_x0).1) && ((x`_0).2 == (x`_x0).2) ->
       (x`_x0).1 == (x`_0).1).
-  move/andP=> toto1x0.
-  move:toto1x0.
-  move=> [toto1x0_1 toto1x0_2].
-  move/eqP:toto1x0_1.
-  move=> toto1x0_1.
+  move/andP=> egal0x0.
+  move: egal0x0.
+  move=> [ egal0x0_1  egal0x0_2].
+  move/eqP: egal0x0_1.
+  move=>  egal0x0_1.
   apply/eqP.
-  rewrite toto1x0_1.
+  rewrite  egal0x0_1.
   reflexivity.
 
 
-move/forallP : toto.
-move=> toto.
+move/forallP : tous_egaux.
+move=> tous_egaux.
 have zero_inf_n : (0 < n)%N.
   by apply : ltn_trans (ltnSn 0) (ns1).
-move: (toto (Ordinal zero_inf_n)).
+move: (tous_egaux (Ordinal zero_inf_n)).
 change ([forall (j : 'I_n|true),
    ((x`_0).1 == (x`_j).1) &&
    ((x`_0).2 == (x`_j).2)] ->
       [forall (i : 'I_n | true), (x`_i).2 == (x`_0).2]).
-move=> toto2.
+move=> tous_egaux0.
 apply/forallP.
 move=> x0.
 change (((x`_x0).2 == (x`_0).2)).
-move/forallP : toto2.
-move=> toto1.
-move: (toto1 x0).
+move/forallP : tous_egaux0.
+move=> tous_egaux0.
+move: (tous_egaux0 x0).
 change (((x`_0).1 == (x`_x0).1) && ((x`_0).2 == (x`_x0).2) ->
       (x`_x0).2 == (x`_0).2).
-move/andP=> toto2x0.
-move:toto2x0.
-move=> [toto2x0_1 toto2x0_2].
-move/eqP:toto2x0_2.
-move=> toto2x0_2.
+move/andP=> tous_egaux0x0.
+move:tous_egaux0x0.
+move=> [tous_egaux0x0_1 tous_egaux0x0_2].
+move/eqP:tous_egaux0x0_2.
+move=> tous_egaux0x0_2.
 apply/eqP.
-rewrite toto2x0_2.
+rewrite tous_egaux0x0_2.
 reflexivity.
 
 
@@ -3612,516 +3832,20 @@ have hyp: (\det (\matrix_(i<4, j<4) (if i == 0
                                (tm t
                                   (Ordinal deux<3)) ^+ 2)
                               else 0))).
+  rewrite !expand_det44.
+  rewrite !mxE. rewrite !//= !expr2 !mul1l !mul0l !mul0r !mul1r !plus0r !sub0r.
 
+  rewrite H1 H2.
 
-  rewrite (expand_det_row _ (Ordinal (trois<4))) big_ord_recl !mxE !//=.
-  set cof1 := cofactor
-  (\matrix_(i, j) (if i == 0
-                   then
-                    if j == 0
-                    then point2R1 (tm t (Ordinal zero<3))
-                    else
-                     if j == 1
-                     then point2R2 (tm t (Ordinal zero<3))
-                     else
-                      if nat_of_ord j == 2
-                      then
-                       point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
-                       point2R2 (tm t (Ordinal zero<3)) ^+ 2
-                      else 1
-                   else
-                    if i == 1
-                    then
-                     if j == 0
-                     then point2R1 (tm t (Ordinal un<3))
-                     else
-                      if j == 1
-                      then point2R2 (tm t (Ordinal un<3))
-                      else
-                       if nat_of_ord j == 2
-                       then
-                        point2R1 (tm t (Ordinal un<3)) ^+ 2 +
-                        point2R2 (tm t (Ordinal un<3)) ^+ 2
-                       else 1
-                    else
-                     if nat_of_ord i == 2
-                     then
-                      if j == 0
-                      then point2R1 (tm t (Ordinal deux<3))
-                      else
-                       if j == 1
-                       then point2R2 (tm t (Ordinal deux<3))
-                       else
-                        if nat_of_ord j == 2
-                        then
-                         point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
-                         point2R2 (tm t (Ordinal deux<3)) ^+ 2
-                        else 1
-                     else
-                      if j == 0
-                      then point2R1 p
-                      else
-                       if j == 1
-                       then point2R2 p
-                       else
-                        if nat_of_ord j == 2
-                        then point2R1 p ^+ 2 + point2R2 p ^+ 2
-                        else 1)) (Ordinal trois<4) ord0.
+  have infok1: k1 = 1 - k2 - k3.
+    rewrite -(eqP H3).  simpl in k1. prefield; ring.
+  rewrite infok1.
+  prefield.
+  ring.
 
-  rewrite big_ord_recl !mxE !//=.
-  set cof2 := cofactor
-   (\matrix_(i, j) (if i == 0
-                    then
-                     if j == 0
-                     then point2R1 (tm t (Ordinal zero<3))
-                     else
-                      if j == 1
-                      then point2R2 (tm t (Ordinal zero<3))
-                      else
-                       if nat_of_ord j == 2
-                       then
-                        point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
-                        point2R2 (tm t (Ordinal zero<3)) ^+ 2
-                       else 1
-                    else
-                     if i == 1
-                     then
-                      if j == 0
-                      then point2R1 (tm t (Ordinal un<3))
-                      else
-                       if j == 1
-                       then point2R2 (tm t (Ordinal un<3))
-                       else
-                        if nat_of_ord j == 2
-                        then
-                         point2R1 (tm t (Ordinal un<3)) ^+ 2 +
-                         point2R2 (tm t (Ordinal un<3)) ^+ 2
-                        else 1
-                     else
-                      if nat_of_ord i == 2
-                      then
-                       if j == 0
-                       then point2R1 (tm t (Ordinal deux<3))
-                       else
-                        if j == 1
-                        then point2R2 (tm t (Ordinal deux<3))
-                        else
-                         if nat_of_ord j == 2
-                         then
-                          point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
-                          point2R2 (tm t (Ordinal deux<3)) ^+ 2
-                         else 1
-                      else
-                       if j == 0
-                       then point2R1 p
-                       else
-                        if j == 1
-                        then point2R2 p
-                        else
-                         if nat_of_ord j == 2
-                         then point2R1 p ^+ 2 + point2R2 p ^+ 2
-                         else 1)) (Ordinal trois<4) 
-   (lift ord0 ord0).
+rewrite [X in Num.lt 0 X == true]hyp.
 
-  rewrite big_ord_recl !mxE !//=.
-  set cof3 := cofactor
-    (\matrix_(i, j) (if i == 0
-                     then
-                      if j == 0
-                      then point2R1 (tm t (Ordinal zero<3))
-                      else
-                       if j == 1
-                       then point2R2 (tm t (Ordinal zero<3))
-                       else
-                        if nat_of_ord j == 2
-                        then
-                         point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
-                         point2R2 (tm t (Ordinal zero<3)) ^+ 2
-                        else 1
-                     else
-                      if i == 1
-                      then
-                       if j == 0
-                       then point2R1 (tm t (Ordinal un<3))
-                       else
-                        if j == 1
-                        then point2R2 (tm t (Ordinal un<3))
-                        else
-                         if nat_of_ord j == 2
-                         then
-                          point2R1 (tm t (Ordinal un<3)) ^+ 2 +
-                          point2R2 (tm t (Ordinal un<3)) ^+ 2
-                         else 1
-                      else
-                       if nat_of_ord i == 2
-                       then
-                        if j == 0
-                        then point2R1 (tm t (Ordinal deux<3))
-                        else
-                         if j == 1
-                         then point2R2 (tm t (Ordinal deux<3))
-                         else
-                          if nat_of_ord j == 2
-                          then
-                           point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
-                           point2R2 (tm t (Ordinal deux<3)) ^+ 2
-                          else 1
-                       else
-                        if j == 0
-                        then point2R1 p
-                        else
-                         if j == 1
-                         then point2R2 p
-                         else
-                          if nat_of_ord j == 2
-                          then point2R1 p ^+ 2 + point2R2 p ^+ 2
-                          else 1)) (Ordinal trois<4)
-    (lift ord0 (lift ord0 ord0)).
-
-  rewrite big_ord_recl !mxE !//=.
-  set cof4 := cofactor
-     (\matrix_(i, j) (if i == 0
-                      then
-                       if j == 0
-                       then point2R1 (tm t (Ordinal zero<3))
-                       else
-                        if j == 1
-                        then point2R2 (tm t (Ordinal zero<3))
-                        else
-                         if nat_of_ord j == 2
-                         then
-                          point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
-                          point2R2 (tm t (Ordinal zero<3)) ^+ 2
-                         else 1
-                      else
-                       if i == 1
-                       then
-                        if j == 0
-                        then point2R1 (tm t (Ordinal un<3))
-                        else
-                         if j == 1
-                         then point2R2 (tm t (Ordinal un<3))
-                         else
-                          if nat_of_ord j == 2
-                          then
-                           point2R1 (tm t (Ordinal un<3)) ^+ 2 +
-                           point2R2 (tm t (Ordinal un<3)) ^+ 2
-                          else 1
-                       else
-                        if nat_of_ord i == 2
-                        then
-                         if j == 0
-                         then point2R1 (tm t (Ordinal deux<3))
-                         else
-                          if j == 1
-                          then point2R2 (tm t (Ordinal deux<3))
-                          else
-                           if nat_of_ord j == 2
-                           then
-                            point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
-                            point2R2 (tm t (Ordinal deux<3)) ^+ 2
-                           else 1
-                        else
-                         if j == 0
-                         then point2R1 p
-                         else
-                          if j == 1
-                          then point2R2 p
-                          else
-                           if nat_of_ord j == 2
-                           then point2R1 p ^+ 2 + point2R2 p ^+ 2
-                           else 1)) (Ordinal trois<4)
-     (lift ord0 (lift ord0 (lift ord0 ord0))).
-
-  rewrite big_ord0 /cof1 /cofactor expand_det33 !mxE !//=.
-  rewrite /cof2 /cofactor expand_det33 !mxE !//=.
-  rewrite /cof3 /cofactor expand_det33 !mxE !//=.
-  rewrite /cof4 /cofactor expand_det33 !mxE !//=.
-
-
-rewrite (expand_det_row _ (Ordinal (trois<4))) big_ord_recl !mxE !//=.
-set cof1' := cofactor
-  (\matrix_(i, j) (if i == 0
-                   then
-                    if j == 0
-                    then point2R1 (tm t (Ordinal zero<3))
-                    else
-                     if j == 1
-                     then point2R2 (tm t (Ordinal zero<3))
-                     else
-                      if nat_of_ord j == 2
-                      then
-                       point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
-                       point2R2 (tm t (Ordinal zero<3)) ^+ 2
-                      else 1
-                   else
-                    if i == 1
-                    then
-                     if j == 0
-                     then point2R1 (tm t (Ordinal un<3))
-                     else
-                      if j == 1
-                      then point2R2 (tm t (Ordinal un<3))
-                      else
-                       if nat_of_ord j == 2
-                       then
-                        point2R1 (tm t (Ordinal un<3)) ^+ 2 +
-                        point2R2 (tm t (Ordinal un<3)) ^+ 2
-                       else 1
-                    else
-                     if nat_of_ord i == 2
-                     then
-                      if j == 0
-                      then point2R1 (tm t (Ordinal deux<3))
-                      else
-                       if j == 1
-                       then point2R2 (tm t (Ordinal deux<3))
-                       else
-                        if nat_of_ord j == 2
-                        then
-                         point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
-                         point2R2 (tm t (Ordinal deux<3)) ^+ 2
-                        else 1
-                     else
-                      if j == 0
-                      then 0
-                      else
-                       if j == 1
-                       then 0
-                       else
-                        if nat_of_ord j == 2
-                        then
-                         point2R1 p ^+ 2 + point2R2 p ^+ 2 -
-                         k1 *
-                         (point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
-                          point2R2 (tm t (Ordinal zero<3)) ^+ 2) -
-                         k2 *
-                         (point2R1 (tm t (Ordinal un<3)) ^+ 2 +
-                          point2R2 (tm t (Ordinal un<3)) ^+ 2) -
-                         k3 *
-                         (point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
-                          point2R2 (tm t (Ordinal deux<3)) ^+ 2)
-                        else 0)) (Ordinal trois<4) ord0.
-rewrite big_ord_recl !mxE !//=.
-set cof2' := cofactor
-   (\matrix_(i, j) (if i == 0
-                    then
-                     if j == 0
-                     then point2R1 (tm t (Ordinal zero<3))
-                     else
-                      if j == 1
-                      then point2R2 (tm t (Ordinal zero<3))
-                      else
-                       if nat_of_ord j == 2
-                       then
-                        point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
-                        point2R2 (tm t (Ordinal zero<3)) ^+ 2
-                       else 1
-                    else
-                     if i == 1
-                     then
-                      if j == 0
-                      then point2R1 (tm t (Ordinal un<3))
-                      else
-                       if j == 1
-                       then point2R2 (tm t (Ordinal un<3))
-                       else
-                        if nat_of_ord j == 2
-                        then
-                         point2R1 (tm t (Ordinal un<3)) ^+ 2 +
-                         point2R2 (tm t (Ordinal un<3)) ^+ 2
-                        else 1
-                     else
-                      if nat_of_ord i == 2
-                      then
-                       if j == 0
-                       then point2R1 (tm t (Ordinal deux<3))
-                       else
-                        if j == 1
-                        then point2R2 (tm t (Ordinal deux<3))
-                        else
-                         if nat_of_ord j == 2
-                         then
-                          point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
-                          point2R2 (tm t (Ordinal deux<3)) ^+ 2
-                         else 1
-                      else
-                       if j == 0
-                       then 0
-                       else
-                        if j == 1
-                        then 0
-                        else
-                         if nat_of_ord j == 2
-                         then
-                          point2R1 p ^+ 2 + point2R2 p ^+ 2 -
-                          k1 *
-                          (point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
-                           point2R2 (tm t (Ordinal zero<3)) ^+ 2) -
-                          k2 *
-                          (point2R1 (tm t (Ordinal un<3)) ^+ 2 +
-                           point2R2 (tm t (Ordinal un<3)) ^+ 2) -
-                          k3 *
-                          (point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
-                           point2R2 (tm t (Ordinal deux<3)) ^+ 2)
-                         else 0)) (Ordinal trois<4) 
-   (lift ord0 ord0).
-rewrite big_ord_recl !mxE !//=.
-set cof3' := cofactor
-    (\matrix_(i, j) (if i == 0
-                     then
-                      if j == 0
-                      then point2R1 (tm t (Ordinal zero<3))
-                      else
-                       if j == 1
-                       then point2R2 (tm t (Ordinal zero<3))
-                       else
-                        if nat_of_ord j == 2
-                        then
-                         point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
-                         point2R2 (tm t (Ordinal zero<3)) ^+ 2
-                        else 1
-                     else
-                      if i == 1
-                      then
-                       if j == 0
-                       then point2R1 (tm t (Ordinal un<3))
-                       else
-                        if j == 1
-                        then point2R2 (tm t (Ordinal un<3))
-                        else
-                         if nat_of_ord j == 2
-                         then
-                          point2R1 (tm t (Ordinal un<3)) ^+ 2 +
-                          point2R2 (tm t (Ordinal un<3)) ^+ 2
-                         else 1
-                      else
-                       if nat_of_ord i == 2
-                       then
-                        if j == 0
-                        then point2R1 (tm t (Ordinal deux<3))
-                        else
-                         if j == 1
-                         then point2R2 (tm t (Ordinal deux<3))
-                         else
-                          if nat_of_ord j == 2
-                          then
-                           point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
-                           point2R2 (tm t (Ordinal deux<3)) ^+ 2
-                          else 1
-                       else
-                        if j == 0
-                        then 0
-                        else
-                         if j == 1
-                         then 0
-                         else
-                          if nat_of_ord j == 2
-                          then
-                           point2R1 p ^+ 2 + point2R2 p ^+ 2 -
-                           k1 *
-                           (point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
-                            point2R2 (tm t (Ordinal zero<3)) ^+ 2) -
-                           k2 *
-                           (point2R1 (tm t (Ordinal un<3)) ^+ 2 +
-                            point2R2 (tm t (Ordinal un<3)) ^+ 2) -
-                           k3 *
-                           (point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
-                            point2R2 (tm t (Ordinal deux<3)) ^+ 2)
-                          else 0)) (Ordinal trois<4)
-    (lift ord0 (lift ord0 ord0)).
-
-rewrite big_ord_recl !mxE !//=.
-set cof4' :=  cofactor
-     (\matrix_(i, j) (if i == 0
-                      then
-                       if j == 0
-                       then point2R1 (tm t (Ordinal zero<3))
-                       else
-                        if j == 1
-                        then point2R2 (tm t (Ordinal zero<3))
-                        else
-                         if nat_of_ord j == 2
-                         then
-                          point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
-                          point2R2 (tm t (Ordinal zero<3)) ^+ 2
-                         else 1
-                      else
-                       if i == 1
-                       then
-                        if j == 0
-                        then point2R1 (tm t (Ordinal un<3))
-                        else
-                         if j == 1
-                         then point2R2 (tm t (Ordinal un<3))
-                         else
-                          if nat_of_ord j == 2
-                          then
-                           point2R1 (tm t (Ordinal un<3)) ^+ 2 +
-                           point2R2 (tm t (Ordinal un<3)) ^+ 2
-                          else 1
-                       else
-                        if nat_of_ord i == 2
-                        then
-                         if j == 0
-                         then point2R1 (tm t (Ordinal deux<3))
-                         else
-                          if j == 1
-                          then point2R2 (tm t (Ordinal deux<3))
-                          else
-                           if nat_of_ord j == 2
-                           then
-                            point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
-                            point2R2 (tm t (Ordinal deux<3)) ^+ 2
-                           else 1
-                        else
-                         if j == 0
-                         then 0
-                         else
-                          if j == 1
-                          then 0
-                          else
-                           if nat_of_ord j == 2
-                           then
-                            point2R1 p ^+ 2 + point2R2 p ^+ 2 -
-                            k1 *
-                            (point2R1 (tm t (Ordinal zero<3)) ^+ 2 +
-                             point2R2 (tm t (Ordinal zero<3)) ^+ 2) -
-                            k2 *
-                            (point2R1 (tm t (Ordinal un<3)) ^+ 2 +
-                             point2R2 (tm t (Ordinal un<3)) ^+ 2) -
-                            k3 *
-                            (point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
-                             point2R2 (tm t (Ordinal deux<3)) ^+ 2)
-                           else 0)) (Ordinal trois<4)
-     (lift ord0 (lift ord0 (lift ord0 ord0))).
-rewrite big_ord0.
-
-rewrite /cof3' /cofactor expand_det33 !mxE !//=.
-
-rewrite !mulN1r !addr0 !//= !expr2 !//= !exprD !expr1 !expr0 !//= !mulr1 !//= .
-rewrite !mulN1r !//= ?mul1r !mul0l !plus0l !plus0r.
-
-
-
-rewrite H1 H2.
-  set a := point2R1 (tm t (Ordinal zero<3)).
-  set b := point2R2 (tm t (Ordinal zero<3)).
-  set c := point2R1 (tm t (Ordinal un<3)).
-  set d := point2R2 (tm t (Ordinal un<3)).
-  set e := point2R1 (tm t (Ordinal deux<3)).
-  set f := point2R2 (tm t (Ordinal deux<3)).
-  set g := point2R1 p.
-  set h := point2R2 p.
-have infok1: k1 = 1 - k2 - k3.
-  rewrite -(eqP H3).  simpl in k1. prefield; ring.
-rewrite infok1.
-prefield.
-ring.
-
-
-
-rewrite [X in Num.lt 0 X == true]hyp (expand_det_row _ (Ordinal (trois<4))).
+rewrite (expand_det_row _ (Ordinal (trois<4))).
 rewrite big_ord_recl !mxE !//=.
 set cof1 := cofactor
      (\matrix_(i, j) (if i == 0
@@ -4324,13 +4048,13 @@ set cof2 := cofactor
                            else 0)) (Ordinal trois<4)
                                           (lift ord0 ord0).
 rewrite big_ord_recl !mxE !//= /cofactor expand_det33 !mxE !//=.
-rewrite big_ord_recl big_ord0 !mxE !//= expand_det33 !mxE !//=.
-
+rewrite big_ord_recl big_ord0 !mxE !//= expand_det33 !mxE !//=. 
 move:toriented.
 rewrite /leftpoint expand_det33 !mxE !//=.
 
-rewrite !mulN1r !addr0 !//= !expr2 !//= !exprD !expr1 !expr0 !//= !mulr1 !//=.
-rewrite !mulN1r !//= !mul1l.
+rewrite  !mulN1r  !addr0  !//= !expr2 !//= !exprD  !expr1 !expr0 !//= !mulr1.
+rewrite !//=.
+rewrite !mulN1r  !//= !mul1l.
 
 have : k1 = 1 - k2 - k3.
   rewrite -(eqP H3).  simpl in k1. prefield; ring.
@@ -4438,10 +4162,10 @@ have devpt: (0 * cof1 +
   set f := point2R2 (tm t (Ordinal deux<3)).
   set g := point2R1 p.
   set h := point2R2 p.
-  rewrite !expr2 !//= !mul0l !plus0l !plus0r.
+  rewrite !expr2 !//= !mul0l (* !plus0l *) !plus0r.
   prefield.
   ring.
-rewrite devpt.
+   rewrite devpt.
    rewrite (pmulr_lgt0 (-
    (point2R1 p ^+ 2 + point2R2 p ^+ 2 -
     (1 - k2 - k3) *
@@ -4452,7 +4176,7 @@ rewrite devpt.
      point2R2 (tm t (Ordinal un<3)) ^+ 2) -
     k3 *
     (point2R1 (tm t (Ordinal deux<3)) ^+ 2 +
-     point2R2 (tm t (Ordinal deux<3)) ^+ 2))) toriented). 
+     point2R2 (tm t (Ordinal deux<3)) ^+ 2))) toriented).
 
 
 rewrite ltr_oppr oppr0 H1 H2 !//= hypk1.
@@ -4495,6 +4219,7 @@ have: ((1 - k2 - k3) * point2R1 (tm t (Ordinal zero<3)) +
   rewrite !expr2 !//=.
   prefield.
   ring.
+
 
 move=> egalite_wlog.
 rewrite egalite_wlog.
@@ -4701,7 +4426,6 @@ Lemma point2indext1t2_correct tm p t1 t2 :
     pt_in_triangle tm p t1 -> ~(pt_in_triangle tm p t2) ->
                                      tm t1 (point2indext1t2 p t1 t2 tm) = p.
 Proof.
-(* A faire par wassim. *)
 rewrite /point2indext1t2 /pt_in_triangle.
 case info: (tm t1 (Ordinal zero<3)==p).
 case info2 : (p == tm t2 (Ordinal zero<3)) => //=. move/eqP:info=>info.
@@ -4818,22 +4542,22 @@ move: Ha.
 rewrite info3 info4 //=.
 by move=>hyp; move/eqP:hyp=>hyp; rewrite hyp.
 move=> Ha Hb.
-case toto : (p == tm t1 (Ordinal zero<3)).
-  by move/eqP:toto=>toto; rewrite toto.
-case toto2 : (p == tm t1 (Ordinal un<3)).
-  by move/eqP:toto2=>toto2; rewrite toto2.
-case toto3 : (p == tm t1 (Ordinal deux<3)).
-  by move/eqP:toto3=>toto3; rewrite toto3.
-case toto4 : (p == tm t2 (Ordinal zero<3)).
+case p_is_zero : (p == tm t1 (Ordinal zero<3)).
+  by move/eqP:p_is_zero =>p_is_zero ; rewrite p_is_zero .
+case p_is_un : (p == tm t1 (Ordinal un<3)).
+  by move/eqP:p_is_un=>p_is_un; rewrite p_is_un.
+case p_is_deux : (p == tm t1 (Ordinal deux<3)).
+  by move/eqP:p_is_deux=>p_is_deux; rewrite p_is_deux.
+case p_is_zero_t2 : (p == tm t2 (Ordinal zero<3)).
   move: Ha.
-  rewrite toto2 toto3 //= !orb_false_r.
+  rewrite p_is_un p_is_deux //= !orb_false_r.
   by move=>hyp; move/eqP:hyp=>hyp; rewrite hyp.
-case toto5: (p == tm t2 (Ordinal un<3)).
+case p_is_un_t2: (p == tm t2 (Ordinal un<3)).
   move: Ha.
-  rewrite toto toto3 //= !orb_false_r.
+  rewrite p_is_zero p_is_deux //= !orb_false_r.
   by move=>hyp; move/eqP:hyp=>hyp; rewrite hyp.
 move: Ha.
-rewrite toto toto2 //=.
+rewrite p_is_zero p_is_un //=.
 by move=>hyp; move/eqP:hyp=>hyp; rewrite hyp.
 Qed.
 
@@ -4902,8 +4626,8 @@ case info7 : (p == tm t2 (Ordinal un<3)).
   by rewrite info7.
 move:Ha.
 rewrite info6 info7 //=.
-move/eqP=> toto.
-by rewrite toto.
+move/eqP=> p_is_deuxt2.
+by rewrite p_is_deuxt2.
 Qed.
 
 Definition inCircle2 (p1 : point) (t1: triangle) : bool :=
@@ -4976,11 +4700,11 @@ rewrite /triangle2points.
 rewrite !ffunE.
 rewrite hyp1.
 rewrite (@samedef_inCircle (t1 (Ordinal zero<3)) t2 tm t4).
-rewrite (@samedef_inCircle (t1 (Ordinal un<3)) t2 tm t4).
-rewrite (@samedef_inCircle (t1 (Ordinal deux<3)) t2 tm t4).
-by [].
-by [].
-by [].
+  rewrite (@samedef_inCircle (t1 (Ordinal un<3)) t2 tm t4).
+    rewrite (@samedef_inCircle (t1 (Ordinal deux<3)) t2 tm t4).
+      by [].
+    by [].
+  by [].
 by [].
 Qed.
 
@@ -4993,27 +4717,34 @@ Lemma delaunay_post_flip (tm: trianglemap)  (ptext1 : point) (ptext2 : point)
   -> if flip default_triangle (tm: trianglemap) (ptext1 : point) 
                                   (ptext2 : point) (t1:T) (t2 :T) (g:graph)
                                      (pm: pointmap) is Some (g',tm') then
+
+       let ptext1 := (tm t1 (Ordinal(zero<3))) in
+       let q1 := (tm t1 (Ordinal(un<3))) in
+       let p1 := (tm t1 (Ordinal(deux<3))) in
+       let ptext2 := (tm t2 (Ordinal(zero<3))) in
+       let p2 := (tm t2 (Ordinal(un<3))) in
+       let q2 :=(tm t2 (Ordinal(deux<3))) in
        let new_tr1 := (fun x : 'I_3 =>
            if x == 0
            then
-            tm t1 (point2indext1t2 ptext1 t1 t2 tm)
+            ptext1
            else
             if x == 1
             then
-              tm t2 (point2indext1t2 ptext2 t1 t2 tm)
-            else tm t1
-                (addOrd3 (point2indext1t2 ptext1 t1 t2 tm)
-                   (inZp 2))) in
+              ptext2
+            else p1) in
         let new_tr2 := (fun x : 'I_3 =>
               if x == 0
-              then tm t2 (point2indext1t2 ptext2 t1 t2 tm)
+              then ptext2
               else
                if x == 1
-               then tm t1 (point2indext1t2 ptext1 t1 t2 tm)
-               else tm t2
-                   (addOrd3 (point2indext1t2 ptext2 t1 t2 tm)
-                      (inZp 2))) in
-          isDelaunayLocal2 new_tr1 new_tr2
+               then ptext1
+               else q2) in
+  p1 = p2
+  -> q1 = q2
+  -> ~pt_in_triangle tm ptext2 t1
+  -> ~pt_in_triangle tm ptext1 t2
+          -> isDelaunayLocal2 new_tr1 new_tr2
      else true.
 Proof.
 move=> illegal infop1 infop2.
@@ -5025,45 +4756,271 @@ move=>[info1p2 info2p2].
 case cas : (flip default_triangle tm ptext1 ptext2 t1 t2 g pm)=> [[g' tmap' ] | ]
       ; last first.
   by [].
+move=> pt1 q1 p1 pt2 p2 q2 new_tr1 new_tr2 adj1 adj2 notint1 notint2.
 rewrite /isDelaunayLocal2.
 apply/andP.
 split.
-apply/andP.
-split.
-rewrite /inCircle2.
-rewrite //=.
-rewrite !point2indext1t2_correct; last first.
-    by [].
-  by [].
-rewrite !point2indext2t1_correct; last first.
-    by [].
-  by [].
-have : (\det (\matrix_(i<4, j<4) (if i == 0
+  apply/andP.
+  split.
+    rewrite (_ : new_tr1 (@Ordinal 3 0 zero<3) = pt1); last first.
+      by [].
+    rewrite /inCircle2.
+    have det_eq_0 : (\det (\matrix_(i<4, j<4) (if i == 0
                          then
                           if j == 0
-                          then point2R1 ptext2
+                          then
+                           point2R1
+                             (new_tr2 (@inZp 2 0))
                           else
                            if j == 1
-                           then point2R2 ptext2
+                           then
+                            point2R2
+                              (new_tr2 (@inZp 2 0))
                            else
                             if nat_of_ord j == 2
                             then
-                             point2R1 ptext2 ^+ 2 +
-                             point2R2 ptext2 ^+ 2
+                             point2R1
+                               (new_tr2 (@inZp 2 0))
+                             ^+ 2 +
+                             point2R2
+                               (new_tr2 (@inZp 2 0))
+                             ^+ 2
                             else 1
                          else
                           if i == 1
                           then
                            if j == 0
-                           then point2R1 ptext1
+                           then
+                            point2R1
+                              (new_tr2 (@inZp 2 1))
                            else
                             if j == 1
-                            then point2R2 ptext1
+                            then
+                             point2R2
+                               (new_tr2 (@inZp 2 1))
                             else
                              if nat_of_ord j == 2
                              then
-                              point2R1 ptext1 ^+ 2 +
-                              point2R2 ptext1 ^+ 2
+                              point2R1
+                                (new_tr2 (@inZp 2 1))
+                              ^+ 2 +
+                              point2R2
+                                (new_tr2 (@inZp 2 1))
+                              ^+ 2
+                             else 1
+                          else
+                           if nat_of_ord i == 2
+                           then
+                            if j == 0
+                            then
+                             point2R1
+                               (new_tr2 (@inZp 2 2))
+                            else
+                             if j == 1
+                             then
+                              point2R2
+                                (new_tr2 (@inZp 2 2))
+                             else
+                              if nat_of_ord j == 2
+                              then
+                               point2R1
+                                 (new_tr2 (@inZp 2 2))
+                               ^+ 2 +
+                               point2R2
+                                 (new_tr2 (@inZp 2 2))
+                               ^+ 2
+                              else 1
+                           else
+                            if j == 0
+                            then point2R1 pt1
+                            else
+                             if j == 1
+                             then point2R2 pt1
+                             else
+                              if nat_of_ord j == 2
+                              then
+                               point2R1 pt1 ^+ 2 +
+                               point2R2 pt1 ^+ 2
+                              else 1))) = 0.
+      rewrite expand_det44 !mxE !//=.
+      rewrite !expr2 !mul1r.
+      rewrite !mul1l.
+      set a := point2R1 (new_tr2 (@inZp 2 0)).
+      set b:= point2R2 (new_tr2 (@inZp 2 0)).
+      set c := point2R1 (new_tr2 (@inZp 2 1)).
+      set d:= point2R2 (new_tr2 (@inZp 2 1)).
+      set e := point2R1 (new_tr2 (@inZp 2 2)).
+      set f:= point2R2 (new_tr2 (@inZp 2 2)).
+      prefield. ring.
+    rewrite lt0r.
+    rewrite negb_andb.
+    rewrite negb_involutive.
+    move/eqP:det_eq_0 => det_eq_0.
+    rewrite det_eq_0.
+    rewrite orb_true_l.
+    by [].
+  rewrite (_ : new_tr1 (@Ordinal 3 1 un<3) = pt2); last first.
+    by [].
+  rewrite /inCircle2.
+  have det_eq_0 : (\det (\matrix_(i<4, j<4) (if i == 0
+                         then
+                          if j == 0
+                          then
+                           point2R1
+                             (new_tr2 (@inZp 2 0))
+                          else
+                           if j == 1
+                           then
+                            point2R2
+                              (new_tr2 (@inZp 2 0))
+                           else
+                            if nat_of_ord j == 2
+                            then
+                             point2R1
+                               (new_tr2 (@inZp 2 0))
+                             ^+ 2 +
+                             point2R2
+                               (new_tr2 (@inZp 2 0))
+                             ^+ 2
+                            else 1
+                         else
+                          if i == 1
+                          then
+                           if j == 0
+                           then
+                            point2R1
+                              (new_tr2 (@inZp 2 1))
+                           else
+                            if j == 1
+                            then
+                             point2R2
+                               (new_tr2 (@inZp 2 1))
+                            else
+                             if nat_of_ord j == 2
+                             then
+                              point2R1
+                                (new_tr2 (@inZp 2 1))
+                              ^+ 2 +
+                              point2R2
+                                (new_tr2 (@inZp 2 1))
+                              ^+ 2
+                             else 1
+                          else
+                           if nat_of_ord i == 2
+                           then
+                            if j == 0
+                            then
+                             point2R1
+                               (new_tr2 (@inZp 2 2))
+                            else
+                             if j == 1
+                             then
+                              point2R2
+                                (new_tr2 (@inZp 2 2))
+                             else
+                              if nat_of_ord j == 2
+                              then
+                               point2R1
+                                 (new_tr2 (@inZp 2 2))
+                               ^+ 2 +
+                               point2R2
+                                 (new_tr2 (@inZp 2 2))
+                               ^+ 2
+                              else 1
+                           else
+                            if j == 0
+                            then point2R1 pt2
+                            else
+                             if j == 1
+                             then point2R2 pt2
+                             else
+                              if nat_of_ord j == 2
+                              then
+                               point2R1 pt2 ^+ 2 +
+                               point2R2 pt2 ^+ 2
+                              else 1))) = 0.
+    rewrite expand_det44 !mxE !//=.
+    rewrite !expr2 !mul1r.
+    rewrite !mul1l.
+    set a := point2R1 (new_tr2 (@inZp 2 0)).
+    set b:= point2R2 (new_tr2 (@inZp 2 0)).
+    set c := point2R1 (new_tr2 (@inZp 2 1)).
+    set d:= point2R2 (new_tr2 (@inZp 2 1)).
+    set e := point2R1 (new_tr2 (@inZp 2 2)).
+    set f:= point2R2 (new_tr2 (@inZp 2 2)).
+    prefield. ring.
+  rewrite lt0r.
+  rewrite negb_andb.
+  rewrite negb_involutive.
+  move/eqP:det_eq_0 => det_eq_0.
+  rewrite det_eq_0.
+  rewrite orb_true_l.
+  by [].
+rewrite (_ : new_tr1 (@Ordinal 3 2 deux<3) = p1); last first.
+  by [].
+move:illegal.
+rewrite /isDelaunayLocal.
+rewrite (_ : (@triangle2points P t1 tm) (@Ordinal 3 0 zero<3) = pt1); last first.
+  rewrite /triangle2points ffunE.
+  by [].
+rewrite (_ : (@triangle2points P t1 tm) (@Ordinal 3 1 un<3) = q1); last first.
+  rewrite /triangle2points ffunE.
+  by [].
+rewrite (_ : (@triangle2points P t1 tm) (@Ordinal 3 2 deux<3) = p1); last first.
+  rewrite /triangle2points ffunE.
+  by [].
+have q1_notin_t2 : ~~ @inCircle P q1 t2 tm.
+  rewrite /inCircle.
+  rewrite adj2.
+  have det_eq_0 :  (\det (\matrix_(i<4, j<4) (if i == 0
+                         then
+                          if j == 0
+                          then
+                           point2R1
+                             (tm t2
+                                (@Ordinal 3 0 zero<3))
+                          else
+                           if j == 1
+                           then
+                            point2R2
+                              (tm t2
+                                 (@Ordinal 3 0 zero<3))
+                           else
+                            if nat_of_ord j == 2
+                            then
+                             point2R1
+                               (tm t2
+                                  (@Ordinal 3 0 zero<3))
+                             ^+ 2 +
+                             point2R2
+                               (tm t2
+                                  (@Ordinal 3 0 zero<3))
+                             ^+ 2
+                            else 1
+                         else
+                          if i == 1
+                          then
+                           if j == 0
+                           then
+                            point2R1
+                              (tm t2 (@Ordinal 3 1 un<3))
+                           else
+                            if j == 1
+                            then
+                             point2R2
+                               (tm t2
+                                  (@Ordinal 3 1 un<3))
+                            else
+                             if nat_of_ord j == 2
+                             then
+                              point2R1
+                                (tm t2
+                                   (@Ordinal 3 1 un<3))
+                              ^+ 2 +
+                              point2R2
+                                (tm t2
+                                   (@Ordinal 3 1 un<3))
+                              ^+ 2
                              else 1
                           else
                            if nat_of_ord i == 2
@@ -5072,474 +5029,457 @@ have : (\det (\matrix_(i<4, j<4) (if i == 0
                             then
                              point2R1
                                (tm t2
-                                  (addOrd3
-                                     (point2indext1t2
-                                      ptext2 t1 t2 tm)
-                                     (inZp 2)))
+                                  (@Ordinal 3 2 deux<3))
                             else
                              if j == 1
                              then
                               point2R2
                                 (tm t2
-                                   (addOrd3
-                                      (point2indext1t2
-                                      ptext2 t1 t2 tm)
-                                      (inZp 2)))
+                                   (@Ordinal 3 2 deux<3))
                              else
                               if nat_of_ord j == 2
                               then
                                point2R1
                                  (tm t2
-                                    (addOrd3
-                                      (point2indext1t2
-                                      ptext2 t1 t2 tm)
-                                      (inZp 2))) ^+ 2 +
+                                    (@Ordinal 3 2 deux<3))
+                               ^+ 2 +
                                point2R2
                                  (tm t2
-                                    (addOrd3
-                                      (point2indext1t2
-                                      ptext2 t1 t2 tm)
-                                      (inZp 2))) ^+ 2
+                                    (@Ordinal 3 2 deux<3))
+                               ^+ 2
                               else 1
                            else
                             if j == 0
-                            then point2R1 ptext1
+                            then point2R1 q2
                             else
                              if j == 1
-                             then point2R2 ptext1
+                             then point2R2 q2
                              else
                               if nat_of_ord j == 2
                               then
-                               point2R1 ptext1 ^+ 2 +
-                               point2R2 ptext1 ^+ 2
-                              else 1)))=0; last first.
-  rewrite lt0r.
-  Search _ (~~(_ &&_)).
-  rewrite negb_andb.
-  set tmp := (\det (\matrix_(i, j) (if i == 0
-                       then
-                        if j == 0
-                        then point2R1 ptext2
-                        else
-                         if j == 1
-                         then point2R2 ptext2
-                         else
-                          if nat_of_ord j == 2
-                          then
-                           point2R1 ptext2 ^+ 2 +
-                           point2R2 ptext2 ^+ 2
-                          else 1
-                       else
-                        if i == 1
-                        then
-                         if j == 0
-                         then point2R1 ptext1
-                         else
-                          if j == 1
-                          then point2R2 ptext1
-                          else
-                           if nat_of_ord j == 2
-                           then
-                            point2R1 ptext1 ^+ 2 +
-                            point2R2 ptext1 ^+ 2
-                           else 1
-                        else
-                         if nat_of_ord i == 2
-                         then
-                          if j == 0
-                          then
-                           point2R1
-                             (tm t2
-                                (addOrd3
-                                   (point2indext1t2 ptext2
-                                      t1 t2 tm) 
-                                   (inZp 2)))
-                          else
-                           if j == 1
-                           then
-                            point2R2
-                              (tm t2
-                                 (addOrd3
-                                    (point2indext1t2 ptext2
-                                      t1 t2 tm) 
-                                    (inZp 2)))
-                           else
-                            if nat_of_ord j == 2
-                            then
-                             point2R1
-                               (tm t2
-                                  (addOrd3
-                                     (point2indext1t2
-                                      ptext2 t1 t2 tm)
-                                     (inZp 2))) ^+ 2 +
-                             point2R2
-                               (tm t2
-                                  (addOrd3
-                                     (point2indext1t2
-                                      ptext2 t1 t2 tm)
-                                     (inZp 2))) ^+ 2
-                            else 1
-                         else
-                          if j == 0
-                          then point2R1 ptext1
-                          else
-                           if j == 1
-                           then point2R2 ptext1
-                           else
-                            if nat_of_ord j == 2
-                            then
-                             point2R1 ptext1 ^+ 2 +
-                             point2R2 ptext1 ^+ 2
-                            else 1))).
-  move/eqP=> infotmp.
-  rewrite infotmp.
-  by rewrite //.
-  set tmp := (\matrix_(i, j) (if i == 0
-                       then
-                        if j == 0
-                        then point2R1 ptext2
-                        else
-                         if j == 1
-                         then point2R2 ptext2
-                         else
-                          if nat_of_ord j == 2
-                          then
-                           point2R1 ptext2 ^+ 2 +
-                           point2R2 ptext2 ^+ 2
-                          else 1
-                       else
-                        if i == 1
-                        then
-                         if j == 0
-                         then point2R1 ptext1
-                         else
-                          if j == 1
-                          then point2R2 ptext1
-                          else
-                           if nat_of_ord j == 2
-                           then
-                            point2R1 ptext1 ^+ 2 +
-                            point2R2 ptext1 ^+ 2
-                           else 1
-                        else
-                         if nat_of_ord i == 2
-                         then
-                          if j == 0
-                          then
-                           point2R1
-                             (tm t2
-                                (addOrd3
-                                   (point2indext1t2 ptext2
-                                      t1 t2 tm) 
-                                   (inZp 2)))
-                          else
-                           if j == 1
-                           then
-                            point2R2
-                              (tm t2
-                                 (addOrd3
-                                    (point2indext1t2 ptext2
-                                      t1 t2 tm) 
-                                    (inZp 2)))
-                           else
-                            if nat_of_ord j == 2
-                            then
-                             point2R1
-                               (tm t2
-                                  (addOrd3
-                                     (point2indext1t2
-                                      ptext2 t1 t2 tm)
-                                     (inZp 2))) ^+ 2 +
-                             point2R2
-                               (tm t2
-                                  (addOrd3
-                                     (point2indext1t2
-                                      ptext2 t1 t2 tm)
-                                     (inZp 2))) ^+ 2
-                            else 1
-                         else
-                          if j == 0
-                          then point2R1 ptext1
-                          else
-                           if j == 1
-                           then point2R2 ptext1
-                           else
-                            if nat_of_ord j == 2
-                            then
-                             point2R1 ptext1 ^+ 2 +
-                             point2R2 ptext1 ^+ 2
-                            else 1)).
-About determinant_alternate.
-have infolem1 : ~~(Ordinal (un<4) == Ordinal(trois<4)).
-  by [].
-have infolem2 : (tmp (Ordinal (un<4)) =1 tmp (Ordinal (trois<4))).
-  rewrite /tmp.
-  Locate "=1".
-  (* 
-apply (determinant_alternate infolem1 tmp).
-
-
-
-rewrite (expand_det_col _ (inZp 3)).
-rewrite big_ord_recl.
-rewrite !mxE. rewrite //=.
-rewrite /cofactor !//=.
-rewrite expand_det33.
-rewrite !mxE. rewrite //.
-
-rewrite big_ord_recl.
-rewrite !mxE. rewrite //.
-rewrite /cofactor. rewrite //.
-rewrite expand_det33.
-rewrite !mxE. rewrite //.
-
-rewrite big_ord_recl.
-rewrite !mxE. rewrite //.
-rewrite /cofactor. rewrite //.
-rewrite expand_det33.
-rewrite !mxE. rewrite //.
-
-rewrite big_ord_recl.
-rewrite !mxE. rewrite //.
-rewrite /cofactor. rewrite //.
-rewrite expand_det33.
-rewrite !mxE. rewrite //.
-
-rewrite big_ord0.
-rewrite /=.
-rewrite !mul1l.
-rewrite plus0r  !expr2.
-rewrite //.
-
-
-
-
- (* Montrons que isDelaunayLocal new_tr1 new_tr2 tm == true *)
-case p0inCircle : (inCircle ((triangle2points t1 tm) (Ordinal zero<3)) t2 tm).
-set M := \matrix_(i<4, j<4) if i ==0 then if j==0 then
-                                     point2R1 ((triangle2points t1 tm) (Ordinal zero<3))
-                                         else if j==1 then
-                                     point2R2 ((triangle2points t1 tm) (Ordinal zero<3))
-                                         else if nat_of_ord j==2 then 
-                         (point2R1 ((triangle2points t1 tm) (Ordinal zero<3)))^+2
-                            + (point2R2 ((triangle2points t1 tm) (Ordinal zero<3)))^+2
-                                         else 1
-                           else if i ==1 then if j==0 then
-                                     point2R1 (ptext2)
-                                         else if j==1 then
-                                     point2R2 (ptext2)
-                                         else if nat_of_ord j==2 then 
-                         (point2R1 (ptext2))^+2
-                            + (point2R2 (ptext2))^+2
-                                         else 1
-                           else if nat_of_ord i ==2 then if j==0 then
-                                     point2R1 (tm t2
-                (addOrd3 (point2indext1t2 ptext2 t1 t2 tm)
-                   (Ordinal un<3)))
-                                         else if j==1 then
-                                     point2R2 (tm t2
-                (addOrd3 (point2indext1t2 ptext2 t1 t2 tm)
-                   (Ordinal un<3)))
-                                         else if nat_of_ord j==2 then 
-                         (point2R1 (tm t2
-                (addOrd3 (point2indext1t2 ptext2 t1 t2 tm)
-                   (Ordinal un<3))))^+2
-                            + (point2R2 (tm t2
-                (addOrd3 (point2indext1t2 ptext2 t1 t2 tm)
-                   (Ordinal un<3))))^+2
-                                         else 1
-                           else 
-                                let p2 := tm t2
-                (addOrd3 (point2indext1t2 ptext2 t1 t2 tm)
-                   (Ordinal deux<3)) in
-                                      if j==0 then
-                                     point2R1 p2
-                                         else if j==1 then
-                                     point2R2 p2
-                                         else if nat_of_ord j==2 then 
-                                     (point2R1 p2)^+2 + (point2R2 p2)^+2 
-                                         else 1
-                              ; last first.
-have not_illegal_after_flip : (\det M <0).
-  move: illegal.
-  rewrite /isDelaunayLocal.
-  move=> illegal.
-
-    rewrite //.
-    move: p0inCircle.
-    rewrite /inCircle.
-    rewrite (expand_det_col _ (Ordinal (trois<4))).
-    rewrite big_ord_recl.
-    rewrite mxE. rewrite //=.
-    rewrite /cofactor !//=.
-    rewrite expand_det33.
-    rewrite !mxE !//=.
-
-    rewrite big_ord_recl.
-    rewrite mxE. rewrite //=.
-    rewrite /cofactor !//=.
-    rewrite expand_det33.
-    rewrite !mxE !//=.
-
-    rewrite big_ord_recl.
-    rewrite mxE. rewrite //=.
-    rewrite /cofactor !//=.
-    rewrite expand_det33.
-    rewrite !mxE !//=.
-
-    rewrite big_ord_recl.
-    rewrite mxE. rewrite //=.
-    rewrite /cofactor !//=.
-    rewrite expand_det33.
-    rewrite !mxE !//=.
-
-    rewrite big_ord0.
+                               point2R1 q2 ^+ 2 +
+                               point2R2 q2 ^+ 2
+                              else 1))) = 0.
+    rewrite expand_det44 !mxE !//=.
+    rewrite !expr2 !mul1r.
     rewrite !mul1l.
-    rewrite plus0r  !expr2.
-    rewrite !//=.
-
-
-    (* Développement de M *)
-    rewrite /M.
-    rewrite (expand_det_col _ (Ordinal (trois<4))).
-    rewrite big_ord_recl.
-    rewrite mxE. rewrite //=.
-    rewrite /cofactor !//=.
-    rewrite expand_det33.
-    rewrite !mxE !//=.
-
-    rewrite big_ord_recl.
-    rewrite mxE. rewrite //=.
-    rewrite /cofactor !//=.
-    rewrite expand_det33.
-    rewrite !mxE !//=.
-
-    rewrite big_ord_recl.
-    rewrite mxE. rewrite //=.
-    rewrite /cofactor !//=.
-    rewrite expand_det33.
-    rewrite !mxE !//=.
-
-    rewrite big_ord_recl.
-    rewrite mxE. rewrite //=.
-    rewrite /cofactor !//=.
-    rewrite expand_det33.
-    rewrite !mxE !//=.
-
-    rewrite big_ord0.
-    About point2indext1t2_correct.
-    case index_ptext2_iszero : 
-          (point2indext1t2 ptext2 t1 t2 tm == Ordinal(zero<3)).
-    move/eqP : index_ptext2_iszero.
-    move=> index_ptext2_iszero.
-    rewrite !index_ptext2_iszero .
-    rewrite !mul1l.
-    rewrite plus0r  !expr2.
-    rewrite !//=.
-    set a := point2R1 (tm t2 (Ordinal zero<3)).
-    set b := point2R2 (tm t2 (Ordinal zero<3)).
-    set c := point2R1 (tm t2 (Ordinal un<3)).
-    set d := point2R2 (tm t2 (Ordinal un<3)).
-    set e := point2R1 (tm t2 (Ordinal deux<3)).
-    set f := point2R2 (tm t2 (Ordinal deux<3)).
-    set h := point2R1 ((triangle2points t1 tm) (Ordinal zero<3)).
-    set i := point2R2 ((triangle2points t1 tm) (Ordinal zero<3)).
-    rewrite (_ : addOrd3 (Ordinal zero<3) (Ordinal deux<3) = (Ordinal deux<3))
-        ; last first.
-      rewrite /addOrd3.
-      apply: val_inj.
-      by rewrite //.
-    have rew1 : ptext2 = tm t2 (Ordinal zero<3).
-      rewrite -index_ptext2_iszero.
-      by rewrite point2indext2t1_correct.
-    rewrite rew1 -/f -/e -/a -/b -/c -/d -/h -/i.
-    rewrite (_ : addOrd3 (Ordinal zero<3) (Ordinal un<3) = (Ordinal un<3))
-        ; last first.
-      rewrite /addOrd3.
-      apply: val_inj.
-      by rewrite //.
-    rewrite -/f -/e -/a -/b -/c -/d -/h -/i.
-    rewrite !//=.
-    Search _ (Num.lt _ 0) (Num.lt 0 (-_)).
-    rewrite -oppr_gt0.
-    rewrite (_ : (-
-   ((-1) ^+ (0 + 3) *
-    (a * d * (e * e + f * f) - a * (c * c + d * d) * f -
-     b * c * (e * e + f * f) + b * (c * c + d * d) * e +
-     (a * a + b * b) * c * f - (a * a + b * b) * d * e) +
-    (h * d * (e * e + f * f) - h * (c * c + d * d) * f -
-     i * c * (e * e + f * f) + i * (c * c + d * d) * e +
-     (h * h + i * i) * c * f - (h * h + i * i) * d * e +
-     ((-1) ^+ (bump 0 (bump 0 0) + 3) *
-      (h * b * (e * e + f * f) - h * (a * a + b * b) * f -
-       i * a * (e * e + f * f) + i * (a * a + b * b) * e +
-       (h * h + i * i) * a * f - (h * h + i * i) * b * e) +
-      (h * b * (c * c + d * d) - h * (a * a + b * b) * d -
-       i * a * (c * c + d * d) + i * (a * a + b * b) * c +
-       (h * h + i * i) * a * d - (h * h + i * i) * b * c))))) 
-    = ((-1) ^+ (0 + 3) *
-   (c * f * (h * h + i * i) - c * (e * e + f * f) * i -
-    d * e * (h * h + i * i) + d * (e * e + f * f) * h +
-    (c * c + d * d) * e * i - (c * c + d * d) * f * h) +
-   (a * f * (h * h + i * i) - a * (e * e + f * f) * i -
-    b * e * (h * h + i * i) + b * (e * e + f * f) * h +
-    (a * a + b * b) * e * i - (a * a + b * b) * f * h +
-    ((-1) ^+ (bump 0 (bump 0 0) + 3) *
-     (a * d * (h * h + i * i) - a * (c * c + d * d) * i -
-      b * c * (h * h + i * i) + b * (c * c + d * d) * h +
-      (a * a + b * b) * c * i - (a * a + b * b) * d * h) +
-     (a * d * (e * e + f * f) - a * (c * c + d * d) * f -
-      b * c * (e * e + f * f) + b * (c * c + d * d) * e +
-      (a * a + b * b) * c * f - (a * a + b * b) * d * e)))) ); last first.
-    change (-
-((-1) ^+ (3) *
- (a * d * (e * e + f * f) - a * (c * c + d * d) * f -
-  b * c * (e * e + f * f) + b * (c * c + d * d) * e +
-  (a * a + b * b) * c * f - (a * a + b * b) * d * e) +
- (h * d * (e * e + f * f) - h * (c * c + d * d) * f -
-  i * c * (e * e + f * f) + i * (c * c + d * d) * e +
-  (h * h + i * i) * c * f - (h * h + i * i) * d * e +
-  ((-1) ^+ (bump 0 (bump 0 0) + 3) *
-   (h * b * (e * e + f * f) - h * (a * a + b * b) * f -
-    i * a * (e * e + f * f) + i * (a * a + b * b) * e +
-    (h * h + i * i) * a * f - (h * h + i * i) * b * e) +
-   (h * b * (c * c + d * d) - h * (a * a + b * b) * d -
-    i * a * (c * c + d * d) + i * (a * a + b * b) * c +
-    (h * h + i * i) * a * d - (h * h + i * i) * b * c)))) =
-(-1) ^+ (3) *
-(c * f * (h * h + i * i) - c * (e * e + f * f) * i -
- d * e * (h * h + i * i) + d * (e * e + f * f) * h +
- (c * c + d * d) * e * i - (c * c + d * d) * f * h) +
-(a * f * (h * h + i * i) - a * (e * e + f * f) * i -
- b * e * (h * h + i * i) + b * (e * e + f * f) * h +
- (a * a + b * b) * e * i - (a * a + b * b) * f * h +
- ((-1) ^+ (bump 0 (bump 0 0) + 3) *
-  (a * d * (h * h + i * i) - a * (c * c + d * d) * i -
-   b * c * (h * h + i * i) + b * (c * c + d * d) * h +
-   (a * a + b * b) * c * i - (a * a + b * b) * d * h) +
-  (a * d * (e * e + f * f) - a * (c * c + d * d) * f -
-   b * c * (e * e + f * f) + b * (c * c + d * d) * e +
-   (a * a + b * b) * c * f - (a * a + b * b) * d * e)))).
-    rewrite (_ : ((bump 0 (bump 0 0) + 3) = 5)%N); last first.
-      by [].
-    rewrite //.
-    Search _ (_^+ _) odd.
-    rewrite -GRing.signr_odd.
-    rewrite (_ : odd 3 = true); last first.
-      by [].
-    rewrite !//= expr1.
-    rewrite -GRing.signr_odd.
-    rewrite (_ : odd 5 = true); last first.
-      by [].
-    rewrite !//= expr1.
+    set a := point2R1 (new_tr2 (@inZp 2 0)).
+    set b:= point2R2 (new_tr2 (@inZp 2 0)).
+    set c := point2R1 (tm t2 (@Ordinal 3 1 un<3)).
+    set d:= point2R2 (tm t2 (@Ordinal 3 1 un<3)).
+    set e := point2R1 (new_tr2 (@inZp 2 2)).
+    set f:= point2R2 (new_tr2 (@inZp 2 2)).
+    set h1:= point2R1 q2.
+    set h2:= point2R2 q2.
     prefield. ring.
-    by [].
-   *)
-Admitted.
+  rewrite lt0r.
+  rewrite negb_andb.
+  rewrite negb_involutive.
+  move/eqP:det_eq_0 => det_eq_0.
+  rewrite det_eq_0.
+  rewrite orb_true_l.
+  by [].
+rewrite q1_notin_t2.
+have p1_notin_t2 : ~~ @inCircle P p1 t2 tm.
+  rewrite /inCircle.
+  rewrite adj1.
+  have det_eq_0 :  (\det (\matrix_(i<4, j<4) (if i == 0
+                         then
+                          if j == 0
+                          then
+                           point2R1
+                             (tm t2
+                                (@Ordinal 3 0 zero<3))
+                          else
+                           if j == 1
+                           then
+                            point2R2
+                              (tm t2
+                                 (@Ordinal 3 0 zero<3))
+                           else
+                            if nat_of_ord j == 2
+                            then
+                             point2R1
+                               (tm t2
+                                  (@Ordinal 3 0 zero<3))
+                             ^+ 2 +
+                             point2R2
+                               (tm t2
+                                  (@Ordinal 3 0 zero<3))
+                             ^+ 2
+                            else 1
+                         else
+                          if i == 1
+                          then
+                           if j == 0
+                           then
+                            point2R1
+                              (tm t2 (@Ordinal 3 1 un<3))
+                           else
+                            if j == 1
+                            then
+                             point2R2
+                               (tm t2
+                                  (@Ordinal 3 1 un<3))
+                            else
+                             if nat_of_ord j == 2
+                             then
+                              point2R1
+                                (tm t2
+                                   (@Ordinal 3 1 un<3))
+                              ^+ 2 +
+                              point2R2
+                                (tm t2
+                                   (@Ordinal 3 1 un<3))
+                              ^+ 2
+                             else 1
+                          else
+                           if nat_of_ord i == 2
+                           then
+                            if j == 0
+                            then
+                             point2R1
+                               (tm t2
+                                  (@Ordinal 3 2 deux<3))
+                            else
+                             if j == 1
+                             then
+                              point2R2
+                                (tm t2
+                                   (@Ordinal 3 2 deux<3))
+                             else
+                              if nat_of_ord j == 2
+                              then
+                               point2R1
+                                 (tm t2
+                                    (@Ordinal 3 2 deux<3))
+                               ^+ 2 +
+                               point2R2
+                                 (tm t2
+                                    (@Ordinal 3 2 deux<3))
+                               ^+ 2
+                              else 1
+                           else
+                            if j == 0
+                            then point2R1 p2
+                            else
+                             if j == 1
+                             then point2R2 p2
+                             else
+                              if nat_of_ord j == 2
+                              then
+                               point2R1 p2 ^+ 2 +
+                               point2R2 p2 ^+ 2
+                              else 1))) = 0.
+    rewrite expand_det44 !mxE !//=.
+    rewrite !expr2 !mul1r.
+    rewrite !mul1l.
+    set a := point2R1 (new_tr2 (@inZp 2 0)).
+    set b:= point2R2 (new_tr2 (@inZp 2 0)).
+    set c := point2R1 (tm t2 (@Ordinal 3 1 un<3)).
+    set d:= point2R2 (tm t2 (@Ordinal 3 1 un<3)).
+    set e := point2R1 (new_tr2 (@inZp 2 2)).
+    set f:= point2R2 (new_tr2 (@inZp 2 2)).
+    set h1:= point2R1 p2.
+    set h2:= point2R2 p2.
+    prefield. ring.
+  rewrite lt0r.
+  rewrite negb_andb.
+  rewrite negb_involutive.
+  move/eqP:det_eq_0 => det_eq_0.
+  rewrite det_eq_0.
+  rewrite orb_true_l.
+  by [].
+rewrite p1_notin_t2.
+rewrite !andb_true_r.
+move/eqP=> inCirc.
+apply negb_false_iff in inCirc.
+move: inCirc.
+rewrite /inCircle /inCircle2.
+rewrite adj1.
+have opp :   (\det (\matrix_(i<4, j<4) (if i == 0
+                         then
+                          if j == 0
+                          then
+                           point2R1
+                             (new_tr2 (@inZp 2 0))
+                          else
+                           if j == 1
+                           then
+                            point2R2
+                              (new_tr2 (@inZp 2 0))
+                           else
+                            if nat_of_ord j == 2
+                            then
+                             point2R1
+                               (new_tr2 (@inZp 2 0))
+                             ^+ 2 +
+                             point2R2
+                               (new_tr2 (@inZp 2 0))
+                             ^+ 2
+                            else 1
+                         else
+                          if i == 1
+                          then
+                           if j == 0
+                           then
+                            point2R1
+                              (new_tr2 (@inZp 2 1))
+                           else
+                            if j == 1
+                            then
+                             point2R2
+                               (new_tr2 (@inZp 2 1))
+                            else
+                             if nat_of_ord j == 2
+                             then
+                              point2R1
+                                (new_tr2 (@inZp 2 1))
+                              ^+ 2 +
+                              point2R2
+                                (new_tr2 (@inZp 2 1))
+                              ^+ 2
+                             else 1
+                          else
+                           if nat_of_ord i == 2
+                           then
+                            if j == 0
+                            then
+                             point2R1
+                               (new_tr2 (@inZp 2 2))
+                            else
+                             if j == 1
+                             then
+                              point2R2
+                                (new_tr2 (@inZp 2 2))
+                             else
+                              if nat_of_ord j == 2
+                              then
+                               point2R1
+                                 (new_tr2 (@inZp 2 2))
+                               ^+ 2 +
+                               point2R2
+                                 (new_tr2 (@inZp 2 2))
+                               ^+ 2
+                              else 1
+                           else
+                            if j == 0
+                            then point2R1 p2
+                            else
+                             if j == 1
+                             then point2R2 p2
+                             else
+                              if nat_of_ord j == 2
+                              then
+                               point2R1 p2 ^+ 2 +
+                               point2R2 p2 ^+ 2
+                              else 1))) 
+            = - (
+                      (\det (\matrix_(i<4, j<4) (if i == 0
+                         then
+                          if j == 0
+                          then
+                           point2R1
+                             (tm t2
+                                (@Ordinal 3 0 zero<3))
+                          else
+                           if j == 1
+                           then
+                            point2R2
+                              (tm t2
+                                 (@Ordinal 3 0 zero<3))
+                           else
+                            if nat_of_ord j == 2
+                            then
+                             point2R1
+                               (tm t2
+                                  (@Ordinal 3 0 zero<3))
+                             ^+ 2 +
+                             point2R2
+                               (tm t2
+                                  (@Ordinal 3 0 zero<3))
+                             ^+ 2
+                            else 1
+                         else
+                          if i == 1
+                          then
+                           if j == 0
+                           then
+                            point2R1
+                              (tm t2 (@Ordinal 3 1 un<3))
+                           else
+                            if j == 1
+                            then
+                             point2R2
+                               (tm t2
+                                  (@Ordinal 3 1 un<3))
+                            else
+                             if nat_of_ord j == 2
+                             then
+                              point2R1
+                                (tm t2
+                                   (@Ordinal 3 1 un<3))
+                              ^+ 2 +
+                              point2R2
+                                (tm t2
+                                   (@Ordinal 3 1 un<3))
+                              ^+ 2
+                             else 1
+                          else
+                           if nat_of_ord i == 2
+                           then
+                            if j == 0
+                            then
+                             point2R1
+                               (tm t2
+                                  (@Ordinal 3 2 deux<3))
+                            else
+                             if j == 1
+                             then
+                              point2R2
+                                (tm t2
+                                   (@Ordinal 3 2 deux<3))
+                             else
+                              if nat_of_ord j == 2
+                              then
+                               point2R1
+                                 (tm t2
+                                    (@Ordinal 3 2 deux<3))
+                               ^+ 2 +
+                               point2R2
+                                 (tm t2
+                                    (@Ordinal 3 2 deux<3))
+                               ^+ 2
+                              else 1
+                           else
+                            if j == 0
+                            then point2R1 pt1
+                            else
+                             if j == 1
+                             then point2R2 pt1
+                             else
+                              if nat_of_ord j == 2
+                              then
+                               point2R1 pt1 ^+ 2 +
+                               point2R2 pt1 ^+ 2
+                              else 1)))).
+  rewrite expand_det44 !mxE !//=.
+  rewrite !expr2 !mul1r.
+  rewrite !mul1l.
+  rewrite expand_det44 !mxE !//=.
+  rewrite !mul1r !mul1l.
+  set a := point2R1 (new_tr2 (@inZp 2 0)).
+  set b:= point2R2 (new_tr2 (@inZp 2 0)).
+  set c := point2R1 (tm t2 (@Ordinal 3 1 un<3)).
+  set d:= point2R2 (tm t2 (@Ordinal 3 1 un<3)).
+  set e := point2R1 (new_tr2 (@inZp 2 2)).
+  set f:= point2R2 (new_tr2 (@inZp 2 2)).
+  set h1:= point2R1 (new_tr2 (@inZp 2 1)).
+  set h2:= point2R2 (new_tr2 (@inZp 2 1)).
+  set i1 := point2R1 p1.
+  set i2 := point2R2 p1.
+  prefield; ring.
+rewrite opp.
+set det := \det (\matrix_(i<4, j<4) (if i == 0
+                         then
+                          if j == 0
+                          then
+                           point2R1
+                             (tm t2
+                                (@Ordinal 3 0 zero<3))
+                          else
+                           if j == 1
+                           then
+                            point2R2
+                              (tm t2
+                                 (@Ordinal 3 0 zero<3))
+                           else
+                            if nat_of_ord j == 2
+                            then
+                             point2R1
+                               (tm t2
+                                  (@Ordinal 3 0 zero<3))
+                             ^+ 2 +
+                             point2R2
+                               (tm t2
+                                  (@Ordinal 3 0 zero<3))
+                             ^+ 2
+                            else 1
+                         else
+                          if i == 1
+                          then
+                           if j == 0
+                           then
+                            point2R1
+                              (tm t2 (@Ordinal 3 1 un<3))
+                           else
+                            if j == 1
+                            then
+                             point2R2
+                               (tm t2
+                                  (@Ordinal 3 1 un<3))
+                            else
+                             if nat_of_ord j == 2
+                             then
+                              point2R1
+                                (tm t2
+                                   (@Ordinal 3 1 un<3))
+                              ^+ 2 +
+                              point2R2
+                                (tm t2
+                                   (@Ordinal 3 1 un<3))
+                              ^+ 2
+                             else 1
+                          else
+                           if nat_of_ord i == 2
+                           then
+                            if j == 0
+                            then
+                             point2R1
+                               (tm t2
+                                  (@Ordinal 3 2 deux<3))
+                            else
+                             if j == 1
+                             then
+                              point2R2
+                                (tm t2
+                                   (@Ordinal 3 2 deux<3))
+                             else
+                              if nat_of_ord j == 2
+                              then
+                               point2R1
+                                 (tm t2
+                                    (@Ordinal 3 2 deux<3))
+                               ^+ 2 +
+                               point2R2
+                                 (tm t2
+                                    (@Ordinal 3 2 deux<3))
+                               ^+ 2
+                              else 1
+                           else
+                            if j == 0
+                            then point2R1 pt1
+                            else
+                             if j == 1
+                             then point2R2 pt1
+                             else
+                              if nat_of_ord j == 2
+                              then
+                               point2R1 pt1 ^+ 2 +
+                               point2R2 pt1 ^+ 2
+                              else 1)).
+simpl in det.
+move => det_gt0.
+rewrite lt0r negb_andb negb_involutive -ltrNge.
+rewrite -oppr_lt0 in det_gt0.
+rewrite det_gt0.
+rewrite orb_true_r.
+by [].
+Qed.
 
 
 (*===================================
-                  PROOF OF YB for ccw_exchange
+                  PROOF OF  ccw_exchange
 ===================================*)
 
 
@@ -5584,25 +5524,21 @@ have : (ccwd xq yq xr yr xt yt =
   by rat_field.
 move=>H.
 rewrite H.
-Search _ (Num.lt 0 (_/_)).
 apply: divr_gt0.
-Search _ (Num.lt 0 (_+_)).
-apply: addr_gt0.
-Search _ (Num.lt 0 (_*_)).
-apply: mulr_gt0.
-by [].
-by [].
-apply: mulr_gt0.
-by [].
-by [].
+  apply: addr_gt0.
+    apply: mulr_gt0.
+      by [].
+    by [].
+  apply: mulr_gt0.
+    by [].
+  by [].
 by [].
 Qed.
 
 Lemma eq_not_ccwr :
   forall xp yp xq yq xr yr, xp = xq -> yp = yq -> ~ccwr xp yp xq yq xr yr.
 move=> xp yp xq yq xr yr q1 q2.
-rewrite q1 q2.
-rewrite /ccwr /ccwd.
+rewrite q1 q2 /ccwr /ccwd.
 have info : (xq * yq - xq * yq - xq * yr + xr * yq + xq * yr -
    xr * yq) = 0.
   set a := xq * yq.
@@ -5737,7 +5673,7 @@ split.
   move/eqP: cc1.
   rewrite /ccwd.
   by [].
-rewrite //.
+by rewrite //.
 Qed.
 
 Lemma distance_0_eq :
@@ -5791,14 +5727,10 @@ rewrite (sum_eq0 pos).
 move/forallP=>tmp2.
 move : (tmp2 ord0).
 change ((k`_0 == 0%Q) -> x = x').
-rewrite /k.
-rewrite !//=.
-rewrite /a.
-Search _ ((_*_) ==0).
+rewrite /k !//= /a.
 rewrite mulf_eq0.
 rewrite orb_diag.
 move/eqP=>tmp3.
-Search _ ((_-_)=0).
 apply subr0_eq.
 by [].
 set a := (x - x') * (x - x').
@@ -5847,14 +5779,10 @@ rewrite (sum_eq0 pos).
 move/forallP=>tmp2.
 move : (tmp2 (inZp 1)).
 change ((k`_1 == 0%Q) -> y = y').
-rewrite /k.
-rewrite !//=.
-rewrite /b.
-Search _ ((_*_) ==0).
+rewrite /k !//= /b.
 rewrite mulf_eq0.
 rewrite orb_diag.
 move/eqP=>tmp3.
-Search _ ((_-_)=0).
 apply subr0_eq.
 by [].
 Qed.
@@ -5873,13 +5801,12 @@ have pos2 : Num.le 0 ((y - y') * (y - y')).
   Search _ (Num.le 0 (_^+_)).
   apply: exprn_even_ge0.
   by [].
-About pos_elt_pos_sum.
 set a := (x - x') * (x - x').
 set b := (y - y') * (y - y').
 simpl in a,b.
 set k := [::a;b].
 rewrite (_ : (x - x') * (x - x') + (y - y') * (y - y') = \sum_(i < 2) k`_i).
-apply pos_elt_pos_sum.
+  apply pos_elt_pos_sum.
   rewrite -big_andE.
   rewrite big_ord_recr.
   change ((\big[andb_monoid/true]_(i < 1) Num.le 0 k`_i && (Num.le 0 k`_1)) = true).
@@ -5887,13 +5814,13 @@ apply pos_elt_pos_sum.
   change ( (Num.le 0 k`_0) && (Num.le 0 k`_1) = true).
   apply/andP.
   by [].
-  rewrite big_ord_recr.
-  change ((x - x') * (x - x') + (y - y') * (y - y') = \sum_(i<1) k`_i + k`_1).
-  rewrite big_ord_recr big_ord0.
-  change ((x - x') * (x - x') + (y - y') * (y - y') = 0 + k`_0 + k`_1).
-  rewrite plus0l.
-  rewrite /k.
-  by rewrite //.
+rewrite big_ord_recr.
+change ((x - x') * (x - x') + (y - y') * (y - y') = \sum_(i<1) k`_i + k`_1).
+rewrite big_ord_recr big_ord0.
+change ((x - x') * (x - x') + (y - y') * (y - y') = 0 + k`_0 + k`_1).
+rewrite plus0l.
+rewrite /k.
+by rewrite //.
 Qed.
 
 Lemma in_circled1 :
@@ -5925,30 +5852,21 @@ have vp := (in_circled1 xp yp xq yq xr yr).
 rewrite d in vp.
 have vdp := (distance_sq_pos xp yp a b).
 have info : (r >= 0).
-  Search _ ((_*_) = 0).
   move : vp.
   set p1 := - ccwd xp yp xq yq xr yr.
   set p2 := (distance_sq xp yp a b - r).
   move=> vp.
   simpl in p1, p2.
-  Search _ ((_*_) == 0).
   move/eqP: vp.
   rewrite GRing.mulf_eq0.
   move:q.
-  rewrite /p1.
-  rewrite lt0r.
-  Search _ (-_ ==0).
-  rewrite oppr_eq0.
+  rewrite /p1 lt0r oppr_eq0.
   move/andP=> q.
   move:q.
   move=> [q1 q2].
   move/negbTE:q1.
   move=> q1.
-  rewrite q1.
-  Search _ (false || _).
-  rewrite orb_false_l.
-  rewrite /p2.
-  Search _ (_ - _ == _).
+  rewrite q1 orb_false_l /p2.
   rewrite subr_eq0.
   move/eqP=>info2.
   rewrite -info2.
@@ -5967,17 +5885,14 @@ have pa : (distance_sq xp yp a b = 0).
   move:q.
   set p1 := - ccwd xp yp xq yq xr yr.
   set p2 := (distance_sq xp yp a b - r).
-  rewrite /p1.
-  rewrite lt0r.
-  Search _ (-_ ==0).
+  rewrite /p1 lt0r.
   rewrite oppr_eq0.
   move/andP=> q.
   move:q.
   move=> [q1 q2].
   move/negbTE:q1.
   move=> q1.
-  rewrite q1.
-  rewrite orb_false_l.
+  rewrite q1 orb_false_l.
   rewrite /p2.
   move/eqP => fin.
   apply/eqP.
@@ -5985,7 +5900,6 @@ have pa : (distance_sq xp yp a b = 0).
   move=> nul_ou_spos.
   rewrite nul_ou_spos in fin.
   move : fin.
-  Search _ (_ - 0).
   rewrite subr0.
   move/eqP => t.
   by [].
@@ -5997,21 +5911,16 @@ have qa : (distance_sq xq yq a b = 0).
   move/eqP:vq.
   rewrite -/p1 -/p2.
   simpl in p1, p2.
-  Search _ ((_*_) == 0).
   rewrite GRing.mulf_eq0.
   move:q.
-  rewrite /p1.
-  rewrite lt0r.
-  Search _ (-_ ==0).
+  rewrite /p1 lt0r.
   rewrite oppr_eq0.
   move/andP=> q.
   move:q.
   move=> [q1 q2].
   move/negbTE:q1.
   move=> q1.
-  rewrite q1.
-  rewrite orb_false_l.
-  rewrite /p2.
+  rewrite q1 orb_false_l /p2.
   move/eqP : nul_ou_spos.
   move=> nul_ou_spos.
   rewrite nul_ou_spos.
@@ -6042,10 +5951,8 @@ rewrite /ccwd.
 rewrite /distance_sq.
 move=> x y a b rp inc diff.
 rewrite !mul0l !mul0r.
-Search _ (0 - _).
 rewrite !subr0 plus0l.
 rewrite !expr2 in inc.
-Search _ (-_*(-_)).
 rewrite (_ : (b * y - x * - a) = (b * y + (- x * - a))); last first.
   prefield; ring.
 rewrite mulrNN.
@@ -6053,50 +5960,42 @@ case nul_ou_non : ((x == 0)).
   move/eqP : nul_ou_non.
   move=> nul_ou_non.
   rewrite nul_ou_non mul0l.
-  Search _ (_ -0).
   rewrite subr0.
   move: (diff nul_ou_non).
   rewrite nul_ou_non in inc.
   rewrite !sub0r in inc.
   move : inc.
   rewrite mulrNN.
-  Search _ (Num.le (_+_) (_+_)).
   set tmp := a*a.
   move=> hypo.
   simpl in tmp.
   move=>hypo2.
-  Search _ (Num.lt (_+_) (_+_)).
   rewrite ler_add2l in hypo.
-  Search _ (Num.lt 0 (_*_)).
   have info : ~~ (b ==0).
-    Search _ (~~_) (false).
     apply/negP.
     rewrite /not.
     move/eqP=> contra.
     rewrite contra in hypo.
     move: hypo.
     rewrite //= mul0r subr0.
-    Search _ (Num.le _ 0) (_^+_).
     rewrite -expr2.
     rewrite real_exprn_even_le0.
         move/andP=> hyp.
         move:hyp.
         move=> [hyp1 hyp2].
         move/eqP:hyp2 => hyp2.
-        Search _ (_<> _) (_=_).
         move : hyp2 hypo2.
         by [].
-      Search _ (Num.real).
       apply : Num.Internals.num_real.
     by [].
   rewrite lt0r.
   apply/andP; split.
-    Search _ ((_*_)==0).
     apply:mulf_neq0.
-    by [].
-  by move/eqP:hypo2.
-  Search _ (Num.le (_^+_) _).
+      by [].
+    by move/eqP:hypo2.
   
+
+
 
 
 Admitted.
@@ -6118,37 +6017,31 @@ have qa : (distance_sq xq yq a b = r).
 have ciq := (in_circled2 xp yp xq yq xr yr).
 rewrite H in ciq. rewrite /ccwr in cc. apply: subr0_eq. rewrite lt0r in cc.
   move/andP:cc => [cc1 cc2].
-  Search _ (-_ ==0). rewrite -oppr_eq0 in cc1.
-  Search _ (_*_ == 0).
+  rewrite -oppr_eq0 in cc1.
   move/eqP: ciq => ciq.
   rewrite mulf_eq0 in ciq.
   move/negbTE: cc1 => cc1.
   rewrite cc1 in ciq.
-  Search _ (false || _).
   rewrite orb_false_l in ciq.
   by move/eqP:ciq=>ciq.
 have ra : (distance_sq xr yr a b = r).
 have cir := (in_circled3 xp yp xq yq xr yr).
 rewrite H in cir; rewrite /ccwr in cc. apply: subr0_eq. rewrite lt0r in cc.
   move/andP:cc => [cc1 cc2].
-  Search _ (-_ ==0). rewrite -oppr_eq0 in cc1.
-  Search _ (_*_ == 0).
+  rewrite -oppr_eq0 in cc1.
   move/eqP: cir => cir.
   rewrite mulf_eq0 in cir.
   move/negbTE: cc1 => cc1.
   rewrite cc1 in cir.
-  Search _ (false || _).
   rewrite orb_false_l in cir.
   by move/eqP:cir=>cir.
 have info : (xq - xp = 0 -> yq - yp <> 0).
-  move=> H1 H2; have H1' : (xp = xq). apply: subr0_eq. move/eqP:H1. 
-    Search _ (-_ == 0).
+  move=> H1 H2; have H1' : (xp = xq). apply: subr0_eq. move/eqP:H1.
     rewrite -oppr_eq0.
     move/eqP=>H1. move:H1. rewrite (_ : - (xq - xp) = xp - xq); last first.
       rat_field.
     by [].
-  have H2' : (yp = yq). apply: subr0_eq. move/eqP:H2. 
-    Search _ (-_ == 0).
+  have H2' : (yp = yq). apply: subr0_eq. move/eqP:H2.
     rewrite -oppr_eq0.
     move/eqP=>H2. move:H2. rewrite (_ : - (yq - yp) = yp - yq); last first.
       rat_field.
@@ -6157,20 +6050,17 @@ case :(@eq_not_ccwr xp yp xq yq xr yr H1' H2'). by [].
 have :  (xr - xp = 0 -> yr - yp <> 0).
   move=> H1 H2; have H1' : (xr = xp). apply: subr0_eq. by [].
   have H2' : (yr = yp) by apply: subr0_eq.
-About eq_not_ccwr.
 case :(@eq_not_ccwr xr yr xp yp xq yq H1' H2').
 apply axiom1; apply axiom1; by [].
 have pa : (distance_sq xp yp a b = r).
 have cip := (in_circled1 xp yp xq yq xr yr).
 rewrite H in cip; rewrite /ccwr in cc.  apply: subr0_eq. rewrite lt0r in cc.
   move/andP:cc => [cc1 cc2].
-  Search _ (-_ ==0). rewrite -oppr_eq0 in cc1.
-  Search _ (_*_ == 0).
+  rewrite -oppr_eq0 in cc1.
   move/eqP: cip => cip.
   rewrite mulf_eq0 in cip.
   move/negbTE: cc1 => cc1.
   rewrite cc1 in cip.
-  Search _ (false || _).
   rewrite orb_false_l in cip.
   by move/eqP:cip=>cip.
 rewrite /ccwr; rewrite <- (ccwd_translation (-xp) (-yp) _ _ _ _ xq yq).
@@ -6191,29 +6081,34 @@ rewrite (_ : (yp + xp - a + - yp) = (-(a - xp))); last first.
   by rat_field.
 have rp := (@ccw_circle_positive_radius xp yp xq yq xr yr a b r cc H).
 have d' : (0 < (a-xp)^+2 + (b-yp)^+2).
-rewrite (_ : ((a - xp) ^+ 2 + (b - yp) ^+ 2) = (distance_sq xp yp a b))
+  rewrite (_ : ((a - xp) ^+ 2 + (b - yp) ^+ 2) = (distance_sq xp yp a b))
       ; last first.
-  rewrite /distance_sq.
-  rewrite !expr2.
-  by rat_field.
-rewrite pa. by [].
+    rewrite /distance_sq.
+    rewrite !expr2.
+    by rat_field.
+  rewrite pa. 
+  by [].
 rewrite /distance_sq.
 split.
-apply in_circle_ccwr.
-by [].
-rewrite -/(xq - xp); rewrite -/(yq - yp); rewrite translation_distance.
-have dq : ((distance_sq xq yq a b) = ((a - xp) ^+ 2 + (b - yp) ^+ 2)).
-rewrite qa. rewrite <- pa. rewrite /distance_sq. rewrite !expr2. by rat_field.
-rewrite dq. by [].
-by [].
+  apply in_circle_ccwr.
+      by [].
+    rewrite -/(xq - xp); rewrite -/(yq - yp); rewrite translation_distance.
+    have dq : ((distance_sq xq yq a b) = ((a - xp) ^+ 2 + (b - yp) ^+ 2)).
+      rewrite qa. rewrite <- pa. rewrite /distance_sq. rewrite !expr2.
+      by rat_field.
+    rewrite dq.
+    by [].
+  by [].
 split.
-apply in_circle_ccwr.
-by [].
-rewrite -/(xr - xp); rewrite-/(yr - yp); rewrite translation_distance.
-have dq : ((distance_sq xr yr a b) = ((a - xp) ^+ 2 + (b - yp) ^+ 2)).
-rewrite ra. rewrite <- pa; rewrite /distance_sq. rewrite !expr2. by rat_field.
-rewrite dq; by [].
-by [].
+  apply in_circle_ccwr.
+      by [].
+    rewrite -/(xr - xp); rewrite-/(yr - yp); rewrite translation_distance.
+    have dq : ((distance_sq xr yr a b) = ((a - xp) ^+ 2 + (b - yp) ^+ 2)).
+      rewrite ra. rewrite <- pa; rewrite /distance_sq. rewrite !expr2. 
+      by rat_field.
+    rewrite dq.
+     by [].
+  by [].
 move=> xs ys inc.
 rewrite <- (ccwd_translation (-xp) (-yp) _ _ _ _ xs ys).
 rewrite (_ : (xp - xp) = 0); last first.
@@ -6231,27 +6126,27 @@ rewrite (_ : (xp + b - yp + - xp) = (b - yp)); last first.
 rewrite (_ : (yp + xp - a + - yp) = (-(a - xp))); last first.
   by rat_field.
 apply in_circle_ccwr.
-by [].
-rewrite /in_circle in inc; rewrite H in inc.
-have sa : (distance_sq xs ys a b < r).
-rewrite /ccwr in cc. rewrite -oppr_lt0 in cc.
-  Search _ (Num.lt 0 (_*_)).
-  rewrite (nmulr_rgt0 (distance_sq xs ys a b - r) cc) in inc.
-  Search _ (Num.lt (_-_) 0).
-  rewrite -subr_lt0.
-  by [].
-rewrite -/(xs - xp); rewrite-/(ys - yp); rewrite translation_distance.
-have dd : (distance_sq xp yp a b = ((a - xp) ^+ 2 + (b - yp) ^+ 2)).
-rewrite /distance_sq. rewrite !expr2. by rat_field.
-rewrite -dd. rewrite pa. Search _ (Num.lt _ _) (Num.le _ _) in ssrnum.
+    by [].
+  rewrite /in_circle in inc; rewrite H in inc.
+  have sa : (distance_sq xs ys a b < r).
+    rewrite /ccwr in cc. rewrite -oppr_lt0 in cc.
+    rewrite (nmulr_rgt0 (distance_sq xs ys a b - r) cc) in inc.
+    rewrite -subr_lt0.
+    by [].
+  rewrite -/(xs - xp); rewrite-/(ys - yp); rewrite translation_distance.
+  have dd : (distance_sq xp yp a b = ((a - xp) ^+ 2 + (b - yp) ^+ 2)).
+    rewrite /distance_sq. rewrite !expr2. by rat_field.
+  rewrite -dd. rewrite pa.
   rewrite ltr_def in sa. move/andP : sa => [sa1 sa2]. by [].
-move=> Hx Hy; have Hx' : (xs = xp). apply/eqP. rewrite -subr_eq0. by apply/eqP.
-have Hy' : (ys = yp).  apply/eqP. rewrite -subr_eq0. by apply/eqP.
+move=> Hx Hy; have Hx' : (xs = xp). apply/eqP. rewrite -subr_eq0. 
+  by apply/eqP.
+have Hy' : (ys = yp).  apply/eqP. rewrite -subr_eq0. 
+  by apply/eqP.
 rewrite Hx' Hy' in inc; rewrite /in_circle in inc; rewrite in_circled1 in inc.
-Search _ (Num.lt _ _) false in ssrnum.
 move: inc.
 by rewrite ltrr.
 Admitted.
+(* Admitted car Qed trop long *)
 
 Lemma exchange :
 forall xp yp xq yq xr yr xs ys,  ccwr xp yp xq yq xr yr ->
@@ -6279,6 +6174,7 @@ rewrite /in_circled /in_circle /in_circled. by [].
 rewrite !/in_circled. by rat_field.
 apply axiom1; apply axiom1; by [].
 Admitted.
+(* Admitted car Qed trop long *)
 
 (*========END OF YB'PROOF========*)
 
@@ -6351,94 +6247,10 @@ Proof.
 move=> p q r s.
 rewrite /in_circle /in_circled !mul1l !mul1r.
 rewrite /inCircle_point.
-rewrite (expand_det_col _ (inZp 3)).
-rewrite big_ord_recl.
-rewrite !mxE. rewrite //=.
-rewrite /cofactor !//=.
-rewrite expand_det33.
-rewrite !mxE. rewrite //.
-
-rewrite big_ord_recl.
-rewrite !mxE. rewrite //.
-rewrite /cofactor. rewrite //.
-rewrite expand_det33.
-rewrite !mxE. rewrite //.
-
-rewrite big_ord_recl.
-rewrite !mxE. rewrite //.
-rewrite /cofactor. rewrite //.
-rewrite expand_det33.
-rewrite !mxE. rewrite //.
-
-rewrite big_ord_recl.
-rewrite !mxE. rewrite //.
-rewrite /cofactor. rewrite //.
-rewrite expand_det33.
-rewrite !mxE. rewrite //.
-
-rewrite big_ord0.
-rewrite /=.
+rewrite expand_det44 !mxE !//=.
 rewrite !mul1l.
-rewrite plus0r  !expr2.
-rewrite //.
-rewrite (_:  ((-1) ^+ (0 + 3 %% 4) *
-   (point2R1 q * point2R2 r *
-    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) -
-    point2R1 q *
-    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) *
-    point2R2 s -
-    point2R2 q * point2R1 r *
-    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) +
-    point2R2 q *
-    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) *
-    point2R1 s +
-    (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
-    point2R1 r * point2R2 s -
-    (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
-    point2R2 r * point2R1 s) +
-   (point2R1 p * point2R2 r *
-    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) -
-    point2R1 p *
-    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) *
-    point2R2 s -
-    point2R2 p * point2R1 r *
-    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) +
-    point2R2 p *
-    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) *
-    point2R1 s +
-    (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
-    point2R1 r * point2R2 s -
-    (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
-    point2R2 r * point2R1 s +
-    ((-1) ^+ (bump 0 (bump 0 0) + 3 %% 4) *
-     (point2R1 p * point2R2 q *
-      (point2R1 s * point2R1 s + point2R2 s * point2R2 s) -
-      point2R1 p *
-      (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
-      point2R2 s -
-      point2R2 p * point2R1 q *
-      (point2R1 s * point2R1 s + point2R2 s * point2R2 s) +
-      point2R2 p *
-      (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
-      point2R1 s +
-      (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
-      point2R1 q * point2R2 s -
-      (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
-      point2R2 q * point2R1 s) +
-     (point2R1 p * point2R2 q *
-      (point2R1 r * point2R1 r + point2R2 r * point2R2 r) -
-      point2R1 p *
-      (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
-      point2R2 r -
-      point2R2 p * point2R1 q *
-      (point2R1 r * point2R1 r + point2R2 r * point2R2 r) +
-      point2R2 p *
-      (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
-      point2R1 r +
-      (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
-      point2R1 q * point2R2 r -
-      (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
-      point2R2 q * point2R1 r)))) =  (point2R1 p *
+rewrite !expr2 !mul1r.
+rewrite (_:  (point2R1 p *
    (point2R2 q *
     (point2R1 r * point2R1 r + point2R2 r * point2R2 r -
      (point2R1 s * point2R1 s + point2R2 s * point2R2 s)) -
@@ -6477,21 +6289,63 @@ rewrite (_:  ((-1) ^+ (0 + 3 %% 4) *
      (point2R1 r * point2R1 r + point2R2 r * point2R2 r)) +
     point2R2 r *
     (point2R1 p * point2R1 p + point2R2 p * point2R2 p -
-     (point2R1 q * point2R1 q + point2R2 q * point2R2 q))))).
-by [].
-rewrite (_ : (-1) ^+ (0 + 3 %% 4) = -1).
-rewrite (_ :  ((-1) ^+ (bump 0 (bump 0 0) + 3 %% 4) = -1)).
-set xp := point2R1 p.
-set yp := point2R2 p.
-set xq := point2R1 q.
-set yq := point2R2 q.
-set xr := point2R1 r.
-set yr := point2R2 r.
-set xs := point2R1 s.
-set ys := point2R2 s.
+     (point2R1 q * point2R1 q + point2R2 q * point2R2 q))))
+
+
+    =  (point2R1 p *
+   (point2R2 q *
+    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) -
+    point2R2 q *
+    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) -
+    (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
+    point2R2 r +
+    (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
+    point2R2 s +
+    point2R2 r *
+    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) -
+    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) *
+    point2R2 s) -
+   point2R1 q *
+   (point2R2 p *
+    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) -
+    point2R2 p *
+    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) -
+    (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
+    point2R2 r +
+    (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
+    point2R2 s +
+    point2R2 r *
+    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) -
+    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) *
+    point2R2 s) +
+   point2R1 r *
+   (point2R2 p *
+    (point2R1 q * point2R1 q + point2R2 q * point2R2 q) -
+    point2R2 p *
+    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) -
+    (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
+    point2R2 q +
+    (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
+    point2R2 s +
+    point2R2 q *
+    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) -
+    (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
+    point2R2 s) -
+   point2R1 s *
+   (point2R2 p *
+    (point2R1 q * point2R1 q + point2R2 q * point2R2 q) -
+    point2R2 p *
+    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) -
+    (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
+    point2R2 q +
+    (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
+    point2R2 r +
+    point2R2 q *
+    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) -
+    (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
+    point2R2 r))).
+  by [].
 prefield. ring.
-rewrite !//=.
-rewrite !//=.
 Qed.
 
 Axiom ccw_axiom_1 : forall (p q r : point),
@@ -6501,21 +6355,21 @@ Lemma ccw_exchange_bis: forall (p q r s: point),
   leftpoint p q r > 0 -> leftpoint p r s > 0 -> inCircle_point p q r s ->
       ((leftpoint p q s > 0) /\ (leftpoint q r s > 0)).
 Proof.
-  move=> p q r s.
-  rewrite -!lien2. 
-  rewrite -lien3.
-  set xp := point2R1 p.
-  set yp := point2R2 p.
-  set xq := point2R1 q.
-  set yq := point2R2 q.
-  set xr := point2R1 r.
-  set yr := point2R2 r.
-  set xs := point2R1 s.
-  set ys := point2R2 s.
-  move=> pqr prs pqrs.
-  move:  (exchange pqr prs pqrs).
-  by [].
-  Qed.
+move=> p q r s.
+rewrite -!lien2. 
+rewrite -lien3.
+set xp := point2R1 p.
+set yp := point2R2 p.
+set xq := point2R1 q.
+set yq := point2R2 q.
+set xr := point2R1 r.
+set yr := point2R2 r.
+set xs := point2R1 s.
+set ys := point2R2 s.
+move=> pqr prs pqrs.
+move:  (exchange pqr prs pqrs).
+by [].
+Qed.
 
 
 (* IMPORTANT: *)
@@ -6524,243 +6378,165 @@ Theorem ccw_exchange: forall (p q r s: point),
   leftpoint p q r > 0 -> leftpoint q p s > 0 -> inCircle_point p q r s ->
       ((leftpoint r s q > 0) /\ (leftpoint s r p > 0)).
 Proof. 
-  move=> p q r s.
-  rewrite -!lien2.
-  set xp := point2R1 p.
-  set yp := point2R2 p.
-  set xq := point2R1 q.
-  set yq := point2R2 q.
-  set xr := point2R1 r.
-  set yr := point2R2 r.
-  set xs := point2R1 s.
-  set ys := point2R2 s.
-  move=> pqr.
-  rewrite {1}/ccwr.
-  rewrite axiom1'.
-  rewrite (_ : Num.lt 0 (ccwd xp yp xs ys xq yq) = ccwr xp yp xs ys xq yq)
-      ; last first.
-    by rewrite /ccwr.
-  move=> psq.
-  rewrite (_ : inCircle_point p q r s = inCircle_point p s q r); last first.
-    rewrite /inCircle_point.
-    rewrite (expand_det_col _ (inZp 3)).
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //=.
-    rewrite /cofactor !//=.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
+move=> p q r s.
+rewrite -!lien2.
+set xp := point2R1 p.
+set yp := point2R2 p.
+set xq := point2R1 q.
+set yq := point2R2 q.
+set xr := point2R1 r.
+set yr := point2R2 r.
+set xs := point2R1 s.
+set ys := point2R2 s.
+move=> pqr.
+rewrite {1}/ccwr.
+rewrite axiom1'.
+rewrite (_ : Num.lt 0 (ccwd xp yp xs ys xq yq) = ccwr xp yp xs ys xq yq)
+    ; last first.
+  by rewrite /ccwr.
+move=> psq.
+rewrite (_ : inCircle_point p q r s = inCircle_point p s q r); last first.
+rewrite /inCircle_point.
 
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
+rewrite expand_det44 !mxE !//=.
+rewrite expand_det44 !mxE !//=.
+rewrite !mul1l.
+rewrite !expr2 !mul1r.
 
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord0.
-    rewrite /=.
-    rewrite !mul1l.
-    rewrite plus0r  !expr2.
-    rewrite //.
-
-    rewrite (expand_det_col _ (inZp 3)).
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //=.
-    rewrite /cofactor !//=.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord0.
-    rewrite /=.
-    rewrite !mul1l.
-
-    set tmp := ((-1) ^+ (0 + 3 %% 4) *
-   (point2R1 s * point2R2 q *
+    set tmp :=  (point2R1 p *
+   (point2R2 q *
     (point2R1 r * point2R1 r + point2R2 r * point2R2 r) -
-    point2R1 s *
+    point2R2 q *
+    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) -
     (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
-    point2R2 r -
-    point2R2 s * point2R1 q *
-    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) +
-    point2R2 s *
+    point2R2 r +
     (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
-    point2R1 r +
-    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) *
-    point2R1 q * point2R2 r -
-    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) *
-    point2R2 q * point2R1 r) +
-   (point2R1 p * point2R2 q *
+    point2R2 s +
+    point2R2 r *
+    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) -
+    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) *
+    point2R2 s) -
+   point2R1 q *
+   (point2R2 p *
     (point2R1 r * point2R1 r + point2R2 r * point2R2 r) -
-    point2R1 p *
-    (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
-    point2R2 r -
-    point2R2 p * point2R1 q *
-    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) +
     point2R2 p *
+    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) -
+    (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
+    point2R2 r +
+    (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
+    point2R2 s +
+    point2R2 r *
+    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) -
+    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) *
+    point2R2 s) +
+   point2R1 r *
+   (point2R2 p *
+    (point2R1 q * point2R1 q + point2R2 q * point2R2 q) -
+    point2R2 p *
+    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) -
+    (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
+    point2R2 q +
+    (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
+    point2R2 s +
+    point2R2 q *
+    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) -
     (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
-    point2R1 r +
+    point2R2 s) -
+   point2R1 s *
+   (point2R2 p *
+    (point2R1 q * point2R1 q + point2R2 q * point2R2 q) -
+    point2R2 p *
+    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) -
     (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
-    point2R1 q * point2R2 r -
+    point2R2 q +
     (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
-    point2R2 q * point2R1 r +
-    ((-1) ^+ (bump 0 (bump 0 0) + 3 %% 4) *
-     (point2R1 p * point2R2 s *
-      (point2R1 r * point2R1 r + point2R2 r * point2R2 r) -
-      point2R1 p *
-      (point2R1 s * point2R1 s + point2R2 s * point2R2 s) *
-      point2R2 r -
-      point2R2 p * point2R1 s *
-      (point2R1 r * point2R1 r + point2R2 r * point2R2 r) +
-      point2R2 p *
-      (point2R1 s * point2R1 s + point2R2 s * point2R2 s) *
-      point2R1 r +
-      (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
-      point2R1 s * point2R2 r -
-      (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
-      point2R2 s * point2R1 r) +
-     (point2R1 p * point2R2 s *
-      (point2R1 q * point2R1 q + point2R2 q * point2R2 q) -
-      point2R1 p *
-      (point2R1 s * point2R1 s + point2R2 s * point2R2 s) *
-      point2R2 q -
-      point2R2 p * point2R1 s *
-      (point2R1 q * point2R1 q + point2R2 q * point2R2 q) +
-      point2R2 p *
-      (point2R1 s * point2R1 s + point2R2 s * point2R2 s) *
-      point2R1 q +
-      (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
-      point2R1 s * point2R2 q -
-      (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
-      point2R2 s * point2R1 q + 0)))).
+    point2R2 r +
+    point2R2 q *
+    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) -
+    (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
+    point2R2 r)).
     
 
 
-    set tmp2 := ((-1) ^+ (0 + 3 %% 4) *
-   (point2R1 q * point2R2 r *
-    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) -
-    point2R1 q *
-    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) *
-    point2R2 s -
-    point2R2 q * point2R1 r *
-    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) +
+    set tmp2 := (point2R1 p *
+   (point2R2 s *
+    (point2R1 q * point2R1 q + point2R2 q * point2R2 q) -
+    point2R2 s *
+    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) -
+    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) *
+    point2R2 q +
+    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) *
+    point2R2 r +
     point2R2 q *
-    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) *
-    point2R1 s +
+    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) -
     (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
-    point2R1 r * point2R2 s -
-    (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
-    point2R2 r * point2R1 s) +
-   (point2R1 p * point2R2 r *
-    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) -
-    point2R1 p *
-    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) *
-    point2R2 s -
-    point2R2 p * point2R1 r *
-    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) +
+    point2R2 r) -
+   point2R1 s *
+   (point2R2 p *
+    (point2R1 q * point2R1 q + point2R2 q * point2R2 q) -
     point2R2 p *
-    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) *
-    point2R1 s +
+    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) -
     (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
-    point2R1 r * point2R2 s -
+    point2R2 q +
     (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
-    point2R2 r * point2R1 s +
-    ((-1) ^+ (bump 0 (bump 0 0) + 3 %% 4) *
-     (point2R1 p * point2R2 q *
-      (point2R1 s * point2R1 s + point2R2 s * point2R2 s) -
-      point2R1 p *
-      (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
-      point2R2 s -
-      point2R2 p * point2R1 q *
-      (point2R1 s * point2R1 s + point2R2 s * point2R2 s) +
-      point2R2 p *
-      (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
-      point2R1 s +
-      (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
-      point2R1 q * point2R2 s -
-      (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
-      point2R2 q * point2R1 s) +
-     (point2R1 p * point2R2 q *
-      (point2R1 r * point2R1 r + point2R2 r * point2R2 r) -
-      point2R1 p *
-      (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
-      point2R2 r -
-      point2R2 p * point2R1 q *
-      (point2R1 r * point2R1 r + point2R2 r * point2R2 r) +
-      point2R2 p *
-      (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
-      point2R1 r +
-      (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
-      point2R1 q * point2R2 r -
-      (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
-      point2R2 q * point2R1 r)))).
-    rewrite (_ : tmp = tmp2); last first.
-      rewrite /tmp /tmp2.
-      rewrite (_ : (-1) ^+ (0 + 3 %% 4) = -1).
-      rewrite (_ :  ((-1) ^+ (bump 0 (bump 0 0) + 3 %% 4) = -1)).
-      set xptmp := point2R1 p.
-      set yptmp := point2R2 p.
-      set xqtmp := point2R1 q.
-      set yqtmp := point2R2 q.
-      set xrtmp := point2R1 r.
-      set yrtmp := point2R2 r.
-      set xstmp := point2R1 s.
-      set ystmp := point2R2 s.
-      prefield; ring.
-    by [].
-    by [].
-    by [].
-  move=> psqr.
-  move: pqr psq psqr.
-  rewrite /xp /yp /xq /yq /xr /yr /xs /ys.
-  rewrite (_: ccwr (point2R1 p) (point2R2 p) (point2R1 q) 
+    point2R2 r +
+    point2R2 q *
+    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) -
+    (point2R1 q * point2R1 q + point2R2 q * point2R2 q) *
+    point2R2 r) +
+   point2R1 q *
+   (point2R2 p *
+    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) -
+    point2R2 p *
+    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) -
+    (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
+    point2R2 s +
+    (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
+    point2R2 r +
+    point2R2 s *
+    (point2R1 r * point2R1 r + point2R2 r * point2R2 r) -
+    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) *
+    point2R2 r) -
+   point2R1 r *
+   (point2R2 p *
+    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) -
+    point2R2 p *
+    (point2R1 q * point2R1 q + point2R2 q * point2R2 q) -
+    (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
+    point2R2 s +
+    (point2R1 p * point2R1 p + point2R2 p * point2R2 p) *
+    point2R2 q +
+    point2R2 s *
+    (point2R1 q * point2R1 q + point2R2 q * point2R2 q) -
+    (point2R1 s * point2R1 s + point2R2 s * point2R2 s) *
+    point2R2 q)).
+  rewrite (_ : tmp = tmp2); last first.
+    rewrite /tmp /tmp2.
+    prefield; ring.
+  by [].
+move=> psqr.
+move: pqr psq psqr.
+rewrite /xp /yp /xq /yq /xr /yr /xs /ys.
+rewrite (_: ccwr (point2R1 p) (point2R2 p) (point2R1 q) 
   (point2R2 q) (point2R1 r) (point2R2 r) = (leftpoint p q r > 0)); last first.
-    by rewrite lien2.
-  rewrite (_: ccwr (point2R1 p) (point2R2 p) (point2R1 s) 
+  by rewrite lien2.
+rewrite (_: ccwr (point2R1 p) (point2R2 p) (point2R1 s) 
   (point2R2 s) (point2R1 q) (point2R2 q) = (leftpoint p s q > 0)); last first.
-    by rewrite lien2.
-  move=> pqr psq psqr.
-  move: (ccw_exchange_bis psq pqr psqr). 
-  move=> [hypo1 hypo2].
-  split.
-  rewrite (_: ccwr (point2R1 r) (point2R2 r) (point2R1 s) 
+  by rewrite lien2.
+move=> pqr psq psqr.
+move: (ccw_exchange_bis psq pqr psqr). 
+move=> [hypo1 hypo2].
+split.
+rewrite (_: ccwr (point2R1 r) (point2R2 r) (point2R1 s) 
   (point2R2 s) (point2R1 q) (point2R2 q) = (leftpoint r s q > 0)); last first.
-    by rewrite lien2.
-  move: (ccw_axiom_1 hypo2). move=> hypo3.
-  move: (ccw_axiom_1 hypo3). by [].
-  rewrite (_: ccwr (point2R1 s) (point2R2 s) (point2R1 r) 
+  by rewrite lien2.
+move: (ccw_axiom_1 hypo2). move=> hypo3.
+move: (ccw_axiom_1 hypo3). by [].
+rewrite (_: ccwr (point2R1 s) (point2R2 s) (point2R1 r) 
   (point2R2 r) (point2R1 p) (point2R2 p) = (leftpoint s r p > 0)); last first.
-    by rewrite lien2.
-  move: (ccw_axiom_1 hypo1). by [].
-  Qed.
+  by rewrite lien2.
+move: (ccw_axiom_1 hypo1). by [].
+Qed.
 
 (*===========END BRIDGE=====================*)
 
@@ -6924,7 +6700,6 @@ have otr2 : leftpoint (new_tr2 (inZp 0))(new_tr2 (inZp 1))(new_tr2 (inZp 2)) > 0
 
 by rewrite -vtemp2istmap'.
 
-About ccw_exchange.
 move : (@ccw_exchange p2 q2 pt2 pt1).
 rewrite (_ : (new_tr2 (inZp 0)) = pt2); last first.
   rewrite /new_tr2.
@@ -6988,7 +6763,6 @@ rewrite (_ : (new_tr2 (inZp 2)) = q2); last first.
     apply/eqP.
     by [].
   move: notint1. rewrite /pt_in_triangle. rewrite not_true_iff_false.
-  Search _ (_||_ = false).
   set b1 := ((pt2 == tm t1 (Ordinal zero<3))
                 || (pt2 == tm t1 (Ordinal un<3))).
   set b2 := (pt2 == tm t1 (Ordinal deux<3)).
@@ -7078,343 +6852,277 @@ have infoLem3 : inCircle_point p2 q2 pt2 pt1.
   case cas1 : (inCircle pt1 t2 tm == true).
     move/eqP: cas1.
     rewrite /inCircle /inCircle_point.
-    rewrite (expand_det_col _ (inZp 3)).
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //=.
-    rewrite /cofactor !//=.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord0.
-    rewrite /=.
+    rewrite expand_det44 !mxE !//=.
+    rewrite expand_det44. rewrite !mxE.
     rewrite !mul1l.
-    rewrite !plus0r.
-    rewrite !expr2.
-    rewrite (_ :  ((-1) ^+ (bump 0 (bump 0 0) + 3 %% 4) = -1)); last first.
+    rewrite !expr2 !mul1r.
+
+  rewrite (_  : (nat_of_ord (@Ordinal 4 2 isT) == 2)); last first.
       by [].
-    rewrite (_ : (-1) ^+ (0 + 3 %% 4)  = -1); last first.
+  rewrite (_  : ((@Ordinal 4 1 isT) == 1)); last first.
       by [].
-
-    rewrite (expand_det_col _ (inZp 3)).
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //=.
-    rewrite /cofactor !//=.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord0.
-    rewrite /=.
-    rewrite !mul1l.
-    rewrite !plus0r.
-    rewrite (_ :  ((-1) ^+ (bump 0 (bump 0 0) + 3 %% 4) = -1)); last first.
+  rewrite (_  : ((@Ordinal 4 2 isT) == 0) = false); last first.
       by [].
-    rewrite (_ : (-1) ^+ (0 + 3 %% 4)  = -1); last first.
+  rewrite (_  : ((@Ordinal 4 2 isT) == 1) = false); last first.
+      by [].
+  rewrite (_  : ((@Ordinal 4 1 isT) == 0) = false); last first.
+      by [].
+  rewrite (_  : ((@Ordinal 4 0 isT) == 1) = false); last first.
+      by [].
+  rewrite (_  : ((@Ordinal 4 0 isT) == 0) ); last first.
+      by [].
+  rewrite (_  : (nat_of_ord (@Ordinal 4 3 isT) = 3) ); last first.
+      by [].
+  rewrite (_  : ((@Ordinal 4 3 isT) == 1) = false); last first.
+      by [].
+  rewrite (_  : ((@Ordinal 4 3 isT) == 0) = false); last first.
+      by [].
+  rewrite (_  : (3 == 2) = false); last first.
       by [].
 
-    have egal_tmp : ( (-1 *
-   (point2R1 q2 * point2R2 pt2 *
+
+    have egal_tmp :(point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+   (point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) -
+    point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
     (point2R1 pt1 * point2R1 pt1 +
      point2R2 pt1 * point2R2 pt1) -
-    point2R1 q2 *
-    (point2R1 (tm t2 (Ordinal zero<3)) *
-     point2R1 (tm t2 (Ordinal zero<3)) +
-     point2R2 (tm t2 (Ordinal zero<3)) *
-     point2R2 (tm t2 (Ordinal zero<3))) * 
-    point2R2 pt1 -
-    point2R2 q2 * point2R1 pt2 *
-    (point2R1 pt1 * point2R1 pt1 +
-     point2R2 pt1 * point2R2 pt1) +
-    point2R2 q2 *
-    (point2R1 (tm t2 (Ordinal zero<3)) *
-     point2R1 (tm t2 (Ordinal zero<3)) +
-     point2R2 (tm t2 (Ordinal zero<3)) *
-     point2R2 (tm t2 (Ordinal zero<3))) * 
-    point2R1 pt1 +
-    (point2R1 (tm t2 (Ordinal deux<3)) *
-     point2R1 (tm t2 (Ordinal deux<3)) +
-     point2R2 (tm t2 (Ordinal deux<3)) *
-     point2R2 (tm t2 (Ordinal deux<3))) * 
-    point2R1 pt2 * point2R2 pt1 -
-    (point2R1 (tm t2 (Ordinal deux<3)) *
-     point2R1 (tm t2 (Ordinal deux<3)) +
-     point2R2 (tm t2 (Ordinal deux<3)) *
-     point2R2 (tm t2 (Ordinal deux<3))) * 
-    point2R2 pt2 * point2R1 pt1) +
-   (point2R1 p2 * point2R2 pt2 *
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) *
+    point2R2 (tm t2 (@Ordinal 3 2 deux<3)) +
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) *
+    point2R2 pt1 +
+    point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
     (point2R1 pt1 * point2R1 pt1 +
      point2R2 pt1 * point2R2 pt1) -
-    point2R1 p2 *
-    (point2R1 (tm t2 (Ordinal zero<3)) *
-     point2R1 (tm t2 (Ordinal zero<3)) +
-     point2R2 (tm t2 (Ordinal zero<3)) *
-     point2R2 (tm t2 (Ordinal zero<3))) * 
-    point2R2 pt1 -
-    point2R2 p2 * point2R1 pt2 *
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) *
+    point2R2 pt1) -
+   point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+   (point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) -
+    point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
     (point2R1 pt1 * point2R1 pt1 +
-     point2R2 pt1 * point2R2 pt1) +
-    point2R2 p2 *
-    (point2R1 (tm t2 (Ordinal zero<3)) *
-     point2R1 (tm t2 (Ordinal zero<3)) +
-     point2R2 (tm t2 (Ordinal zero<3)) *
-     point2R2 (tm t2 (Ordinal zero<3))) * 
-    point2R1 pt1 +
-    (point2R1 (tm t2 (Ordinal un<3)) *
-     point2R1 (tm t2 (Ordinal un<3)) +
-     point2R2 (tm t2 (Ordinal un<3)) *
-     point2R2 (tm t2 (Ordinal un<3))) * 
-    point2R1 pt2 * point2R2 pt1 -
-    (point2R1 (tm t2 (Ordinal un<3)) *
-     point2R1 (tm t2 (Ordinal un<3)) +
-     point2R2 (tm t2 (Ordinal un<3)) *
-     point2R2 (tm t2 (Ordinal un<3))) * 
-    point2R2 pt2 * point2R1 pt1 +
-    (-1 *
-     (point2R1 p2 * point2R2 q2 *
-      (point2R1 pt1 * point2R1 pt1 +
-       point2R2 pt1 * point2R2 pt1) -
-      point2R1 p2 *
-      (point2R1 (tm t2 (Ordinal deux<3)) *
-       point2R1 (tm t2 (Ordinal deux<3)) +
-       point2R2 (tm t2 (Ordinal deux<3)) *
-       point2R2 (tm t2 (Ordinal deux<3))) * 
-      point2R2 pt1 -
-      point2R2 p2 * point2R1 q2 *
-      (point2R1 pt1 * point2R1 pt1 +
-       point2R2 pt1 * point2R2 pt1) +
-      point2R2 p2 *
-      (point2R1 (tm t2 (Ordinal deux<3)) *
-       point2R1 (tm t2 (Ordinal deux<3)) +
-       point2R2 (tm t2 (Ordinal deux<3)) *
-       point2R2 (tm t2 (Ordinal deux<3))) * 
-      point2R1 pt1 +
-      (point2R1 (tm t2 (Ordinal un<3)) *
-       point2R1 (tm t2 (Ordinal un<3)) +
-       point2R2 (tm t2 (Ordinal un<3)) *
-       point2R2 (tm t2 (Ordinal un<3))) * 
-      point2R1 q2 * point2R2 pt1 -
-      (point2R1 (tm t2 (Ordinal un<3)) *
-       point2R1 (tm t2 (Ordinal un<3)) +
-       point2R2 (tm t2 (Ordinal un<3)) *
-       point2R2 (tm t2 (Ordinal un<3))) * 
-      point2R2 q2 * point2R1 pt1) +
-     (point2R1 p2 * point2R2 q2 *
-      (point2R1 (tm t2 (Ordinal zero<3)) *
-       point2R1 (tm t2 (Ordinal zero<3)) +
-       point2R2 (tm t2 (Ordinal zero<3)) *
-       point2R2 (tm t2 (Ordinal zero<3))) -
-      point2R1 p2 *
-      (point2R1 (tm t2 (Ordinal deux<3)) *
-       point2R1 (tm t2 (Ordinal deux<3)) +
-       point2R2 (tm t2 (Ordinal deux<3)) *
-       point2R2 (tm t2 (Ordinal deux<3))) * 
-      point2R2 pt2 -
-      point2R2 p2 * point2R1 q2 *
-      (point2R1 (tm t2 (Ordinal zero<3)) *
-       point2R1 (tm t2 (Ordinal zero<3)) +
-       point2R2 (tm t2 (Ordinal zero<3)) *
-       point2R2 (tm t2 (Ordinal zero<3))) +
-      point2R2 p2 *
-      (point2R1 (tm t2 (Ordinal deux<3)) *
-       point2R1 (tm t2 (Ordinal deux<3)) +
-       point2R2 (tm t2 (Ordinal deux<3)) *
-       point2R2 (tm t2 (Ordinal deux<3))) * 
-      point2R1 pt2 +
-      (point2R1 (tm t2 (Ordinal un<3)) *
-       point2R1 (tm t2 (Ordinal un<3)) +
-       point2R2 (tm t2 (Ordinal un<3)) *
-       point2R2 (tm t2 (Ordinal un<3))) * 
-      point2R1 q2 * point2R2 pt2 -
-      (point2R1 (tm t2 (Ordinal un<3)) *
-       point2R1 (tm t2 (Ordinal un<3)) +
-       point2R2 (tm t2 (Ordinal un<3)) *
-       point2R2 (tm t2 (Ordinal un<3))) * 
-      point2R2 q2 * point2R1 pt2))))
+     point2R2 pt1 * point2R2 pt1) -
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) *
+    point2R2 (tm t2 (@Ordinal 3 2 deux<3)) +
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) *
+    point2R2 pt1 +
+    point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+    (point2R1 pt1 * point2R1 pt1 +
+     point2R2 pt1 * point2R2 pt1) -
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) *
+    point2R2 pt1) +
+   point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+   (point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) -
+    point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+    (point2R1 pt1 * point2R1 pt1 +
+     point2R2 pt1 * point2R2 pt1) -
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) *
+    point2R2 (tm t2 (@Ordinal 3 1 un<3)) +
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) *
+    point2R2 pt1 +
+    point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+    (point2R1 pt1 * point2R1 pt1 +
+     point2R2 pt1 * point2R2 pt1) -
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) *
+    point2R2 pt1) -
+   point2R1 pt1 *
+   (point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) -
+    point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) -
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) *
+    point2R2 (tm t2 (@Ordinal 3 1 un<3)) +
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) *
+    point2R2 (tm t2 (@Ordinal 3 2 deux<3)) +
+    point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) -
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) *
+    point2R2 (tm t2 (@Ordinal 3 2 deux<3)))) 
   
 
-      = (-1 *
-   (point2R1 (tm t2 (Ordinal un<3)) *
-    point2R2 (tm t2 (Ordinal deux<3)) *
+      =(point2R1 p2 *
+   (point2R2 q2 *
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) -
+    point2R2 q2 *
     (point2R1 pt1 * point2R1 pt1 +
      point2R2 pt1 * point2R2 pt1) -
-    point2R1 (tm t2 (Ordinal un<3)) *
-    (point2R1 (tm t2 (Ordinal deux<3)) *
-     point2R1 (tm t2 (Ordinal deux<3)) +
-     point2R2 (tm t2 (Ordinal deux<3)) *
-     point2R2 (tm t2 (Ordinal deux<3))) * 
-    point2R2 pt1 -
-    point2R2 (tm t2 (Ordinal un<3)) *
-    point2R1 (tm t2 (Ordinal deux<3)) *
-    (point2R1 pt1 * point2R1 pt1 +
-     point2R2 pt1 * point2R2 pt1) +
-    point2R2 (tm t2 (Ordinal un<3)) *
-    (point2R1 (tm t2 (Ordinal deux<3)) *
-     point2R1 (tm t2 (Ordinal deux<3)) +
-     point2R2 (tm t2 (Ordinal deux<3)) *
-     point2R2 (tm t2 (Ordinal deux<3))) * 
-    point2R1 pt1 +
-    (point2R1 (tm t2 (Ordinal un<3)) *
-     point2R1 (tm t2 (Ordinal un<3)) +
-     point2R2 (tm t2 (Ordinal un<3)) *
-     point2R2 (tm t2 (Ordinal un<3))) *
-    point2R1 (tm t2 (Ordinal deux<3)) * 
-    point2R2 pt1 -
-    (point2R1 (tm t2 (Ordinal un<3)) *
-     point2R1 (tm t2 (Ordinal un<3)) +
-     point2R2 (tm t2 (Ordinal un<3)) *
-     point2R2 (tm t2 (Ordinal un<3))) *
-    point2R2 (tm t2 (Ordinal deux<3)) * 
-    point2R1 pt1) +
-   (point2R1 (tm t2 (Ordinal zero<3)) *
-    point2R2 (tm t2 (Ordinal deux<3)) *
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) *
+    point2R2 pt2 +
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) *
+    point2R2 pt1 +
+    point2R2 pt2 *
     (point2R1 pt1 * point2R1 pt1 +
      point2R2 pt1 * point2R2 pt1) -
-    point2R1 (tm t2 (Ordinal zero<3)) *
-    (point2R1 (tm t2 (Ordinal deux<3)) *
-     point2R1 (tm t2 (Ordinal deux<3)) +
-     point2R2 (tm t2 (Ordinal deux<3)) *
-     point2R2 (tm t2 (Ordinal deux<3))) * 
-    point2R2 pt1 -
-    point2R2 (tm t2 (Ordinal zero<3)) *
-    point2R1 (tm t2 (Ordinal deux<3)) *
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) *
+    point2R2 pt1) -
+   point2R1 q2 *
+   (point2R2 p2 *
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) -
+    point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
     (point2R1 pt1 * point2R1 pt1 +
-     point2R2 pt1 * point2R2 pt1) +
-    point2R2 (tm t2 (Ordinal zero<3)) *
-    (point2R1 (tm t2 (Ordinal deux<3)) *
-     point2R1 (tm t2 (Ordinal deux<3)) +
-     point2R2 (tm t2 (Ordinal deux<3)) *
-     point2R2 (tm t2 (Ordinal deux<3))) * 
-    point2R1 pt1 +
-    (point2R1 (tm t2 (Ordinal zero<3)) *
-     point2R1 (tm t2 (Ordinal zero<3)) +
-     point2R2 (tm t2 (Ordinal zero<3)) *
-     point2R2 (tm t2 (Ordinal zero<3))) *
-    point2R1 (tm t2 (Ordinal deux<3)) * 
-    point2R2 pt1 -
-    (point2R1 (tm t2 (Ordinal zero<3)) *
-     point2R1 (tm t2 (Ordinal zero<3)) +
-     point2R2 (tm t2 (Ordinal zero<3)) *
-     point2R2 (tm t2 (Ordinal zero<3))) *
-    point2R2 (tm t2 (Ordinal deux<3)) * 
-    point2R1 pt1 +
-    (-1 *
-     (point2R1 (tm t2 (Ordinal zero<3)) *
-      point2R2 (tm t2 (Ordinal un<3)) *
-      (point2R1 pt1 * point2R1 pt1 +
-       point2R2 pt1 * point2R2 pt1) -
-      point2R1 (tm t2 (Ordinal zero<3)) *
-      (point2R1 (tm t2 (Ordinal un<3)) *
-       point2R1 (tm t2 (Ordinal un<3)) +
-       point2R2 (tm t2 (Ordinal un<3)) *
-       point2R2 (tm t2 (Ordinal un<3))) * 
-      point2R2 pt1 -
-      point2R2 (tm t2 (Ordinal zero<3)) *
-      point2R1 (tm t2 (Ordinal un<3)) *
-      (point2R1 pt1 * point2R1 pt1 +
-       point2R2 pt1 * point2R2 pt1) +
-      point2R2 (tm t2 (Ordinal zero<3)) *
-      (point2R1 (tm t2 (Ordinal un<3)) *
-       point2R1 (tm t2 (Ordinal un<3)) +
-       point2R2 (tm t2 (Ordinal un<3)) *
-       point2R2 (tm t2 (Ordinal un<3))) * 
-      point2R1 pt1 +
-      (point2R1 (tm t2 (Ordinal zero<3)) *
-       point2R1 (tm t2 (Ordinal zero<3)) +
-       point2R2 (tm t2 (Ordinal zero<3)) *
-       point2R2 (tm t2 (Ordinal zero<3))) *
-      point2R1 (tm t2 (Ordinal un<3)) * 
-      point2R2 pt1 -
-      (point2R1 (tm t2 (Ordinal zero<3)) *
-       point2R1 (tm t2 (Ordinal zero<3)) +
-       point2R2 (tm t2 (Ordinal zero<3)) *
-       point2R2 (tm t2 (Ordinal zero<3))) *
-      point2R2 (tm t2 (Ordinal un<3)) * 
-      point2R1 pt1) +
-     (point2R1 (tm t2 (Ordinal zero<3)) *
-      point2R2 (tm t2 (Ordinal un<3)) *
-      (point2R1 (tm t2 (Ordinal deux<3)) *
-       point2R1 (tm t2 (Ordinal deux<3)) +
-       point2R2 (tm t2 (Ordinal deux<3)) *
-       point2R2 (tm t2 (Ordinal deux<3))) -
-      point2R1 (tm t2 (Ordinal zero<3)) *
-      (point2R1 (tm t2 (Ordinal un<3)) *
-       point2R1 (tm t2 (Ordinal un<3)) +
-       point2R2 (tm t2 (Ordinal un<3)) *
-       point2R2 (tm t2 (Ordinal un<3))) *
-      point2R2 (tm t2 (Ordinal deux<3)) -
-      point2R2 (tm t2 (Ordinal zero<3)) *
-      point2R1 (tm t2 (Ordinal un<3)) *
-      (point2R1 (tm t2 (Ordinal deux<3)) *
-       point2R1 (tm t2 (Ordinal deux<3)) +
-       point2R2 (tm t2 (Ordinal deux<3)) *
-       point2R2 (tm t2 (Ordinal deux<3))) +
-      point2R2 (tm t2 (Ordinal zero<3)) *
-      (point2R1 (tm t2 (Ordinal un<3)) *
-       point2R1 (tm t2 (Ordinal un<3)) +
-       point2R2 (tm t2 (Ordinal un<3)) *
-       point2R2 (tm t2 (Ordinal un<3))) *
-      point2R1 (tm t2 (Ordinal deux<3)) +
-      (point2R1 (tm t2 (Ordinal zero<3)) *
-       point2R1 (tm t2 (Ordinal zero<3)) +
-       point2R2 (tm t2 (Ordinal zero<3)) *
-       point2R2 (tm t2 (Ordinal zero<3))) *
-      point2R1 (tm t2 (Ordinal un<3)) *
-      point2R2 (tm t2 (Ordinal deux<3)) -
-      (point2R1 (tm t2 (Ordinal zero<3)) *
-       point2R1 (tm t2 (Ordinal zero<3)) +
-       point2R2 (tm t2 (Ordinal zero<3)) *
-       point2R2 (tm t2 (Ordinal zero<3))) *
-      point2R2 (tm t2 (Ordinal un<3)) *
-      point2R1 (tm t2 (Ordinal deux<3))))))).
-        set a := point2R1 (tm t1 (Ordinal zero<3)).
-        set b := point2R2 (tm t1 (Ordinal zero<3)).
-        set c := point2R1 (tm t1 (Ordinal un<3)).
-        set d := point2R2 (tm t1 (Ordinal un<3)).
-        set e := point2R1 (tm t1 (Ordinal deux<3)).
-        set f := point2R2 (tm t1 (Ordinal deux<3)).
+     point2R2 pt1 * point2R2 pt1) -
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) *
+    point2R2 pt2 +
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) *
+    point2R2 pt1 +
+    point2R2 pt2 *
+    (point2R1 pt1 * point2R1 pt1 +
+     point2R2 pt1 * point2R2 pt1) -
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) *
+    point2R2 pt1) +
+   point2R1 pt2 *
+   (point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) -
+    point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+    (point2R1 pt1 * point2R1 pt1 +
+     point2R2 pt1 * point2R2 pt1) -
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) *
+    point2R2 (tm t2 (@Ordinal 3 2 deux<3)) +
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) *
+    point2R2 pt1 +
+    point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+    (point2R1 pt1 * point2R1 pt1 +
+     point2R2 pt1 * point2R2 pt1) -
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) *
+    point2R2 pt1) -
+   point2R1 pt1 *
+   (point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) -
+    point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) -
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) *
+    point2R2 (tm t2 (@Ordinal 3 2 deux<3)) +
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) *
+    point2R2 pt2 +
+    point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) -
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) *
+    point2R2 pt2)).
+    
+    set a := point2R1 (tm t1 (Ordinal zero<3)).
+    set b := point2R2 (tm t1 (Ordinal zero<3)).
+    set c := point2R1 (tm t1 (Ordinal un<3)).
+    set d := point2R2 (tm t1 (Ordinal un<3)).
+    set e := point2R1 (tm t1 (Ordinal deux<3)).
+    set f := point2R2 (tm t1 (Ordinal deux<3)).
 
-        set a2 := point2R1 (tm t2 (Ordinal zero<3)).
-        set b2 := point2R2 (tm t2 (Ordinal zero<3)).
-        set c2 := point2R1 (tm t2 (Ordinal un<3)).
-        set d2 := point2R2 (tm t2 (Ordinal un<3)).
-        set e2 := point2R1 (tm t2 (Ordinal deux<3)).
-        set f2 := point2R2 (tm t2 (Ordinal deux<3)).
-        prefield; ring.
+    set a2 := point2R1 (tm t2 (Ordinal zero<3)).
+    set b2 := point2R2 (tm t2 (Ordinal zero<3)).
+    set c2 := point2R1 (tm t2 (Ordinal un<3)).
+    set d2 := point2R2 (tm t2 (Ordinal un<3)).
+    set e2 := point2R1 (tm t2 (Ordinal deux<3)).
+    set f2 := point2R2 (tm t2 (Ordinal deux<3)).       
+    
+    prefield. ring.
 
     rewrite egal_tmp.
     rewrite {egal_tmp}.
@@ -7507,42 +7215,8 @@ have infoLem3 : inCircle_point p2 q2 pt2 pt1.
                                  (tm t2 (Ordinal deux<3))
                                ^+ 2
                               else 1))) = 0.
-
-    rewrite (expand_det_col _ (inZp 3)).
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //=.
-    rewrite /cofactor !//=.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord0.
-    rewrite /=.
-    rewrite !mul1l.
-    rewrite !plus0r.
-    rewrite !expr2.
-    rewrite (_ :  ((-1) ^+ (bump 0 (bump 0 0) + 3 %% 4) = -1)); last first.
-      by [].
-    rewrite (_ : (-1) ^+ (0 + 3 %% 4)  = -1); last first.
-      by [].
-
+    rewrite expand_det44 !mxE !//=.
+    rewrite !expr2 !mul1l !mul1r.
     
     set a := point2R1 (tm t1 (Ordinal zero<3)).
     set b := point2R2 (tm t1 (Ordinal zero<3)).
@@ -7563,7 +7237,6 @@ have infoLem3 : inCircle_point p2 q2 pt2 pt1.
     move: hypocontra.
     move=> [contra2 hypo].
     move/eqP: contra => contra.
-    Search _ (_ && ~~_) false.
     move: contra contra2.
     set tmp :=(\det (\matrix_(i, j) (if i == 0
                        then
@@ -7751,42 +7424,9 @@ have infoLem3 : inCircle_point p2 q2 pt2 pt1.
                                  (tm t2 (Ordinal un<3))
                                ^+ 2
                               else 1))) = 0.
-
-    rewrite (expand_det_col _ (inZp 3)).
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //=.
-    rewrite /cofactor !//=.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord0.
-    rewrite /=.
+    rewrite expand_det44 !mxE !//=.
     rewrite !mul1l.
-    rewrite !plus0r.
-    rewrite !expr2.
-    rewrite (_ :  ((-1) ^+ (bump 0 (bump 0 0) + 3 %% 4) = -1)); last first.
-      by [].
-    rewrite (_ : (-1) ^+ (0 + 3 %% 4)  = -1); last first.
-      by [].
-
+    rewrite !expr2 !mul1r.
     
     set a := point2R1 (tm t1 (Ordinal zero<3)).
     set b := point2R2 (tm t1 (Ordinal zero<3)).
@@ -7807,7 +7447,6 @@ have infoLem3 : inCircle_point p2 q2 pt2 pt1.
     move: hypocontra.
     move=> [contra2 hypo].
     move/eqP: contra => contra.
-    Search _ (_ && ~~_) false.
     move: contra contra2.
     set tmp :=\det (\matrix_(i, j) (if i == 0
                       then
@@ -7958,19 +7597,16 @@ rewrite (_ : (new_tr1 (inZp 2)) = p2); last first.
     apply/eqP.
     by [].
   move: notint2. rewrite /pt_in_triangle. rewrite not_true_iff_false.
-  Search _ (_||_ = false).
   set b1 := ((pt1 == tm t2 (Ordinal zero<3))
                 || (pt1 == tm t2 (Ordinal un<3))).
   set b2 := (pt1 == tm t2 (Ordinal deux<3)).
-  Search _ ((_||_) = false).
   move=> notint2.
   apply orb_false_iff in notint2.
   move: notint2.
   move=> [notint11 notint12].
   apply orb_false_iff in notint11.
   move:notint11.
-  move=> [notint111 notint112]. (* 
-  rewrite notint111 notint112 notint12. *)
+  move=> [notint111 notint112]. 
   rewrite (_ : (addOrd3 (Ordinal zero<3) (Ordinal deux<3)) 
                  = (Ordinal deux<3)); last first.
     rewrite /addOrd3.
@@ -8048,329 +7684,240 @@ have infoLem3 : inCircle_point p2 q2 pt2 pt1.
   case cas1 : (inCircle pt1 t2 tm == true).
     move/eqP: cas1.
     rewrite /inCircle /inCircle_point.
-    rewrite (expand_det_col _ (inZp 3)).
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //=.
-    rewrite /cofactor !//=.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord0.
-    rewrite /=.
+    rewrite expand_det44 !mxE !//=.
     rewrite !mul1l.
-    rewrite !plus0r.
-    rewrite !expr2.
-    rewrite (_ :  ((-1) ^+ (bump 0 (bump 0 0) + 3 %% 4) = -1)); last first.
-      by [].
-    rewrite (_ : (-1) ^+ (0 + 3 %% 4)  = -1); last first.
-      by [].
+    rewrite !expr2 !mul1r.
 
-    rewrite (expand_det_col _ (inZp 3)).
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //=.
-    rewrite /cofactor !//=.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
+    rewrite expand_det44 !mxE !//=.
+    rewrite !mul1l !mul1r.
 
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
 
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord0.
-    rewrite /=.
-    rewrite !mul1l.
-    rewrite !plus0r.
-    rewrite (_ :  ((-1) ^+ (bump 0 (bump 0 0) + 3 %% 4) = -1)); last first.
-      by [].
-    rewrite (_ : (-1) ^+ (0 + 3 %% 4)  = -1); last first.
-      by [].
-
-    have egal_tmp : ( (-1 *
-   (point2R1 q2 * point2R2 pt2 *
+    have egal_tmp : (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+   (point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) -
+    point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
     (point2R1 pt1 * point2R1 pt1 +
      point2R2 pt1 * point2R2 pt1) -
-    point2R1 q2 *
-    (point2R1 (tm t2 (Ordinal zero<3)) *
-     point2R1 (tm t2 (Ordinal zero<3)) +
-     point2R2 (tm t2 (Ordinal zero<3)) *
-     point2R2 (tm t2 (Ordinal zero<3))) * 
-    point2R2 pt1 -
-    point2R2 q2 * point2R1 pt2 *
-    (point2R1 pt1 * point2R1 pt1 +
-     point2R2 pt1 * point2R2 pt1) +
-    point2R2 q2 *
-    (point2R1 (tm t2 (Ordinal zero<3)) *
-     point2R1 (tm t2 (Ordinal zero<3)) +
-     point2R2 (tm t2 (Ordinal zero<3)) *
-     point2R2 (tm t2 (Ordinal zero<3))) * 
-    point2R1 pt1 +
-    (point2R1 (tm t2 (Ordinal deux<3)) *
-     point2R1 (tm t2 (Ordinal deux<3)) +
-     point2R2 (tm t2 (Ordinal deux<3)) *
-     point2R2 (tm t2 (Ordinal deux<3))) * 
-    point2R1 pt2 * point2R2 pt1 -
-    (point2R1 (tm t2 (Ordinal deux<3)) *
-     point2R1 (tm t2 (Ordinal deux<3)) +
-     point2R2 (tm t2 (Ordinal deux<3)) *
-     point2R2 (tm t2 (Ordinal deux<3))) * 
-    point2R2 pt2 * point2R1 pt1) +
-   (point2R1 p2 * point2R2 pt2 *
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) *
+    point2R2 (tm t2 (@Ordinal 3 2 deux<3)) +
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) *
+    point2R2 pt1 +
+    point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
     (point2R1 pt1 * point2R1 pt1 +
      point2R2 pt1 * point2R2 pt1) -
-    point2R1 p2 *
-    (point2R1 (tm t2 (Ordinal zero<3)) *
-     point2R1 (tm t2 (Ordinal zero<3)) +
-     point2R2 (tm t2 (Ordinal zero<3)) *
-     point2R2 (tm t2 (Ordinal zero<3))) * 
-    point2R2 pt1 -
-    point2R2 p2 * point2R1 pt2 *
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) *
+    point2R2 pt1) -
+   point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+   (point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) -
+    point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
     (point2R1 pt1 * point2R1 pt1 +
-     point2R2 pt1 * point2R2 pt1) +
-    point2R2 p2 *
-    (point2R1 (tm t2 (Ordinal zero<3)) *
-     point2R1 (tm t2 (Ordinal zero<3)) +
-     point2R2 (tm t2 (Ordinal zero<3)) *
-     point2R2 (tm t2 (Ordinal zero<3))) * 
-    point2R1 pt1 +
-    (point2R1 (tm t2 (Ordinal un<3)) *
-     point2R1 (tm t2 (Ordinal un<3)) +
-     point2R2 (tm t2 (Ordinal un<3)) *
-     point2R2 (tm t2 (Ordinal un<3))) * 
-    point2R1 pt2 * point2R2 pt1 -
-    (point2R1 (tm t2 (Ordinal un<3)) *
-     point2R1 (tm t2 (Ordinal un<3)) +
-     point2R2 (tm t2 (Ordinal un<3)) *
-     point2R2 (tm t2 (Ordinal un<3))) * 
-    point2R2 pt2 * point2R1 pt1 +
-    (-1 *
-     (point2R1 p2 * point2R2 q2 *
-      (point2R1 pt1 * point2R1 pt1 +
-       point2R2 pt1 * point2R2 pt1) -
-      point2R1 p2 *
-      (point2R1 (tm t2 (Ordinal deux<3)) *
-       point2R1 (tm t2 (Ordinal deux<3)) +
-       point2R2 (tm t2 (Ordinal deux<3)) *
-       point2R2 (tm t2 (Ordinal deux<3))) * 
-      point2R2 pt1 -
-      point2R2 p2 * point2R1 q2 *
-      (point2R1 pt1 * point2R1 pt1 +
-       point2R2 pt1 * point2R2 pt1) +
-      point2R2 p2 *
-      (point2R1 (tm t2 (Ordinal deux<3)) *
-       point2R1 (tm t2 (Ordinal deux<3)) +
-       point2R2 (tm t2 (Ordinal deux<3)) *
-       point2R2 (tm t2 (Ordinal deux<3))) * 
-      point2R1 pt1 +
-      (point2R1 (tm t2 (Ordinal un<3)) *
-       point2R1 (tm t2 (Ordinal un<3)) +
-       point2R2 (tm t2 (Ordinal un<3)) *
-       point2R2 (tm t2 (Ordinal un<3))) * 
-      point2R1 q2 * point2R2 pt1 -
-      (point2R1 (tm t2 (Ordinal un<3)) *
-       point2R1 (tm t2 (Ordinal un<3)) +
-       point2R2 (tm t2 (Ordinal un<3)) *
-       point2R2 (tm t2 (Ordinal un<3))) * 
-      point2R2 q2 * point2R1 pt1) +
-     (point2R1 p2 * point2R2 q2 *
-      (point2R1 (tm t2 (Ordinal zero<3)) *
-       point2R1 (tm t2 (Ordinal zero<3)) +
-       point2R2 (tm t2 (Ordinal zero<3)) *
-       point2R2 (tm t2 (Ordinal zero<3))) -
-      point2R1 p2 *
-      (point2R1 (tm t2 (Ordinal deux<3)) *
-       point2R1 (tm t2 (Ordinal deux<3)) +
-       point2R2 (tm t2 (Ordinal deux<3)) *
-       point2R2 (tm t2 (Ordinal deux<3))) * 
-      point2R2 pt2 -
-      point2R2 p2 * point2R1 q2 *
-      (point2R1 (tm t2 (Ordinal zero<3)) *
-       point2R1 (tm t2 (Ordinal zero<3)) +
-       point2R2 (tm t2 (Ordinal zero<3)) *
-       point2R2 (tm t2 (Ordinal zero<3))) +
-      point2R2 p2 *
-      (point2R1 (tm t2 (Ordinal deux<3)) *
-       point2R1 (tm t2 (Ordinal deux<3)) +
-       point2R2 (tm t2 (Ordinal deux<3)) *
-       point2R2 (tm t2 (Ordinal deux<3))) * 
-      point2R1 pt2 +
-      (point2R1 (tm t2 (Ordinal un<3)) *
-       point2R1 (tm t2 (Ordinal un<3)) +
-       point2R2 (tm t2 (Ordinal un<3)) *
-       point2R2 (tm t2 (Ordinal un<3))) * 
-      point2R1 q2 * point2R2 pt2 -
-      (point2R1 (tm t2 (Ordinal un<3)) *
-       point2R1 (tm t2 (Ordinal un<3)) +
-       point2R2 (tm t2 (Ordinal un<3)) *
-       point2R2 (tm t2 (Ordinal un<3))) * 
-      point2R2 q2 * point2R1 pt2))))
+     point2R2 pt1 * point2R2 pt1) -
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) *
+    point2R2 (tm t2 (@Ordinal 3 2 deux<3)) +
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) *
+    point2R2 pt1 +
+    point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+    (point2R1 pt1 * point2R1 pt1 +
+     point2R2 pt1 * point2R2 pt1) -
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) *
+    point2R2 pt1) +
+   point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+   (point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) -
+    point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+    (point2R1 pt1 * point2R1 pt1 +
+     point2R2 pt1 * point2R2 pt1) -
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) *
+    point2R2 (tm t2 (@Ordinal 3 1 un<3)) +
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) *
+    point2R2 pt1 +
+    point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+    (point2R1 pt1 * point2R1 pt1 +
+     point2R2 pt1 * point2R2 pt1) -
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) *
+    point2R2 pt1) -
+   point2R1 pt1 *
+   (point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) -
+    point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) -
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) *
+    point2R2 (tm t2 (@Ordinal 3 1 un<3)) +
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) *
+    point2R2 (tm t2 (@Ordinal 3 2 deux<3)) +
+    point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) -
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) *
+    point2R2 (tm t2 (@Ordinal 3 2 deux<3))))
   
 
-      = (-1 *
-   (point2R1 (tm t2 (Ordinal un<3)) *
-    point2R2 (tm t2 (Ordinal deux<3)) *
+      = (point2R1 p2 *
+   (point2R2 q2 *
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) -
+    point2R2 q2 *
     (point2R1 pt1 * point2R1 pt1 +
      point2R2 pt1 * point2R2 pt1) -
-    point2R1 (tm t2 (Ordinal un<3)) *
-    (point2R1 (tm t2 (Ordinal deux<3)) *
-     point2R1 (tm t2 (Ordinal deux<3)) +
-     point2R2 (tm t2 (Ordinal deux<3)) *
-     point2R2 (tm t2 (Ordinal deux<3))) * 
-    point2R2 pt1 -
-    point2R2 (tm t2 (Ordinal un<3)) *
-    point2R1 (tm t2 (Ordinal deux<3)) *
-    (point2R1 pt1 * point2R1 pt1 +
-     point2R2 pt1 * point2R2 pt1) +
-    point2R2 (tm t2 (Ordinal un<3)) *
-    (point2R1 (tm t2 (Ordinal deux<3)) *
-     point2R1 (tm t2 (Ordinal deux<3)) +
-     point2R2 (tm t2 (Ordinal deux<3)) *
-     point2R2 (tm t2 (Ordinal deux<3))) * 
-    point2R1 pt1 +
-    (point2R1 (tm t2 (Ordinal un<3)) *
-     point2R1 (tm t2 (Ordinal un<3)) +
-     point2R2 (tm t2 (Ordinal un<3)) *
-     point2R2 (tm t2 (Ordinal un<3))) *
-    point2R1 (tm t2 (Ordinal deux<3)) * 
-    point2R2 pt1 -
-    (point2R1 (tm t2 (Ordinal un<3)) *
-     point2R1 (tm t2 (Ordinal un<3)) +
-     point2R2 (tm t2 (Ordinal un<3)) *
-     point2R2 (tm t2 (Ordinal un<3))) *
-    point2R2 (tm t2 (Ordinal deux<3)) * 
-    point2R1 pt1) +
-   (point2R1 (tm t2 (Ordinal zero<3)) *
-    point2R2 (tm t2 (Ordinal deux<3)) *
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) *
+    point2R2 pt2 +
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) *
+    point2R2 pt1 +
+    point2R2 pt2 *
     (point2R1 pt1 * point2R1 pt1 +
      point2R2 pt1 * point2R2 pt1) -
-    point2R1 (tm t2 (Ordinal zero<3)) *
-    (point2R1 (tm t2 (Ordinal deux<3)) *
-     point2R1 (tm t2 (Ordinal deux<3)) +
-     point2R2 (tm t2 (Ordinal deux<3)) *
-     point2R2 (tm t2 (Ordinal deux<3))) * 
-    point2R2 pt1 -
-    point2R2 (tm t2 (Ordinal zero<3)) *
-    point2R1 (tm t2 (Ordinal deux<3)) *
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) *
+    point2R2 pt1) -
+   point2R1 q2 *
+   (point2R2 p2 *
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) -
+    point2R2 p2 *
     (point2R1 pt1 * point2R1 pt1 +
-     point2R2 pt1 * point2R2 pt1) +
-    point2R2 (tm t2 (Ordinal zero<3)) *
-    (point2R1 (tm t2 (Ordinal deux<3)) *
-     point2R1 (tm t2 (Ordinal deux<3)) +
-     point2R2 (tm t2 (Ordinal deux<3)) *
-     point2R2 (tm t2 (Ordinal deux<3))) * 
-    point2R1 pt1 +
-    (point2R1 (tm t2 (Ordinal zero<3)) *
-     point2R1 (tm t2 (Ordinal zero<3)) +
-     point2R2 (tm t2 (Ordinal zero<3)) *
-     point2R2 (tm t2 (Ordinal zero<3))) *
-    point2R1 (tm t2 (Ordinal deux<3)) * 
-    point2R2 pt1 -
-    (point2R1 (tm t2 (Ordinal zero<3)) *
-     point2R1 (tm t2 (Ordinal zero<3)) +
-     point2R2 (tm t2 (Ordinal zero<3)) *
-     point2R2 (tm t2 (Ordinal zero<3))) *
-    point2R2 (tm t2 (Ordinal deux<3)) * 
-    point2R1 pt1 +
-    (-1 *
-     (point2R1 (tm t2 (Ordinal zero<3)) *
-      point2R2 (tm t2 (Ordinal un<3)) *
-      (point2R1 pt1 * point2R1 pt1 +
-       point2R2 pt1 * point2R2 pt1) -
-      point2R1 (tm t2 (Ordinal zero<3)) *
-      (point2R1 (tm t2 (Ordinal un<3)) *
-       point2R1 (tm t2 (Ordinal un<3)) +
-       point2R2 (tm t2 (Ordinal un<3)) *
-       point2R2 (tm t2 (Ordinal un<3))) * 
-      point2R2 pt1 -
-      point2R2 (tm t2 (Ordinal zero<3)) *
-      point2R1 (tm t2 (Ordinal un<3)) *
-      (point2R1 pt1 * point2R1 pt1 +
-       point2R2 pt1 * point2R2 pt1) +
-      point2R2 (tm t2 (Ordinal zero<3)) *
-      (point2R1 (tm t2 (Ordinal un<3)) *
-       point2R1 (tm t2 (Ordinal un<3)) +
-       point2R2 (tm t2 (Ordinal un<3)) *
-       point2R2 (tm t2 (Ordinal un<3))) * 
-      point2R1 pt1 +
-      (point2R1 (tm t2 (Ordinal zero<3)) *
-       point2R1 (tm t2 (Ordinal zero<3)) +
-       point2R2 (tm t2 (Ordinal zero<3)) *
-       point2R2 (tm t2 (Ordinal zero<3))) *
-      point2R1 (tm t2 (Ordinal un<3)) * 
-      point2R2 pt1 -
-      (point2R1 (tm t2 (Ordinal zero<3)) *
-       point2R1 (tm t2 (Ordinal zero<3)) +
-       point2R2 (tm t2 (Ordinal zero<3)) *
-       point2R2 (tm t2 (Ordinal zero<3))) *
-      point2R2 (tm t2 (Ordinal un<3)) * 
-      point2R1 pt1) +
-     (point2R1 (tm t2 (Ordinal zero<3)) *
-      point2R2 (tm t2 (Ordinal un<3)) *
-      (point2R1 (tm t2 (Ordinal deux<3)) *
-       point2R1 (tm t2 (Ordinal deux<3)) +
-       point2R2 (tm t2 (Ordinal deux<3)) *
-       point2R2 (tm t2 (Ordinal deux<3))) -
-      point2R1 (tm t2 (Ordinal zero<3)) *
-      (point2R1 (tm t2 (Ordinal un<3)) *
-       point2R1 (tm t2 (Ordinal un<3)) +
-       point2R2 (tm t2 (Ordinal un<3)) *
-       point2R2 (tm t2 (Ordinal un<3))) *
-      point2R2 (tm t2 (Ordinal deux<3)) -
-      point2R2 (tm t2 (Ordinal zero<3)) *
-      point2R1 (tm t2 (Ordinal un<3)) *
-      (point2R1 (tm t2 (Ordinal deux<3)) *
-       point2R1 (tm t2 (Ordinal deux<3)) +
-       point2R2 (tm t2 (Ordinal deux<3)) *
-       point2R2 (tm t2 (Ordinal deux<3))) +
-      point2R2 (tm t2 (Ordinal zero<3)) *
-      (point2R1 (tm t2 (Ordinal un<3)) *
-       point2R1 (tm t2 (Ordinal un<3)) +
-       point2R2 (tm t2 (Ordinal un<3)) *
-       point2R2 (tm t2 (Ordinal un<3))) *
-      point2R1 (tm t2 (Ordinal deux<3)) +
-      (point2R1 (tm t2 (Ordinal zero<3)) *
-       point2R1 (tm t2 (Ordinal zero<3)) +
-       point2R2 (tm t2 (Ordinal zero<3)) *
-       point2R2 (tm t2 (Ordinal zero<3))) *
-      point2R1 (tm t2 (Ordinal un<3)) *
-      point2R2 (tm t2 (Ordinal deux<3)) -
-      (point2R1 (tm t2 (Ordinal zero<3)) *
-       point2R1 (tm t2 (Ordinal zero<3)) +
-       point2R2 (tm t2 (Ordinal zero<3)) *
-       point2R2 (tm t2 (Ordinal zero<3))) *
-      point2R2 (tm t2 (Ordinal un<3)) *
-      point2R1 (tm t2 (Ordinal deux<3))))))).
+     point2R2 pt1 * point2R2 pt1) -
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) *
+    point2R2 pt2 +
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) *
+    point2R2 pt1 +
+    point2R2 pt2 *
+    (point2R1 pt1 * point2R1 pt1 +
+     point2R2 pt1 * point2R2 pt1) -
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) *
+    point2R2 pt1) +
+   point2R1 pt2 *
+   (point2R2 p2 *
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) -
+    point2R2 p2 *
+    (point2R1 pt1 * point2R1 pt1 +
+     point2R2 pt1 * point2R2 pt1) -
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) * 
+    point2R2 q2 +
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) *
+    point2R2 pt1 +
+    point2R2 q2 *
+    (point2R1 pt1 * point2R1 pt1 +
+     point2R2 pt1 * point2R2 pt1) -
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) *
+    point2R2 pt1) -
+   point2R1 pt1 *
+   (point2R2 p2 *
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) -
+    point2R2 p2 *
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) -
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) * 
+    point2R2 q2 +
+    (point2R1 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R1 (tm t2 (@Ordinal 3 1 un<3)) +
+     point2R2 (tm t2 (@Ordinal 3 1 un<3)) *
+     point2R2 (tm t2 (@Ordinal 3 1 un<3))) *
+    point2R2 pt2 +
+    point2R2 q2 *
+    (point2R1 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R1 (tm t2 (@Ordinal 3 0 zero<3)) +
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3)) *
+     point2R2 (tm t2 (@Ordinal 3 0 zero<3))) -
+    (point2R1 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R1 (tm t2 (@Ordinal 3 2 deux<3)) +
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3)) *
+     point2R2 (tm t2 (@Ordinal 3 2 deux<3))) *
+    point2R2 pt2)).
         set a := point2R1 (tm t1 (Ordinal zero<3)).
         set b := point2R2 (tm t1 (Ordinal zero<3)).
         set c := point2R1 (tm t1 (Ordinal un<3)).
@@ -8477,42 +8024,8 @@ have infoLem3 : inCircle_point p2 q2 pt2 pt1.
                                  (tm t2 (Ordinal deux<3))
                                ^+ 2
                               else 1))) = 0.
-
-    rewrite (expand_det_col _ (inZp 3)).
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //=.
-    rewrite /cofactor !//=.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord0.
-    rewrite /=.
-    rewrite !mul1l.
-    rewrite !plus0r.
-    rewrite !expr2.
-    rewrite (_ :  ((-1) ^+ (bump 0 (bump 0 0) + 3 %% 4) = -1)); last first.
-      by [].
-    rewrite (_ : (-1) ^+ (0 + 3 %% 4)  = -1); last first.
-      by [].
-
+    rewrite expand_det44 !mxE !//=.
+    rewrite !mul1r.
     
     set a := point2R1 (tm t1 (Ordinal zero<3)).
     set b := point2R2 (tm t1 (Ordinal zero<3)).
@@ -8533,7 +8046,6 @@ have infoLem3 : inCircle_point p2 q2 pt2 pt1.
     move: hypocontra.
     move=> [contra2 hypo].
     move/eqP: contra => contra.
-    Search _ (_ && ~~_) false.
     move: contra contra2.
     set tmp :=(\det (\matrix_(i, j) (if i == 0
                        then
@@ -8722,42 +8234,10 @@ have infoLem3 : inCircle_point p2 q2 pt2 pt1.
                                ^+ 2
                               else 1))) = 0.
 
-    rewrite (expand_det_col _ (inZp 3)).
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //=.
-    rewrite /cofactor !//=.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord_recl.
-    rewrite !mxE. rewrite //.
-    rewrite /cofactor. rewrite //.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite //.
-
-    rewrite big_ord0.
-    rewrite /=.
-    rewrite !mul1l.
-    rewrite !plus0r.
-    rewrite !expr2.
-    rewrite (_ :  ((-1) ^+ (bump 0 (bump 0 0) + 3 %% 4) = -1)); last first.
-      by [].
-    rewrite (_ : (-1) ^+ (0 + 3 %% 4)  = -1); last first.
-      by [].
-
+    rewrite expand_det44 !mxE !//=.
+    rewrite !mul1r.
     
+
     set a := point2R1 (tm t1 (Ordinal zero<3)).
     set b := point2R2 (tm t1 (Ordinal zero<3)).
     set c := point2R1 (tm t1 (Ordinal un<3)).
@@ -8777,7 +8257,6 @@ have infoLem3 : inCircle_point p2 q2 pt2 pt1.
     move: hypocontra.
     move=> [contra2 hypo].
     move/eqP: contra => contra.
-    Search _ (_ && ~~_) false.
     move: contra contra2.
     set tmp :=\det (\matrix_(i, j) (if i == 0
                       then
@@ -8859,246 +8338,6 @@ have infoLem3 : inCircle_point p2 q2 pt2 pt1.
   move=> [H1 H2].
   by [].
 Qed.
-
-
-About Ordinal.
-
-Lemma expand_det44 (M : 'M[rat]_(4,4)) : 
-\det M
-=
-
-M (@Ordinal 4 0 isT) (@Ordinal 4 0 isT) * 
-(  M (@Ordinal 4 1 isT) (@Ordinal 4 1 isT) *
-  M (@Ordinal 4 2 isT) (@Ordinal 4 2 isT) *
-  M (@Ordinal 4 3 isT) (@Ordinal 4 3 isT) -
-  M (@Ordinal 4 1 isT) (@Ordinal 4 1 isT) *
-  M (@Ordinal 4 2 isT) (@Ordinal 4 3 isT) *
-  M (@Ordinal 4 3 isT) (@Ordinal 4 2 isT) -
-  M (@Ordinal 4 1 isT) (@Ordinal 4 2 isT) *
-  M (@Ordinal 4 2 isT) (@Ordinal 4 1 isT) *
-  M (@Ordinal 4 3 isT) (@Ordinal 4 3 isT) +
-  M (@Ordinal 4 1 isT) (@Ordinal 4 2 isT) *
-  M (@Ordinal 4 2 isT) (@Ordinal 4 3 isT) *
-  M (@Ordinal 4 3 isT) (@Ordinal 4 1 isT) +
-  M (@Ordinal 4 1 isT) (@Ordinal 4 3 isT) *
-  M (@Ordinal 4 2 isT) (@Ordinal 4 1 isT) *
-  M (@Ordinal 4 3 isT) (@Ordinal 4 2 isT) -
-  M (@Ordinal 4 1 isT) (@Ordinal 4 3 isT) *
-  M (@Ordinal 4 2 isT) (@Ordinal 4 2 isT) *
-  M (@Ordinal 4 3 isT) (@Ordinal 4 1 isT))
-
-- M (@Ordinal 4 1 isT) (@Ordinal 4 0 isT) * 
-(   M (@Ordinal 4 0 isT) (@Ordinal 4 1 isT) *
-  M (@Ordinal 4 2 isT) (@Ordinal 4 2 isT) *
-  M (@Ordinal 4 3 isT) (@Ordinal 4 3 isT) -
-  M (@Ordinal 4 0 isT) (@Ordinal 4 1 isT) *
-  M (@Ordinal 4 2 isT) (@Ordinal 4 3 isT) *
-  M (@Ordinal 4 3 isT) (@Ordinal 4 2 isT) -
-  M (@Ordinal 4 0 isT) (@Ordinal 4 2 isT) *
-  M (@Ordinal 4 2 isT) (@Ordinal 4 1 isT) *
-  M (@Ordinal 4 3 isT) (@Ordinal 4 3 isT) +
-  M (@Ordinal 4 0 isT) (@Ordinal 4 2 isT) *
-  M (@Ordinal 4 2 isT) (@Ordinal 4 3 isT) *
-  M (@Ordinal 4 3 isT) (@Ordinal 4 1 isT) +
-  M (@Ordinal 4 0 isT) (@Ordinal 4 3 isT) *
-  M (@Ordinal 4 2 isT) (@Ordinal 4 1 isT) *
-  M (@Ordinal 4 3 isT) (@Ordinal 4 2 isT) -
-  M (@Ordinal 4 0 isT) (@Ordinal 4 3 isT) *
-  M (@Ordinal 4 2 isT) (@Ordinal 4 2 isT) *
-  M (@Ordinal 4 3 isT) (@Ordinal 4 1 isT))
-
-+ M (@Ordinal 4 2 isT) (@Ordinal 4 0 isT) * 
-(  M (@Ordinal 4 0 isT) (@Ordinal 4 1 isT) *
-  M (@Ordinal 4 1 isT) (@Ordinal 4 2 isT) *
-  M (@Ordinal 4 3 isT) (@Ordinal 4 3 isT) -
-  M (@Ordinal 4 0 isT) (@Ordinal 4 1 isT) *
-  M (@Ordinal 4 1 isT) (@Ordinal 4 3 isT) *
-  M (@Ordinal 4 3 isT) (@Ordinal 4 2 isT) -
-  M (@Ordinal 4 0 isT) (@Ordinal 4 2 isT) *
-  M (@Ordinal 4 1 isT) (@Ordinal 4 1 isT) *
-  M (@Ordinal 4 3 isT) (@Ordinal 4 3 isT) +
-  M (@Ordinal 4 0 isT) (@Ordinal 4 2 isT) *
-  M (@Ordinal 4 1 isT) (@Ordinal 4 3 isT) *
-  M (@Ordinal 4 3 isT) (@Ordinal 4 1 isT) +
-  M (@Ordinal 4 0 isT) (@Ordinal 4 3 isT) *
-  M (@Ordinal 4 1 isT) (@Ordinal 4 1 isT) *
-  M (@Ordinal 4 3 isT) (@Ordinal 4 2 isT) -
-  M (@Ordinal 4 0 isT) (@Ordinal 4 3 isT) *
-  M (@Ordinal 4 1 isT) (@Ordinal 4 2 isT) *
-  M (@Ordinal 4 3 isT) (@Ordinal 4 1 isT))
-
-- M (@Ordinal 4 3 isT) (@Ordinal 4 0 isT) * 
-(  M (@Ordinal 4 0 isT) (@Ordinal 4 1 isT) *
-  M (@Ordinal 4 1 isT) (@Ordinal 4 2 isT) *
-  M (@Ordinal 4 2 isT) (@Ordinal 4 3 isT) -
-  M (@Ordinal 4 0 isT) (@Ordinal 4 1 isT) *
-  M (@Ordinal 4 1 isT) (@Ordinal 4 3 isT) *
-  M (@Ordinal 4 2 isT) (@Ordinal 4 2 isT) -
-  M (@Ordinal 4 0 isT) (@Ordinal 4 2 isT) *
-  M (@Ordinal 4 1 isT) (@Ordinal 4 1 isT) *
-  M (@Ordinal 4 2 isT) (@Ordinal 4 3 isT) +
-  M (@Ordinal 4 0 isT) (@Ordinal 4 2 isT) *
-  M (@Ordinal 4 1 isT) (@Ordinal 4 3 isT) *
-  M (@Ordinal 4 2 isT) (@Ordinal 4 1 isT) +
-  M (@Ordinal 4 0 isT) (@Ordinal 4 3 isT) *
-  M (@Ordinal 4 1 isT) (@Ordinal 4 1 isT) *
-  M (@Ordinal 4 2 isT) (@Ordinal 4 2 isT) -
-  M (@Ordinal 4 0 isT) (@Ordinal 4 3 isT) *
-  M (@Ordinal 4 1 isT) (@Ordinal 4 2 isT) *
-  M (@Ordinal 4 2 isT) (@Ordinal 4 1 isT)).
-
-Proof.
-    rewrite (expand_det_col _ (inZp 3)).
-    rewrite big_ord_recl.
-    rewrite !//=.
-    rewrite /cofactor !//=.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite !//=.
-
-    rewrite big_ord_recl.
-    rewrite !//=.
-    rewrite /cofactor. rewrite !//=.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite !//=.
-
-    rewrite big_ord_recl.
-    rewrite !//=.
-    rewrite /cofactor. rewrite !//=.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite !//=.
-
-    rewrite big_ord_recl.
-    rewrite !//=.
-    rewrite /cofactor. rewrite !//=.
-    rewrite expand_det33.
-    rewrite !mxE. rewrite !//=.
-
-    rewrite big_ord0.
-    rewrite !//=.
-    rewrite (_ :  ((-1) ^+ (bump 0 (bump 0 0) + 3 %% 4) = -1)); last first.
-      by [].
-    rewrite (_ : (-1) ^+ (0 + 3 %% 4)  = -1); last first.
-      by [].
-    rewrite (_ : (-1) ^+ (bump 0 0 + 3 %% 4)  = 1); last first.
-      by [].
-    rewrite (_ : (-1) ^+ (bump 0 (bump 0 (bump 0 0)) + 3 %% 4) = 1); last first.
-      by [].
-    rewrite plus0r.
-    rewrite !//=.
-    rewrite !mul1l.
-    rewrite (_ : (lift ord0 (lift ord0 (lift ord0 ord0)) = @Ordinal 4 3 isT))
-                  ; last first.
-      apply val_inj.
-      rewrite //.
-    rewrite (_ : ((lift ord0 (lift ord0 ord0)) = @Ordinal 4 2 isT))
-                  ; last first.
-      apply val_inj.
-      rewrite //.
-    rewrite (_ : (lift ord0 (@Ordinal 3 0 isT) = @Ordinal 4 1 isT))
-                  ; last first.
-      apply val_inj.
-      rewrite //.
-    rewrite (_ : (lift (inZp 3) (@Ordinal 3 2 isT)) = @Ordinal 4 2 isT)
-                  ; last first.
-      apply val_inj.
-      rewrite //.
-    rewrite (_ : (lift (inZp 3) (@Ordinal 3 0 isT)) = @Ordinal 4 0 isT)
-                  ; last first.
-      apply val_inj.
-      rewrite //.
-    rewrite (_ : (lift (inZp 3) (@Ordinal 3 1 isT)) = @Ordinal 4 1 isT)
-                  ; last first.
-      apply val_inj.
-      rewrite //.
-    rewrite (_ : lift ord0 (@Ordinal 3 1 isT) = @Ordinal 4 2 isT)
-                  ; last first.
-      apply val_inj.
-      rewrite //.
-    rewrite (_ : lift ord0 (@Ordinal 3 2 isT) = @Ordinal 4 3 isT)
-                  ; last first.
-      apply val_inj.
-      rewrite //.
-    rewrite (_ : lift ord0 ord0 = @Ordinal 4 1 isT)
-                  ; last first.
-      apply val_inj.
-      rewrite //.
-    rewrite (_ : (lift (@Ordinal 4 2 isT) (@Ordinal 3 1 isT))
-                       = @Ordinal 4 1 isT)
-                  ; last first.
-      apply val_inj.
-      rewrite //.
-    rewrite (_ : (lift (@Ordinal 4 3 isT) (@Ordinal 3 1 isT))
-                       = @Ordinal 4 1 isT)
-                  ; last first.
-      apply val_inj.
-      rewrite //.
-    rewrite (_ : (lift (@Ordinal 4 1 isT) (@Ordinal 3 1 isT))
-                       = @Ordinal 4 2 isT)
-                  ; last first.
-      apply val_inj.
-      rewrite //.
-    rewrite (_ : (lift (@Ordinal 4 1 isT) (@Ordinal 3 0 isT))
-                       = @Ordinal 4 0 isT)
-                  ; last first.
-      apply val_inj.
-      rewrite //.
-    rewrite (_ : (lift (@Ordinal 4 1 isT) (@Ordinal 3 2 isT))
-                       = @Ordinal 4 3 isT)
-                  ; last first.
-      apply val_inj.
-      rewrite //.
-    rewrite (_ : (lift (@Ordinal 4 2 isT) (@Ordinal 3 0 isT))
-                       = @Ordinal 4 0 isT)
-                  ; last first.
-      apply val_inj.
-      rewrite //.
-    rewrite (_ : (lift (@Ordinal 4 2 isT) (@Ordinal 3 2 isT))
-                       = @Ordinal 4 3 isT)
-                  ; last first.
-      apply val_inj.
-      rewrite //.
-    rewrite (_ : (lift (@Ordinal 4 3 isT) (@Ordinal 3 0 isT))
-                       = @Ordinal 4 0 isT)
-                  ; last first.
-      apply val_inj.
-      rewrite //.
-    rewrite (_ : (lift (@Ordinal 4 3 isT) (@Ordinal 3 2 isT))
-                       = @Ordinal 4 2 isT)
-                  ; last first.
-      apply val_inj.
-      rewrite //.
-
-      rewrite (_ : @inZp 3 3 = @Ordinal 4 3 isT); last first.
-        apply: val_inj.
-        by rewrite //.
-
-      rewrite (_ : @ord0 3 = @Ordinal 4 0 isT); last first.
-        apply: val_inj.
-        by rewrite //.
-
-      set a00 := M (@Ordinal 4 0 isT) (@Ordinal 4 0 isT).
-      set a01 := M (@Ordinal 4 0 isT) (@Ordinal 4 1 isT).
-      set a02 := M (@Ordinal 4 0 isT) (@Ordinal 4 2 isT).
-      set a03 := M (@Ordinal 4 0 isT) (@Ordinal 4 3 isT).
-
-      set a10 := M (@Ordinal 4 1 isT) (@Ordinal 4 0 isT).
-      set a11 := M (@Ordinal 4 1 isT) (@Ordinal 4 1 isT).
-      set a12 := M (@Ordinal 4 1 isT) (@Ordinal 4 2 isT).
-      set a13 := M (@Ordinal 4 1 isT) (@Ordinal 4 3 isT).
-
-      set a20 := M (@Ordinal 4 2 isT) (@Ordinal 4 0 isT).
-      set a21 := M (@Ordinal 4 2 isT) (@Ordinal 4 1 isT).
-      set a22 := M (@Ordinal 4 2 isT) (@Ordinal 4 2 isT).
-      set a23 := M (@Ordinal 4 2 isT) (@Ordinal 4 3 isT).
-
-      set a30 := M (@Ordinal 4 3 isT) (@Ordinal 4 0 isT).
-      set a31 := M (@Ordinal 4 3 isT) (@Ordinal 4 1 isT).
-      set a32 := M (@Ordinal 4 3 isT) (@Ordinal 4 2 isT).
-      set a33 := M (@Ordinal 4 3 isT) (@Ordinal 4 3 isT).
-
-      prefield; ring.
-Qed.
-
 
 
 
