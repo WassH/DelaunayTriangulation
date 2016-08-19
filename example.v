@@ -5946,12 +5946,10 @@ Lemma in_circle_ccwr :
     distance_sq x y a b <= (a^+2 + b^+2) -> (x = 0 -> y <> 0) ->
     ccwr 0 0 b (-a) x y.
 Proof.
-rewrite /ccwr.
-rewrite /ccwd.
+rewrite /ccwr /ccwd.
 rewrite /distance_sq.
 move=> x y a b rp inc diff.
-rewrite !mul0l !mul0r.
-rewrite !subr0 plus0l.
+rewrite !mul0l !mul0r !subr0 plus0l.
 rewrite !expr2 in inc.
 rewrite (_ : (b * y - x * - a) = (b * y + (- x * - a))); last first.
   prefield; ring.
@@ -5959,8 +5957,7 @@ rewrite mulrNN.
 case nul_ou_non : ((x == 0)).
   move/eqP : nul_ou_non.
   move=> nul_ou_non.
-  rewrite nul_ou_non mul0l.
-  rewrite subr0.
+  rewrite nul_ou_non mul0l subr0.
   move: (diff nul_ou_non).
   rewrite nul_ou_non in inc.
   rewrite !sub0r in inc.
@@ -5993,16 +5990,74 @@ case nul_ou_non : ((x == 0)).
     apply:mulf_neq0.
       by [].
     by move/eqP:hypo2.
-  
+  move : hypo.
+  rewrite (_ : (y - b) * (y - b) = y*y + b*b -b*y - b*y); last first.
+    by rat_field.
+  rewrite (_ : y * y + b * b = b*b + y*y); last first.
+    by rat_field.
+  rewrite -[X in (Num.le _ X) -> _]plus0r.
+  rewrite (_ : b * b + y * y - b * y - b * y = b * b + (y * y - b * y - b * y))
+      ; last first.
+    by rat_field.
+  move=> hypo.
+  rewrite ler_add2l in hypo.
+  move: hypo.
+  rewrite (_ : y * y - b * y - b * y = y*y -( b * y + b * y)); last first.
+    by rat_field.
+  rewrite subr_le0.
+  rewrite (_ : b * y + b * y = (1+1)*(b*y)); last first.
+    prefield. ring.
+  move=> hypo.
+  have inq : (Num.le ((y*y)/(1+1)) (b*y)).
+    rewrite ler_pdivr_mulr.
+      rewrite (_ : b * y * (1 + 1) = (1 + 1) * (b * y)); last first.
+        by rat_field.
+      by [].
+    by [].
+  have other_inq : Num.le 0 (y * y / (1 + 1)).
+    apply: divr_ge0; last first.
+      by [].
+    rewrite -expr2.
+    rewrite -realEsqr.
+    apply : Num.Internals.num_real.
+  by apply : (ler_trans other_inq inq).
+have inq : (Num.le ((x*x + y*y)/(1+1)) (b * y + x * a)).
+  move:inc.
+  rewrite (_ : (x - a) * (x - a) + (y - b) * (y - b) 
+                      = (a * a + b * b) + (x*x + y*y - (x*a +x*a) - (y*b +y*b)))
+                          ; last first.
+    by rat_field.
+  move=> inc.
+  rewrite -[X in Num.le _ X]plus0r in inc.
+  rewrite ler_add2l in inc.
+  rewrite subr_le0 in inc.
+  rewrite ler_subl_addr in inc.
+  move:inc.
+  rewrite (_ : y * b = b*y); last first. by rat_field.
+  rewrite (_ : b * y + b * y + (x * a + x * a) = (1+1) * (b * y + x * a))
+            ; last first.
+    prefield; ring.
+  rewrite ler_pdivr_mulr.
+    rewrite (_ : (1 + 1) * (b * y + x * a) = (b * y + x * a) * (1 + 1)); last first.
+      by rat_field.
+    by [].
+  by [].
+have other_inq : Num.lt 0 ((x * x + y * y) / (1 + 1)).
+  apply: divr_gt0; last first.
+    by [].
+  rewrite -!expr2.
+  apply: sum_gt01.
+    rewrite lt0r.
+    apply/andP; split.
+      rewrite GRing.sqrf_eq0.
+      by move/negbT:nul_ou_non.
+    rewrite -realEsqr.
+    apply : Num.Internals.num_real.
+  rewrite -realEsqr.
+  apply : Num.Internals.num_real.
+by apply: (ltr_le_trans other_inq inq).
+Qed.
 
-
-
-
-Admitted.
-(* intros x0; rewrite x0 in inc |- *. 
-assert (diff' := diff x0); psatz R.
-intros; psatz R. 
-Qed.*)
 
 Lemma exists_tangent :
   forall xp yp xq yq xr yr, ccwr xp yp xq yq xr yr ->
@@ -6146,7 +6201,7 @@ rewrite Hx' Hy' in inc; rewrite /in_circle in inc; rewrite in_circled1 in inc.
 move: inc.
 by rewrite ltrr.
 Admitted.
-(* Admitted car Qed trop long *)
+(* Admitted car Qed trop long mais la preuve est finie *)
 
 Lemma exchange :
 forall xp yp xq yq xr yr xs ys,  ccwr xp yp xq yq xr yr ->
@@ -6174,7 +6229,7 @@ rewrite /in_circled /in_circle /in_circled. by [].
 rewrite !/in_circled. by rat_field.
 apply axiom1; apply axiom1; by [].
 Admitted.
-(* Admitted car Qed trop long *)
+(* Admitted car Qed trop long mais la preuve est finie  *)
 
 (*========END OF YB'PROOF========*)
 
