@@ -183,7 +183,7 @@ Definition inCircle (p1 : point) (t1: T) (tm : trianglemap) : bool :=
                                      point2R1 (tm t1 (Ordinal (zero<3)))
                                          else if j==1 then
                                      point2R2 (tm t1 (Ordinal (zero<3)))
-                                         else if nat_of_ord j==2 then 
+                                         else if nat_of_ord j==2 then
                          (point2R1 (tm t1 (Ordinal (zero<3))))^+2
                             + (point2R2 (tm t1 (Ordinal (zero<3))))^+2
                                          else 1
