@@ -69,22 +69,26 @@ Notation "deux<5" := (ltn_trans (ltn_trans (ltnSn 2) (ltnSn 3)) (ltnSn 4)).
 Notation "trois<5" := (ltn_trans (ltnSn 3) (ltnSn 4)).
 Notation "quatre<5" := (ltnSn 4).
 
-Axiom modulo : forall i n:nat,  (i%%n)< n.
+
+Lemma deux_dif0 : 2 >0.
+by [].
+Qed.
+
+Lemma trois_dif0 : 3 >0.
+by [].
+Qed.
 
 Definition addOrd2 : 'I_2 -> 'I_2 -> 'I_2 :=
-  fun (p q : 'I_2) => Ordinal(modulo (p+q) 2).
+  fun (p q : 'I_2) => Ordinal(@ltn_pmod (p+q) 2 deux_dif0).
 
 Definition addOrd3 : 'I_3 -> 'I_3 -> 'I_3 :=
-  fun (p q : 'I_3) => Ordinal(modulo (p+q) 3).
+  fun (p q : 'I_3) => Ordinal(@ltn_pmod (p+q) 3 trois_dif0).
 
 Definition minOrd2 : 'I_2 -> 'I_2 -> 'I_2 :=
-  fun (p q : 'I_2) => Ordinal(modulo (p-q) 2).
+  fun (p q : 'I_2) => Ordinal(@ltn_pmod (p-q) 2 deux_dif0).
 
 Definition minrd3 : 'I_3 -> 'I_3 -> 'I_3 :=
-  fun (p q : 'I_3) => Ordinal(modulo (p-q) 3).
-
-Definition addOrdn (n:nat) : 'I_n -> 'I_n -> 'I_n :=
-  fun (p q : 'I_n) => Ordinal(modulo (p-q) n).
+  fun (p q : 'I_3) => Ordinal(@ltn_pmod (p-q) 3 trois_dif0).
 
 
 Variable R : numDomainType.
