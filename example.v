@@ -6200,8 +6200,8 @@ have Hy' : (ys = yp).  apply/eqP. rewrite -subr_eq0.
 rewrite Hx' Hy' in inc; rewrite /in_circle in inc; rewrite in_circled1 in inc.
 move: inc.
 by rewrite ltrr.
-Admitted.
-(* Admitted car Qed trop long mais la preuve est finie *)
+Qed.
+(* Qed un peu long mais la preuve est finie *)
 
 Lemma exchange :
 forall xp yp xq yq xr yr xs ys,  ccwr xp yp xq yq xr yr ->
@@ -6228,8 +6228,8 @@ move: ic.
 rewrite /in_circled /in_circle /in_circled. by [].
 rewrite !/in_circled. by rat_field.
 apply axiom1; apply axiom1; by [].
-Admitted.
-(* Admitted car Qed trop long mais la preuve est finie  *)
+Qed.
+(* Qed un peu long mais la preuve est finie  *)
 
 (*========END OF YB'PROOF========*)
 
