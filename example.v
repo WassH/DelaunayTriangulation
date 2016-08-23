@@ -6195,7 +6195,7 @@ apply in_circle_ccwr.
   rewrite ltr_def in sa. move/andP : sa => [sa1 sa2]. by [].
 move=> Hx Hy; have Hx' : (xs = xp). apply/eqP. rewrite -subr_eq0. 
   by apply/eqP.
-have Hy' : (ys = yp).  apply/eqP. rewrite -subr_eq0. 
+have Hy' : (ys = yp).  apply/eqP. rewrite -subr_eq0.
   by apply/eqP.
 rewrite Hx' Hy' in inc; rewrite /in_circle in inc; rewrite in_circled1 in inc.
 move: inc.
@@ -8404,15 +8404,31 @@ Qed.
 Lemma surface_flip (tm: trianglemap)  (ptext1 : point) (ptext2 : point)
                        (t1:T) (t2 :T) (g:graph) (pm: pointmap) (p:point) 
                         (nomp : P) :
-pm nomp ==p
+let ptext1 := (tm t1 (Ordinal(zero<3))) in
+let q1 := (tm t1 (Ordinal(un<3))) in
+let p1 := (tm t1 (Ordinal(deux<3))) in
+let ptext2 := (tm t2 (Ordinal(zero<3))) in
+let p2 := (tm t2 (Ordinal(un<3))) in
+let q2 :=(tm t2 (Ordinal(deux<3))) in
+isDelaunayLocal t1 t2 tm == false 
+  -> p1 = p2
+  -> q1 = q2
+  -> ~pt_in_triangle tm ptext2 t1
+  -> ~pt_in_triangle tm ptext1 t2
+-> pm nomp ==p
 -> (nomp \in surface t1 tm pm) 
     || (nomp \in surface t2 tm pm)
-      -> exists t:T, if flip (tm: trianglemap) (ptext1 : point) 
+      -> exists t:T, if flip default_triangle (tm: trianglemap) (ptext1 : point) 
                                   (ptext2 : point) (t1:T) (t2 :T) (g:graph)
                                      (pm: pointmap) is Some (g',tm') then
                             nomp \in surface t tm' pm
                    else (nomp \in surface t1 tm pm)
                           || (nomp \in surface t2 tm pm).
+Proof.
+move=> pt1 q1 p1 pt2 p2 q2 illegal adj1 adj2 notint1 notint2 egalnom hyp_or.
+case info : (flip default_triangle tm pt1 pt2 t1 t2 g pm) => [[g' tmap'] | ];
+   last first.
+  by [].
 Abort.
 
 
