@@ -8452,7 +8452,19 @@ Abort.
 
 Lemma combi_flip (tm: trianglemap) (ptext1 : point) (ptext2 : point) 
              (t3 t4: T) (t1:T) (t2 :T) (g:graph) (pm: pointmap) (p:point) :
- (t3 \in g t4 -> t4 \in g t3)
+let ptext1 := (tm t1 (Ordinal(zero<3))) in
+let q1 := (tm t1 (Ordinal(un<3))) in
+let p1 := (tm t1 (Ordinal(deux<3))) in
+let ptext2 := (tm t2 (Ordinal(zero<3))) in
+let p2 := (tm t2 (Ordinal(un<3))) in
+let q2 :=(tm t2 (Ordinal(deux<3))) in
+isDelaunayLocal t1 t2 tm == false 
+  -> p1 = p2
+  -> q1 = q2
+  -> ~pt_in_triangle tm ptext2 t1
+  -> ~pt_in_triangle tm ptext1 t2
+
+-> (t3 \in g t4 -> t4 \in g t3)
 -> forall (t5 t6 :T), if flip (tm: trianglemap) (ptext1 : point) 
                                   (ptext2 : point) (t1:T) (t2 :T) (g:graph)
                                      (pm: pointmap) is Some (g',tm') then
