@@ -8439,6 +8439,7 @@ pm nomp ==p ->
                                 (tm : trianglemap) (g:graph) (pm :pointmap)
               is Some (g', tm') then exists t1:T, nomp \in surface t1 tm' pm
                           else (nomp \in surface t tm pm).
+Proof.
 Abort.
 
 
@@ -8470,6 +8471,7 @@ isDelaunayLocal t1 t2 tm == false
                                      (pm: pointmap) is Some (g',tm') then
                              (t5 \in g' t6 -> t6 \in g' t5)
                    else (t3 \in g t4 -> t4 \in g t3).
+Proof.
 Abort.
 
 Lemma combi_add_point_triangle (p:point) (t:T) (tm : trianglemap)
@@ -8479,6 +8481,7 @@ Lemma combi_add_point_triangle (p:point) (t:T) (tm : trianglemap)
                                 (tm : trianglemap) (g:graph) (pm :pointmap)
               is Some (g', tm') then   (t3 \in g' t4 -> t4 \in g' t3)
                           else (t1 \in g t2 -> t2 \in g t1).
+Proof.
 Abort.
 
 
